@@ -1,0 +1,43 @@
+{
+  "name": "blink",
+  "version": "0.0.0",
+  "description": "Blink is an open-source CSS Authoring Framework.",
+  "main": "./lib/api.js",
+  "scripts": {
+    "postinstall": "bower install",
+    "test": "grunt test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jedmao/blink.git"
+  },
+  "keywords": [
+    "blink",
+    "css",
+    "bem",
+    "oocss",
+    "framework"
+  ],
+  "author": "Jed Mao <jed.hunsaker+npm@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jedmao/blink/issues"
+  },
+  "homepage": "https://github.com/jedmao/blink",
+  "dependencies": {
+    "typescript-require": "^0.2.6"
+  },
+  "devDependencies": {
+    "chai": "^1.9.1",
+    "grunt": "^0.4.4",
+    "grunt-contrib-clean": "^0.5.0",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-mocha-test": "^0.10.2",
+    "grunt-typescript-compile": "^0.2.0",
+    "load-grunt-tasks": "^0.4.0",
+    "mocha": "^1.18.2",
+    "sinon": "^1.9.1",
+    "sinon-chai": "^2.5.0",
+    "time-grunt": "^0.3.1"
+  }
+}

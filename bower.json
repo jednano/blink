@@ -1,0 +1,34 @@
+{
+  "name": "blink",
+  "version": "0.0.0",
+  "homepage": "https://github.com/jedmao/blink",
+  "authors": [
+    "Jed Mao <jed.hunsaker+npm@gmail.com>"
+  ],
+  "description": "Blink is an open-source CSS Authoring Framework.",
+  "main": "./lib/api.js",
+  "keywords": [
+    "blink",
+    "css",
+    "bem",
+    "oocss",
+    "framework"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "dt-node": "*"
+  },
+  "devDependencies": {
+    "dt-mocha": "~1.9.0",
+    "dt-sinon": "~1.5.0",
+    "dt-sinon-chai": "~2.4.0"
+  }
+}

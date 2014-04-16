@@ -1,0 +1,5 @@
+﻿module Blink {
+
+}
+
+export = Blink;
