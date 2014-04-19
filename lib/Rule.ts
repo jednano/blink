@@ -1,6 +1,6 @@
 ﻿import os = require('os');
 
-import CompileSettings = require('./CompileSettings');
+import Configuration = require('./Configuration');
 import DeclarationTree = require('./DeclarationTree');
 import IDeclarationTree = require('./interfaces/IDeclarationTree');
 
@@ -13,11 +13,11 @@ class Rule {
 		this.declarations = new DeclarationTree(declarations || {});
 	}
 
-	public compile(settings?: CompileSettings) {
-		settings = settings || new CompileSettings();
-		var space = settings.oneSpace;
-		return this.selectors.join(',' + space) + space + '{' + settings.newline +
-			this.declarations.compile(settings) + '}' + settings.newline;
+	public compile(config?: Configuration) {
+		config = config || new Configuration();
+		var space = config.oneSpace;
+		return this.selectors.join(',' + space) + space + '{' + config.newline +
+			this.declarations.compile(config) + '}' + config.newline;
 	}
 }
 

@@ -1,12 +1,12 @@
 ﻿import os = require('os');
 
-import CompileSettings = require('./CompileSettings');
+import Configuration = require('./Configuration');
 import IDeclarationTree = require('./interfaces/IDeclarationTree');
 
 
 class DeclarationTree {
 
-	private compileSettings: CompileSettings;
+	private config: Configuration;
 
 	constructor(public root: IDeclarationTree) {
 	}
@@ -49,13 +49,13 @@ class DeclarationTree {
 		return false;
 	}
 
-	public compile(settings?: CompileSettings) {
-		this.compileSettings = settings = settings || new CompileSettings();
+	public compile(config?: Configuration) {
+		this.config = config = config || new Configuration();
 		var declarations = this.resolve();
-		return settings.oneIndent + Object.keys(declarations).map(key => {
+		return config.oneIndent + Object.keys(declarations).map(key => {
 			var value = this.compileValue(declarations[key]);
-			return key + ':' + settings.oneSpace + value + ';';
-		}).join(settings.ruleSeparator) + settings.newline;
+			return key + ':' + config.oneSpace + value + ';';
+		}).join(config.ruleSeparator) + config.newline;
 	}
 
 	private compileValue(value: any): any {
@@ -71,7 +71,7 @@ class DeclarationTree {
 	private compilePrimitive(value: any) {
 		switch (typeof value) {
 			case 'string':
-				var quote = this.compileSettings.quote;
+				var quote = this.config.quote;
 				return quote + value.replace(new RegExp(quote, 'g'), '\\' + quote) + quote;
 			case 'number':
 				return value ? value + 'px' : value;

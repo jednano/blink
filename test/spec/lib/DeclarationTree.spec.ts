@@ -2,7 +2,7 @@
 
 import sinonChai = require('../../sinon-chai');
 var expect = sinonChai.expect;
-import CompileSettings = require('../../../lib/CompileSettings');
+import Configuration = require('../../../lib/Configuration');
 import DeclarationTree = require('../../../lib/DeclarationTree');
 
 
@@ -40,16 +40,16 @@ describe('DeclarationTree', () => {
 		expect(rule.resolve()).to.deep.equal({ 'foo:bar': 'baz' });
 	});
 
-	var settings = new CompileSettings();
-	var newline = settings.newline;
+	var config = new Configuration();
+	var newline = config.newline;
 
 	it('compiles a single declaration', () => {
-		var css = new DeclarationTree({ foo: 'bar' }).compile(settings);
+		var css = new DeclarationTree({ foo: 'bar' }).compile(config);
 		expect(css).to.eq('  foo: "bar";' + newline);
 	});
 
 	it('compiles multiple declarations', () => {
-		var css = new DeclarationTree({ foo: 'bar', baz: 'qux' }).compile(settings);
+		var css = new DeclarationTree({ foo: 'bar', baz: 'qux' }).compile(config);
 		expect(css).to.eq([
 			'  foo: "bar";',
 			'  baz: "qux";'
