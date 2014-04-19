@@ -42,12 +42,27 @@ class CompileSettings implements ICompileSettings {
 
 	private _quoteType: string;
 
-	public get quote() {
-		return this._quoteType === 'single' ? "'" : '"';
+	public get quoteType() {
+		return this._quoteType;
 	}
 
-	public set quote(value: string) {
-		this._quoteType = (value === '"') ? 'double' : 'single';
+	public set quoteType(value: string) {
+		value = value.toLowerCase();
+		switch (value) {
+			case 'single':
+			case 'double':
+				this._quoteType = value;
+				return;
+			default:
+				throw new Error('Unsupported quote type: ' + value);
+		}
+	}
+
+	public get quote() {
+		return {
+			single: "'",
+			'double': '"'
+		}[this._quoteType];
 	}
 	// ReSharper restore InconsistentNaming
 
@@ -70,7 +85,7 @@ class CompileSettings implements ICompileSettings {
 		settings = settings || {};
 		this.outputStyle = settings.outputStyle || 'nested';
 		this.oneIndent = settings.oneIndent || '  ';
-		this.quote = settings.quoteType || 'single';
+		this.quoteType = settings.quoteType || 'double';
 		this.newline = settings.newline || os.EOL;
 	}
 }

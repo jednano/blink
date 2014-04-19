@@ -17,14 +17,15 @@ class DeclarationTree {
 
 	private resolveDeclarations(seed: IDeclarationTree, key: string, rules: IDeclarationTree) {
 		Object.keys(rules).forEach(k2 => {
-			key = this.combineKeys(key, k2);
+			var k1 = key;
+			key = this.combineKeys(k1, k2);
 			var value = rules[k2];
 			if (this.checkValueIsResolved(value)) {
 				seed[key] = value;
-				key = '';
 			} else {
 				this.resolveDeclarations(seed, key, value);
 			}
+			key = k1;
 		});
 		return seed;
 	}

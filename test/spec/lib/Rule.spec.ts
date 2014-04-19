@@ -12,7 +12,7 @@ describe('Rule', () => {
 		var rule = new Rule(['foo'], { bar: 'baz' });
 		expect(rule.compile()).to.eq([
 			'foo {',
-			'  bar: \'baz\';',
+			'  bar: "baz";',
 			'}'
 		].join(os.EOL) + os.EOL);
 	});
@@ -21,7 +21,7 @@ describe('Rule', () => {
 		var rule = new Rule(['foo', 'bar'], { baz: 'qux' });
 		expect(rule.compile()).to.eq([
 			'foo, bar {',
-			'  baz: \'qux\';',
+			'  baz: "qux";',
 			'}'
 		].join(os.EOL) + os.EOL);
 	});

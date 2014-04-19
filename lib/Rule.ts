@@ -1,7 +1,8 @@
-﻿import CompileSettings = require('./CompileSettings');
+﻿import os = require('os');
+
+import CompileSettings = require('./CompileSettings');
 import DeclarationTree = require('./DeclarationTree');
 import IDeclarationTree = require('./interfaces/IDeclarationTree');
-import os = require('os');
 
 
 class Rule {

@@ -15,8 +15,24 @@ describe('DeclarationTree', () => {
 	});
 
 	it('resolves nested rules', () => {
-		var rule = new DeclarationTree({ foo: { bar: { baz: 'qux' } } });
-		expect(rule.resolve()).to.deep.equal({ 'foo-bar-baz': 'qux' });
+		var rule = new DeclarationTree({
+			foo: {
+				bar: {
+					baz: 'BAZ',
+					qux: 5,
+				},
+				baz: 0,
+				qux: {
+					foo: [7, 'FOO']
+				}
+			}
+		});
+		expect(rule.resolve()).to.deep.equal({
+			'foo-bar-baz': 'BAZ',
+			'foo-bar-qux': 5,
+			'foo-baz': 0,
+			'foo-qux-foo': [7, 'FOO']
+		});
 	});
 
 	it('resolves pseudo-selectors', () => {
@@ -25,18 +41,19 @@ describe('DeclarationTree', () => {
 	});
 
 	var settings = new CompileSettings();
+	var newline = settings.newline;
 
 	it('compiles a single declaration', () => {
 		var css = new DeclarationTree({ foo: 'bar' }).compile(settings);
-		expect(css).to.eq('  foo: \'bar\';' + settings.newline);
+		expect(css).to.eq('  foo: "bar";' + newline);
 	});
 
 	it('compiles multiple declarations', () => {
 		var css = new DeclarationTree({ foo: 'bar', baz: 'qux' }).compile(settings);
 		expect(css).to.eq([
-			'  foo: \'bar\';',
-			'  baz: \'qux\';'
-		].join(os.EOL) + settings.newline);
+			'  foo: "bar";',
+			'  baz: "qux";'
+		].join(newline) + newline);
 	});
 
 });
