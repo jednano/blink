@@ -1,9 +1,9 @@
 ﻿import os = require('os');
 
-import ICompileSettings = require('./interfaces/ICompileSettings');
+import IConfigurationOptions = require('./interfaces/IConfigurationOptions');
 
 
-class CompileSettings implements ICompileSettings {
+class Configuration implements IConfigurationOptions {
 
 	public outputStyle: string;
 
@@ -81,13 +81,18 @@ class CompileSettings implements ICompileSettings {
 		}
 	}
 
-	constructor(settings?: ICompileSettings) {
-		settings = settings || {};
-		this.outputStyle = settings.outputStyle || 'nested';
-		this.oneIndent = settings.oneIndent || '  ';
-		this.quoteType = settings.quoteType || 'double';
-		this.newline = settings.newline || os.EOL;
+	constructor(options?: IConfigurationOptions) {
+		this.set(options);
 	}
+
+	public set(options?: IConfigurationOptions) {
+		options = options || {};
+		this.outputStyle = options.outputStyle || 'nested';
+		this.oneIndent = options.oneIndent || '  ';
+		this.quoteType = options.quoteType || 'double';
+		this.newline = options.newline || os.EOL;
+	}
+
 }
 
-export = CompileSettings;
+export = Configuration;

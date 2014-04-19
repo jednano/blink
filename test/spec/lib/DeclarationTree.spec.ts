@@ -2,9 +2,11 @@
 
 import sinonChai = require('../../sinon-chai');
 var expect = sinonChai.expect;
-import Configuration = require('../../../lib/Configuration');
+import Blink = require('../../../lib/Blink');
 import DeclarationTree = require('../../../lib/DeclarationTree');
 
+
+var newline = Blink.configuration.newline;
 
 // ReSharper disable WrongExpressionStatement
 describe('DeclarationTree', () => {
@@ -40,16 +42,13 @@ describe('DeclarationTree', () => {
 		expect(rule.resolve()).to.deep.equal({ 'foo:bar': 'baz' });
 	});
 
-	var config = new Configuration();
-	var newline = config.newline;
-
 	it('compiles a single declaration', () => {
-		var css = new DeclarationTree({ foo: 'bar' }).compile(config);
+		var css = new DeclarationTree({ foo: 'bar' }).compile();
 		expect(css).to.eq('  foo: "bar";' + newline);
 	});
 
 	it('compiles multiple declarations', () => {
-		var css = new DeclarationTree({ foo: 'bar', baz: 'qux' }).compile(config);
+		var css = new DeclarationTree({ foo: 'bar', baz: 'qux' }).compile();
 		expect(css).to.eq([
 			'  foo: "bar";',
 			'  baz: "qux";'
