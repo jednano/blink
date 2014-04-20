@@ -1,7 +1,4 @@
-﻿///<reference path="../bower_components/dt-node/node.d.ts"/>
-import os = require('os');
-
-import Configuration = require('./Configuration');
+﻿import Configuration = require('./Configuration');
 import DeclarationTree = require('./DeclarationTree');
 import IDeclarationTree = require('./interfaces/IDeclarationTree');
 
@@ -14,8 +11,7 @@ class Rule {
 		this.declarations = new DeclarationTree(declarations || {});
 	}
 
-	public compile(config?: Configuration) {
-		config = config || new Configuration();
+	public compile(config: Configuration) {
 		var space = config.oneSpace;
 		return this.selectors.join(',' + space) + space + '{' + config.newline +
 			this.declarations.compile(config) + '}' + config.newline;

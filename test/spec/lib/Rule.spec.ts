@@ -1,18 +1,17 @@
-﻿import os = require('os');
-
-import sinonChai = require('../../sinon-chai');
+﻿import sinonChai = require('../../sinon-chai');
 var expect = sinonChai.expect;
 import Blink = require('../../../lib/Blink');
 
 
-var newline = Blink.configuration.newline;
+var config = Blink.configuration;
+var newline = config.newline;
 
 // ReSharper disable WrongExpressionStatement
 describe('Rule', () => {
 
 	it('compiles a single selector', () => {
 		var rule = new Blink.Rule(['foo'], { bar: 'baz' });
-		expect(rule.compile()).to.eq([
+		expect(rule.compile(config)).to.eq([
 			'foo {',
 			'  bar: baz;',
 			'}'
@@ -21,7 +20,7 @@ describe('Rule', () => {
 
 	it('compiles multiple selectors', () => {
 		var rule = new Blink.Rule(['foo', 'bar'], { baz: 'qux' });
-		expect(rule.compile()).to.eq([
+		expect(rule.compile(config)).to.eq([
 			'foo, bar {',
 			'  baz: qux;',
 			'}'

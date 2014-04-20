@@ -1,6 +1,4 @@
-﻿import os = require('os');
-
-import sinonChai = require('../../sinon-chai');
+﻿import sinonChai = require('../../sinon-chai');
 var expect = sinonChai.expect;
 import Blink = require('../../../lib/Blink');
 import DeclarationTree = require('../../../lib/DeclarationTree');
