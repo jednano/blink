@@ -1,4 +1,5 @@
-﻿import os = require('os');
+﻿///<reference path="../bower_components/dt-node/node.d.ts"/>
+import os = require('os');
 
 import Configuration = require('./Configuration');
 import DeclarationTree = require('./DeclarationTree');

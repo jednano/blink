@@ -1,4 +1,5 @@
-﻿import os = require('os');
+﻿///<reference path="../bower_components/dt-node/node.d.ts"/>
+import os = require('os');
 
 import IConfigurationOptions = require('./interfaces/IConfigurationOptions');
 
@@ -81,6 +82,42 @@ class Configuration implements IConfigurationOptions {
 		}
 	}
 
+	// ReSharper disable once InconsistentNaming
+	private _blockFormat: string;
+	get blockFormat() {
+		return this._blockFormat;
+	}
+	set blockFormat(value: string) {
+		this.validateFormat(value);
+		this._blockFormat = value;
+	}
+
+	private validateFormat(format: string) {
+		if (!~format.indexOf('{0}')) {
+			throw new Error('Invalid format. Expected "{0}".');
+		}
+	}
+
+	// ReSharper disable once InconsistentNaming
+	private _elementFormat: string;
+	get elementFormat() {
+		return this._elementFormat;
+	}
+	set elementFormat(value: string) {
+		this.validateFormat(value);
+		this._elementFormat = value;
+	}
+
+	// ReSharper disable once InconsistentNaming
+	private _modifierFormat: string;
+	get modifierFormat() {
+		return this._modifierFormat;
+	}
+	set modifierFormat(value: string) {
+		this.validateFormat(value);
+		this._modifierFormat = value;
+	}
+
 	constructor(options?: IConfigurationOptions) {
 		this.set(options);
 	}
@@ -91,6 +128,9 @@ class Configuration implements IConfigurationOptions {
 		this.oneIndent = options.oneIndent || '  ';
 		this.quoteType = options.quoteType || 'double';
 		this.newline = options.newline || os.EOL;
+		this.blockFormat = options.blockFormat || '.{0}';
+		this.elementFormat = options.elementFormat || '__{0}';
+		this.modifierFormat = options.modifierFormat || '--{0}';
 	}
 
 }
