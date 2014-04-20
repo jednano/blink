@@ -50,8 +50,8 @@ class DeclarationTree {
 		return false;
 	}
 
-	public compile(config?: Configuration) {
-		this.config = config = config || new Configuration();
+	public compile(config: Configuration) {
+		this.config = config;
 		var declarations = this.resolve();
 		return config.oneIndent + Object.keys(declarations).map(key => {
 			var value = this.compileValue(declarations[key]);

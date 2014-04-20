@@ -6,7 +6,8 @@ import Blink = require('../../../lib/Blink');
 import DeclarationTree = require('../../../lib/DeclarationTree');
 
 
-var newline = Blink.configuration.newline;
+var config = Blink.configuration;
+var newline = config.newline;
 
 // ReSharper disable WrongExpressionStatement
 describe('DeclarationTree', () => {
@@ -43,15 +44,29 @@ describe('DeclarationTree', () => {
 	});
 
 	it('compiles a single declaration', () => {
-		var css = new DeclarationTree({ foo: 'bar' }).compile();
+		var css = new DeclarationTree({ foo: 'bar' }).compile(config);
 		expect(css).to.eq('  foo: bar;' + newline);
 	});
 
 	it('compiles multiple declarations', () => {
-		var css = new DeclarationTree({ foo: 'bar', baz: 'qux' }).compile();
+		var css = new DeclarationTree({ foo: 'bar', baz: 'qux' }).compile(config);
 		expect(css).to.eq([
 			'  foo: bar;',
 			'  baz: qux;'
+		].join(newline) + newline);
+	});
+
+	it('quotifies strings with spaces when compiled', () => {
+		var css = new DeclarationTree({ foo: 'bar baz qux' }).compile(config);
+		expect(css).to.eq([
+			'  foo: "bar baz qux";'
+		].join(newline) + newline);
+	});
+
+	it('compiles numbers with px as the default unit', () => {
+		var css = new DeclarationTree({ foo: 42 }).compile(config);
+		expect(css).to.eq([
+			'  foo: 42px;'
 		].join(newline) + newline);
 	});
 

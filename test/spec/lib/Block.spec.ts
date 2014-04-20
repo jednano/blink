@@ -5,14 +5,15 @@ var expect = sinonChai.expect;
 import Blink = require('../../../lib/Blink');
 
 
-var newline = Blink.configuration.newline;
+var config = Blink.configuration;
+var newline = config.newline;
 
 // ReSharper disable WrongExpressionStatement
 describe('Block', () => {
 
 	it('compiles a block', () => {
 		var block = new Blink.Block('a', { b: 'c' });
-		expect(block.compile(Blink.configuration)).to.eq([
+		expect(block.compile(config)).to.eq([
 			'.a {',
 			'  b: c;',
 			'}'
@@ -31,7 +32,7 @@ describe('Block', () => {
 				})
 			]
 		});
-		expect(block.compile(Blink.configuration)).to.eq([
+		expect(block.compile(config)).to.eq([
 			'.a {',
 			'  b: c;',
 			'}',
@@ -58,7 +59,7 @@ describe('Block', () => {
 				})
 			]
 		});
-		expect(block.compile(Blink.configuration)).to.eq([
+		expect(block.compile(config)).to.eq([
 			'.a {',
 			'  b: c;',
 			'}',
@@ -93,7 +94,7 @@ describe('Block', () => {
 				})
 			]
 		});
-		expect(block.compile(Blink.configuration)).to.eq([
+		expect(block.compile(config)).to.eq([
 			'.a {',
 			'  b: c;',
 			'}',
@@ -130,7 +131,7 @@ describe('Block', () => {
 				})
 			]
 		});
-		expect(block.compile(Blink.configuration)).to.eq([
+		expect(block.compile(config)).to.eq([
 			'.a {',
 			'  b: c;',
 			'}',
@@ -159,7 +160,7 @@ describe('Block', () => {
 				})
 			]
 		});
-		expect(block.compile(Blink.configuration)).to.eq([
+		expect(block.compile(config)).to.eq([
 			'.a {',
 			'  b: c;',
 			'}',
