@@ -1,5 +1,6 @@
 ﻿import Configuration = require('./Configuration');
 import IDeclarationTree = require('./interfaces/IDeclarationTree');
+import s = require('./helpers/string');
 
 
 class DeclarationTree {
@@ -52,7 +53,7 @@ class DeclarationTree {
 		var declarations = this.resolve();
 		return config.oneIndent + Object.keys(declarations).map(key => {
 			var value = this.compileValue(declarations[key]);
-			return key + ':' + config.oneSpace + value + ';';
+			return s.dasherize(key) + ':' + config.oneSpace + value + ';';
 		}).join(config.ruleSeparator) + config.newline;
 	}
 

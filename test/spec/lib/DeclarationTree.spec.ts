@@ -46,6 +46,11 @@ describe('DeclarationTree', () => {
 		expect(css).to.eq('  foo: bar;' + newline);
 	});
 
+	it('dasherizes camel-cased properties upon compile', () => {
+		var css = new DeclarationTree({ fooBar: 'baz' }).compile(config);
+		expect(css).to.eq('  foo-bar: baz;' + newline);
+	});
+
 	it('compiles multiple declarations', () => {
 		var css = new DeclarationTree({ foo: 'bar', baz: 'qux' }).compile(config);
 		expect(css).to.eq([
