@@ -44,14 +44,14 @@ describe('DeclarationTree', () => {
 
 	it('compiles a single declaration', () => {
 		var css = new DeclarationTree({ foo: 'bar' }).compile();
-		expect(css).to.eq('  foo: "bar";' + newline);
+		expect(css).to.eq('  foo: bar;' + newline);
 	});
 
 	it('compiles multiple declarations', () => {
 		var css = new DeclarationTree({ foo: 'bar', baz: 'qux' }).compile();
 		expect(css).to.eq([
-			'  foo: "bar";',
-			'  baz: "qux";'
+			'  foo: bar;',
+			'  baz: qux;'
 		].join(newline) + newline);
 	});
 

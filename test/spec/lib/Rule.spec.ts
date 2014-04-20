@@ -14,7 +14,7 @@ describe('Rule', () => {
 		var rule = new Blink.Rule(['foo'], { bar: 'baz' });
 		expect(rule.compile()).to.eq([
 			'foo {',
-			'  bar: "baz";',
+			'  bar: baz;',
 			'}'
 		].join(newline) + newline);
 	});
@@ -23,7 +23,7 @@ describe('Rule', () => {
 		var rule = new Blink.Rule(['foo', 'bar'], { baz: 'qux' });
 		expect(rule.compile()).to.eq([
 			'foo, bar {',
-			'  baz: "qux";',
+			'  baz: qux;',
 			'}'
 		].join(newline) + newline);
 	});

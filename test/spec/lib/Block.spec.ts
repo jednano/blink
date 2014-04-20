@@ -14,7 +14,7 @@ describe('Block', () => {
 		var block = new Blink.Block('a', { b: 'c' });
 		expect(block.compile(Blink.configuration)).to.eq([
 			'.a {',
-			'  b: "c";',
+			'  b: c;',
 			'}'
 		].join(newline) + newline);
 	});
@@ -33,15 +33,15 @@ describe('Block', () => {
 		});
 		expect(block.compile(Blink.configuration)).to.eq([
 			'.a {',
-			'  b: "c";',
+			'  b: c;',
 			'}',
 			'',
 			'.a__d {',
-			'  e: "f";',
+			'  e: f;',
 			'}',
 			'',
 			'.a__g {',
-			'  h: "i";',
+			'  h: i;',
 			'}'
 		].join(newline) + newline);
 	});
@@ -60,15 +60,15 @@ describe('Block', () => {
 		});
 		expect(block.compile(Blink.configuration)).to.eq([
 			'.a {',
-			'  b: "c";',
+			'  b: c;',
 			'}',
 			'',
 			'.a--d {',
-			'  e: "f";',
+			'  e: f;',
 			'}',
 			'',
 			'.a--g {',
-			'  h: "i";',
+			'  h: i;',
 			'}'
 		].join(newline) + newline);
 	});
@@ -95,23 +95,23 @@ describe('Block', () => {
 		});
 		expect(block.compile(Blink.configuration)).to.eq([
 			'.a {',
-			'  b: "c";',
+			'  b: c;',
 			'}',
 			'',
 			'.a__d {',
-			'  e: "f";',
+			'  e: f;',
 			'}',
 			'',
 			'.a__g {',
-			'  h: "i";',
+			'  h: i;',
 			'}',
 			'',
 			'.a--j {',
-			'  k: "l";',
+			'  k: l;',
 			'}',
 			'',
 			'.a--m {',
-			'  n: "o";',
+			'  n: o;',
 			'}'
 		].join(newline) + newline);
 	});
@@ -132,15 +132,15 @@ describe('Block', () => {
 		});
 		expect(block.compile(Blink.configuration)).to.eq([
 			'.a {',
-			'  b: "c";',
+			'  b: c;',
 			'}',
 			'',
 			'.a__d {',
-			'  e: "f";',
+			'  e: f;',
 			'}',
 			'',
 			'.a__d--g {',
-			'  h: "i";',
+			'  h: i;',
 			'}'
 		].join(newline) + newline);
 	});
@@ -161,15 +161,15 @@ describe('Block', () => {
 		});
 		expect(block.compile(Blink.configuration)).to.eq([
 			'.a {',
-			'  b: "c";',
+			'  b: c;',
 			'}',
 			'',
 			'.a--d {',
-			'  e: "f";',
+			'  e: f;',
 			'}',
 			'',
 			'.a--d--g {',
-			'  h: "i";',
+			'  h: i;',
 			'}'
 		].join(newline) + newline);
 	});

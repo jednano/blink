@@ -14,7 +14,7 @@ describe('Element', () => {
 		var element = new Blink.Element('b', { c: 'd' });
 		expect(element.compile('.a', Blink.configuration)).to.eq([
 			'.a__b {',
-			'  c: "d";',
+			'  c: d;',
 			'}'
 		].join(newline) + newline);
 	});
@@ -33,15 +33,15 @@ describe('Element', () => {
 		});
 		expect(element.compile('.a', Blink.configuration)).to.eq([
 			'.a__b {',
-			'  c: "d";',
+			'  c: d;',
 			'}',
 			'',
 			'.a__b--e {',
-			'  f: "g";',
+			'  f: g;',
 			'}',
 			'',
 			'.a__b--h {',
-			'  i: "j";',
+			'  i: j;',
 			'}'
 		].join(newline) + newline);
 	});

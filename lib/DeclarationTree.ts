@@ -72,8 +72,11 @@ class DeclarationTree {
 	private compilePrimitive(value: any) {
 		switch (typeof value) {
 			case 'string':
-				var quote = this.config.quote;
-				return quote + value.replace(new RegExp(quote, 'g'), '\\' + quote) + quote;
+				if (~value.indexOf(' ')) {
+					var quote = this.config.quote;
+					return quote + value.replace(new RegExp(quote, 'g'), '\\' + quote) + quote;
+				}
+				return value;
 			case 'number':
 				return value ? value + 'px' : value;
 			default:

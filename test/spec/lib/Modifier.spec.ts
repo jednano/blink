@@ -14,7 +14,7 @@ describe('Modifier', () => {
 		var modifier = new Blink.Modifier('c', { d: 'e' });
 		expect(modifier.compile('.a__b', Blink.configuration)).to.eq([
 			'.a__b--c {',
-			'  d: "e";',
+			'  d: e;',
 			'}'
 		].join(newline) + newline);
 	});
@@ -33,15 +33,15 @@ describe('Modifier', () => {
 		});
 		expect(modifier.compile('.a__b', Blink.configuration)).to.eq([
 			'.a__b--c {',
-			'  d: "e";',
+			'  d: e;',
 			'}',
 			'',
 			'.a__b--c--f {',
-			'  g: "h";',
+			'  g: h;',
 			'}',
 			'',
 			'.a__b--c--i {',
-			'  j: "k";',
+			'  j: k;',
 			'}'
 		].join(newline) + newline);
 	});
