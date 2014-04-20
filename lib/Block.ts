@@ -8,7 +8,6 @@ import Rule = require('./Rule');
 class Block {
 
 	public elements: Element[];
-
 	public modifiers: Modifier[];
 
 	constructor(public name: string, private declarations: IBlockDeclarations) {

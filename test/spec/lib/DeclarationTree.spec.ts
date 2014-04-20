@@ -41,6 +41,11 @@ describe('DeclarationTree', () => {
 		expect(rule.resolve()).to.deep.equal({ 'foo:bar': 'baz' });
 	});
 
+	it('compiles nothing when there are no declarations', () => {
+		var css = new DeclarationTree({}).compile(config);
+		expect(css).to.eq('');
+	});
+
 	it('compiles a single declaration', () => {
 		var css = new DeclarationTree({ foo: 'bar' }).compile(config);
 		expect(css).to.eq('  foo: bar;' + newline);

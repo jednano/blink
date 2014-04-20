@@ -51,10 +51,11 @@ class DeclarationTree {
 	public compile(config: Configuration) {
 		this.config = config;
 		var declarations = this.resolve();
-		return config.oneIndent + Object.keys(declarations).map(key => {
+		var css = Object.keys(declarations).map(key => {
 			var value = this.compileValue(declarations[key]);
 			return s.dasherize(key) + ':' + config.oneSpace + value + ';';
-		}).join(config.ruleSeparator) + config.newline;
+		}).join(config.ruleSeparator);
+		return css.length ? config.oneIndent + css + config.newline : '';
 	}
 
 	private compileValue(value: any): any {

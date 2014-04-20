@@ -27,4 +27,18 @@ describe('Rule', () => {
 		].join(newline) + newline);
 	});
 
+	it('compiles includes', () => {
+		var rule = new Blink.Rule(['.foo'], {
+			includes: [
+				Blink.helpers.inlineBlock
+			]
+		});
+		expect(rule.compile(config)).to.eq([
+			'.foo {',
+			'  display: inline-block;',
+			'  vertical-align: middle;',
+			'}'
+		].join(newline) + newline);
+	});
+
 });

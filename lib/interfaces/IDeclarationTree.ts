@@ -2,6 +2,7 @@
 
 
 interface IDeclarationTree extends IHashTable<any> {
+	includes?: Function[];
 }
 
 export = IDeclarationTree;
