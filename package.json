@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/jedmao/blink",
   "dependencies": {
+    "node.extend": "^1.0.10",
     "typescript-require": "^0.2.6"
   },
   "devDependencies": {

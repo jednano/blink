@@ -1,7 +1,9 @@
 ﻿///<reference path="../bower_components/dt-node/node.d.ts"/>
 import os = require('os');
+var extend = require('node.extend');
 
 import IConfigurationOptions = require('./interfaces/IConfigurationOptions');
+import IBrowserSupportOptions = require('./interfaces/IBrowserSupportOptions');
 
 
 class Configuration implements IConfigurationOptions {
@@ -71,7 +73,7 @@ class Configuration implements IConfigurationOptions {
 		return (this.outputStyle === 'compressed') ? '' : ' ';
 	}
 
-	public get ruleSeparator() {
+	public get declarationSeparator() {
 		switch (this.outputStyle) {
 			case 'compact':
 				return ' ';
@@ -118,19 +120,40 @@ class Configuration implements IConfigurationOptions {
 		this._modifierFormat = value;
 	}
 
+	public browserSupport: IBrowserSupportOptions;
+
 	constructor(options?: IConfigurationOptions) {
 		this.set(options);
 	}
 
 	public set(options?: IConfigurationOptions) {
 		options = options || {};
+		this.setOutputStyle(options);
+		this.setBEMOptions(options);
+		this.setBrowserSupport(options);
+	}
+
+	private setOutputStyle(options: IConfigurationOptions) {
 		this.outputStyle = options.outputStyle || 'nested';
 		this.oneIndent = options.oneIndent || '  ';
 		this.quoteType = options.quoteType || 'double';
 		this.newline = options.newline || os.EOL;
+	}
+
+	private setBEMOptions(options: IConfigurationOptions) {
 		this.blockFormat = options.blockFormat || '.{0}';
 		this.elementFormat = options.elementFormat || '__{0}';
 		this.modifierFormat = options.modifierFormat || '--{0}';
+	}
+
+	private setBrowserSupport(options: IConfigurationOptions) {
+		var defaults: IBrowserSupportOptions = {
+			chrome: 31,
+			firefox: 27,
+			ie: 8,
+			opera: 20
+		};
+		this.browserSupport = extend(options.browserSupport, defaults);
 	}
 
 }

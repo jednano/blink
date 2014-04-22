@@ -1,11 +1,9 @@
 ﻿import Configuration = require('./Configuration');
 import IDeclarationTree = require('./interfaces/IDeclarationTree');
-import s = require('./helpers/string');
+import compilers = require('./compilers');
 
 
 class DeclarationTree {
-
-	private config: Configuration;
 
 	constructor(public root: IDeclarationTree) {
 	}
@@ -49,38 +47,7 @@ class DeclarationTree {
 	}
 
 	public compile(config: Configuration) {
-		this.config = config;
-		var declarations = this.resolve();
-		var css = Object.keys(declarations).map(key => {
-			var value = this.compileValue(declarations[key]);
-			return s.dasherize(key) + ':' + config.oneSpace + value + ';';
-		}).join(config.ruleSeparator);
-		return css.length ? config.oneIndent + css + config.newline : '';
-	}
-
-	private compileValue(value: any): any {
-		if (value instanceof Array) {
-			return (<Array<any>>value).map(primitive => {
-				return this.compilePrimitive(primitive);
-			}).join(' ');
-		} else {
-			return this.compilePrimitive(value);
-		}
-	}
-
-	private compilePrimitive(value: any) {
-		switch (typeof value) {
-			case 'string':
-				if (~value.indexOf(' ')) {
-					var quote = this.config.quote;
-					return quote + value.replace(new RegExp(quote, 'g'), '\\' + quote) + quote;
-				}
-				return value;
-			case 'number':
-				return value ? value + 'px' : value;
-			default:
-				throw new Error('Unexpected type: ' + typeof value);
-		}
+		return compilers.compileDeclarationTree(config, this.resolve());
 	}
 }
 

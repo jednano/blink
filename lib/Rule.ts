@@ -1,4 +1,5 @@
-﻿import Configuration = require('./Configuration');
+﻿import compilers = require('./compilers');
+import Configuration = require('./Configuration');
 import DeclarationTree = require('./DeclarationTree');
 import IRuleDeclarations = require('./interfaces/IRuleDeclarations');
 
@@ -24,7 +25,13 @@ class Rule {
 
 	private compileIncludes(config: Configuration) {
 		return this.includes.map(helper => {
-			return new DeclarationTree(helper()).compile(config);
+			var declarations;
+			if (helper.prototype.constructor.name === '') {
+				declarations = helper(config);
+			} else {
+				declarations = helper()(config);
+			}
+			return compilers.compileDeclarations(config, declarations);
 		}).join(config.newline);
 	}
 }

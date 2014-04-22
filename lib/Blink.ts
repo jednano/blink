@@ -3,6 +3,7 @@ import _Block = require('./Block');
 import _Element = require('./Element');
 import _helpers = require('./helpers');
 import _IBlockDeclarations = require('./interfaces/IBlockDeclarations');
+import _IBrowserSupportOptions = require('./interfaces/IBrowserSupportOptions');
 import _IDeclarationTree = require('./interfaces/IDeclarationTree');
 import _IElementDeclarations = require('./interfaces/IElementDeclarations');
 import _IModifierDeclarations = require('./interfaces/IModifierDeclarations');
@@ -14,6 +15,9 @@ import Configuration = require('./Configuration');
 module Blink {
 
 	export var configuration = new Configuration();
+
+	export interface IBrowserSupportOptions extends _IBrowserSupportOptions {
+	}
 
 	export interface IDeclarationTree extends _IDeclarationTree {
 	}
