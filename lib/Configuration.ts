@@ -95,8 +95,8 @@ class Configuration implements IConfigurationOptions {
 	}
 
 	private validateFormat(format: string) {
-		if (!~format.indexOf('{0}')) {
-			throw new Error('Invalid format. Expected "{0}".');
+		if (!~format.indexOf('%s')) {
+			throw new Error('Invalid format. Expected "%s".');
 		}
 	}
 
@@ -141,9 +141,9 @@ class Configuration implements IConfigurationOptions {
 	}
 
 	private setBEMOptions(options: IConfigurationOptions) {
-		this.blockFormat = options.blockFormat || '.{0}';
-		this.elementFormat = options.elementFormat || '__{0}';
-		this.modifierFormat = options.modifierFormat || '--{0}';
+		this.blockFormat = options.blockFormat || '.%s';
+		this.elementFormat = options.elementFormat || '__%s';
+		this.modifierFormat = options.modifierFormat || '--%s';
 	}
 
 	private setBrowserSupport(options: IConfigurationOptions) {

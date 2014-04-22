@@ -1,9 +1,11 @@
 ﻿import Configuration = require('./Configuration');
 import IDeclarationTree = require('./interfaces/IDeclarationTree');
-import compilers = require('./compilers');
+import DeclarationCompiler = require('./DeclarationCompiler');
 
 
 class DeclarationTree {
+
+	private declarationCompiler = new DeclarationCompiler();
 
 	constructor(public root: IDeclarationTree) {
 	}
@@ -47,8 +49,15 @@ class DeclarationTree {
 	}
 
 	public compile(config: Configuration) {
-		return compilers.compileDeclarationTree(config, this.resolve());
+		return this.compileDeclarationTree(config, this.resolve());
 	}
+
+	private compileDeclarationTree(config: Configuration, declarations: IDeclarationTree) {
+		return this.declarationCompiler.compile(config, Object.keys(declarations).map(key => {
+			return [key, declarations[key]];
+		}));
+	}
+
 }
 
 export = DeclarationTree;

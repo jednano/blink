@@ -1,17 +1,21 @@
-﻿import compilers = require('./compilers');
-import Configuration = require('./Configuration');
+﻿import Configuration = require('./Configuration');
 import DeclarationTree = require('./DeclarationTree');
 import IRuleDeclarations = require('./interfaces/IRuleDeclarations');
+import DeclarationCompiler = require('./DeclarationCompiler');
 
 
 class Rule {
 
 	private declarations: DeclarationTree;
-	private includes: Function[];
+	public extend: Function[];
+	private include: Function[];
+	private declarationCompiler = new DeclarationCompiler();
 
 	constructor(public selectors: string[], declarations?: IRuleDeclarations) {
-		this.includes = declarations.includes || [];
-		delete declarations.includes;
+		this.include = declarations.include || [];
+		delete declarations.include;
+		this.extend = declarations.extend || [];
+		delete declarations.extend;
 		this.declarations = new DeclarationTree(declarations || {});
 	}
 
@@ -24,16 +28,17 @@ class Rule {
 	}
 
 	private compileIncludes(config: Configuration) {
-		return this.includes.map(helper => {
+		return this.include.map(helper => {
 			var declarations;
 			if (helper.prototype.constructor.name === '') {
 				declarations = helper(config);
 			} else {
 				declarations = helper()(config);
 			}
-			return compilers.compileDeclarations(config, declarations);
+			return this.declarationCompiler.compile(config, declarations);
 		}).join(config.newline);
 	}
+
 }
 
 export = Rule;

@@ -29,7 +29,7 @@ describe('Rule', () => {
 
 	it('compiles includes', () => {
 		var rule = new Blink.Rule(['.foo'], {
-			includes: [
+			include: [
 				Blink.helpers.inlineBlock
 			]
 		});

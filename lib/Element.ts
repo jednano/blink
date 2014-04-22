@@ -14,7 +14,7 @@ class Element {
 	}
 
 	public compile(selector: string, config: Configuration) {
-		selector += config.elementFormat.replace('{0}', this.name);
+		selector += config.elementFormat.replace('%s', this.name);
 		var rules = [new Rule([selector], this.declarations).compile(config)];
 		rules.push.apply(rules, this.modifiers.map(modifier => {
 			return modifier.compile(selector, config);
