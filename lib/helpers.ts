@@ -1,15 +1,20 @@
 ﻿import Configuration = require('./Configuration');
 
 
-export function inlineBlock(verticalAlign?: string) {
+export interface IInlineBlockOptions {
+	verticalAlign: string;
+}
+
+export function inlineBlock(options: IInlineBlockOptions) {
+	options = options || <any>{};
 	return (config: Configuration) => {
 		var decs = [];
 		if (config.browserSupport.firefox < 3) {
 			decs.push(['display', '-moz-inline-stack']);
 		}
 		decs.push(['display', 'inline-block']);
-		if (verticalAlign !== null) {
-			decs.push(['vertical-align', verticalAlign || 'middle']);
+		if (options.verticalAlign !== null) {
+			decs.push(['vertical-align', options.verticalAlign || 'middle']);
 		}
 		if (config.browserSupport.ie < 8) {
 			decs.push(['*vertical-align', 'auto']);
