@@ -2,6 +2,9 @@
   "name": "blink",
   "version": "0.0.0",
   "description": "Blink is an open-source CSS Authoring Framework.",
+  "bin": {
+    "blink": "./bin/blink.js"
+  },
   "main": "./lib/api.js",
   "scripts": {
     "postinstall": "bower install",

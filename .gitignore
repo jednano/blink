@@ -27,3 +27,4 @@ bower_components
 lib/**/*.js
 !lib/api.js
 test/**/*.js
+tmp
