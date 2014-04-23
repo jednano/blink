@@ -10,37 +10,37 @@ var newline = config.newline;
 describe('Modifier', () => {
 
 	it('compiles a modifier', () => {
-		var modifier = new Blink.Modifier('c', { d: 'e' });
-		expect(modifier.compile('.a__b', config)).to.eq([
-			'.a__b--c {',
-			'  d: e;',
+		var modifier = new Blink.Modifier('b', { c: 'd' });
+		expect(modifier.compile('.a', config)).to.eq([
+			'.a--b {',
+			'  c: d;',
 			'}'
 		].join(newline) + newline);
 	});
 
-	it('compiles a modifier with more modifiers', () => {
-		var modifier = new Blink.Modifier('c', {
-			d: 'e',
-			modifiers: [
-				new Blink.Modifier('f', {
-					g: 'h'
+	it('compiles a modifier with elements', () => {
+		var modifier = new Blink.Modifier('b', {
+			c: 'd',
+			elements: [
+				new Blink.Element('e', {
+					f: 'g'
 				}),
-				new Blink.Modifier('i', {
-					j: 'k'
+				new Blink.Element('h', {
+					i: 'j'
 				})
 			]
 		});
-		expect(modifier.compile('.a__b', config)).to.eq([
-			'.a__b--c {',
-			'  d: e;',
+		expect(modifier.compile('.a', config)).to.eq([
+			'.a--b {',
+			'  c: d;',
 			'}',
 			'',
-			'.a__b--c--f {',
-			'  g: h;',
+			'.a--b__e {',
+			'  f: g;',
 			'}',
 			'',
-			'.a__b--c--i {',
-			'  j: k;',
+			'.a--b__h {',
+			'  i: j;',
 			'}'
 		].join(newline) + newline);
 	});

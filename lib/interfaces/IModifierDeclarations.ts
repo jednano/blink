@@ -1,9 +1,9 @@
 ﻿import IDeclarationTree = require('./IDeclarationTree');
-import Modifier = require('../Modifier');
+import Element = require('../Element');
 
 
 interface IModifierDeclarations extends IDeclarationTree {
-	modifiers?: Modifier[];
+	elements?: Element[];
 }
 
 export = IModifierDeclarations;

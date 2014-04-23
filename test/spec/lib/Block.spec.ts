@@ -144,14 +144,14 @@ describe('Block', () => {
 		].join(newline) + newline);
 	});
 
-	it('compiles a block with a modifier that has a modifier', () => {
+	it('compiles a block with a modifier that has an element', () => {
 		var block = new Blink.Block('a', {
 			b: 'c',
 			modifiers: [
 				new Blink.Modifier('d', {
 					e: 'f',
-					modifiers: [
-						new Blink.Modifier('g', {
+					elements: [
+						new Blink.Element('g', {
 							h: 'i'
 						})
 					]
@@ -167,7 +167,7 @@ describe('Block', () => {
 			'  e: f;',
 			'}',
 			'',
-			'.a--d--g {',
+			'.a--d__g {',
 			'  h: i;',
 			'}'
 		].join(newline) + newline);
