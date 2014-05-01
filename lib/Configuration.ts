@@ -3,78 +3,113 @@ import os = require('os');
 var extend = require('node.extend');
 
 import IConfigurationOptions = require('./interfaces/IConfigurationOptions');
-import IBrowserSupportOptions = require('./interfaces/IBrowserSupportOptions');
+import s = require('./helpers/string');
 
+
+var ONE_INDENT = /(\d+)([st])/;
+
+var styles = {
+	nested: null,
+	expanded: null,
+	compact: null,
+	compressed: null
+};
+
+var newlines = {
+	os: os.EOL,
+	lf: '\n',
+	crlf: '\r\n'
+};
+
+var quotes = {
+	'double': '"',
+	'single': "'"
+};
 
 class Configuration implements IConfigurationOptions {
 
-	public outputStyle: string;
+	private _style: string;
 
-	// ReSharper disable InconsistentNaming
-	private _oneIndent: string;
+	public get style() {
+		return this._style;
+	}
+
+	public set style(value: string) {
+		value = value.toLowerCase();
+		if (!styles.hasOwnProperty(value)) {
+			throw new Error('Unsupported style: ' + value);
+		}
+		this._style = value;
+	}
+
+	private _oneIndent: any;
 
 	public get oneIndent() {
-		switch (this.outputStyle) {
+		switch (this.style) {
 			case 'compact':
 			case 'compressed':
 				return '';
 			default:
-				return this._oneIndent;
+				if (this._oneIndent === 0) {
+					return '';
+				}
+				var m = this._oneIndent.match(ONE_INDENT);
+				return s.repeat({ s: ' ', t: '\t' }[m[2]], parseInt(m[1], 10));
 		}
 	}
 
-	public set oneIndent(value: string) {
+	public set oneIndent(value: any) {
+		if (value.toString()[0] === '0') {
+			this._oneIndent = 0;
+			return;
+		}
+		value = value.toString().toLowerCase();
+		if (!ONE_INDENT.test(value)) {
+			throw new Error('Unsupported oneIndent format: ' + value);
+		}
 		this._oneIndent = value;
 	}
 
 	private _newline: string;
 
 	public get newline() {
-		switch (this.outputStyle) {
+		switch (this.style) {
 			case 'compact':
 			case 'compressed':
 				return '';
 			default:
-				return this._newline;
+				return newlines[this._newline];
 		}
 	}
 
 	public set newline(value: string) {
+		value = value.toLowerCase();
+		if (!newlines.hasOwnProperty(value)) {
+			throw new Error('Unsupported newline: ' + value);
+		}
 		this._newline = value;
 	}
 
-	private _quoteType: string;
-
-	public get quoteType() {
-		return this._quoteType;
-	}
-
-	public set quoteType(value: string) {
-		value = value.toLowerCase();
-		switch (value) {
-			case 'single':
-			case 'double':
-				this._quoteType = value;
-				return;
-			default:
-				throw new Error('Unsupported quote type: ' + value);
-		}
-	}
+	private _quote: string;
 
 	public get quote() {
-		return {
-			single: "'",
-			'double': '"'
-		}[this._quoteType];
+		return quotes[this._quote];
 	}
-	// ReSharper restore InconsistentNaming
+
+	public set quote(value: string) {
+		value = value.toLowerCase();
+		if (!quotes.hasOwnProperty(value)) {
+			throw new Error('Unsupported quote type: ' + value);
+		}
+		this._quote = value;
+	}
 
 	public get oneSpace() {
-		return (this.outputStyle === 'compressed') ? '' : ' ';
+		return (this.style === 'compressed') ? '' : ' ';
 	}
 
 	public get declarationSeparator() {
-		switch (this.outputStyle) {
+		switch (this.style) {
 			case 'compact':
 				return ' ';
 			case 'compressed':
@@ -84,76 +119,105 @@ class Configuration implements IConfigurationOptions {
 		}
 	}
 
-	// ReSharper disable once InconsistentNaming
-	private _blockFormat: string;
-	get blockFormat() {
-		return this._blockFormat;
-	}
-	set blockFormat(value: string) {
-		this.validateFormat(value);
-		this._blockFormat = value;
+	private _block: string;
+
+	get block() {
+		return this._block;
 	}
 
-	private validateFormat(format: string) {
-		if (!~format.indexOf('%s')) {
-			throw new Error('Invalid format. Expected "%s".');
+	set block(value: string) {
+		if (!~value.indexOf('%s')) {
+			throw new Error('Invalid block format. Expected "%s".');
 		}
+		this._block = value;
 	}
 
-	// ReSharper disable once InconsistentNaming
-	private _elementFormat: string;
-	get elementFormat() {
-		return this._elementFormat;
-	}
-	set elementFormat(value: string) {
-		this.validateFormat(value);
-		this._elementFormat = value;
+	private _element: string;
+
+	get element() {
+		return this._element;
 	}
 
-	// ReSharper disable once InconsistentNaming
-	private _modifierFormat: string;
-	get modifierFormat() {
-		return this._modifierFormat;
-	}
-	set modifierFormat(value: string) {
-		this.validateFormat(value);
-		this._modifierFormat = value;
+	set element(value: string) {
+		if (!~value.indexOf('%s')) {
+			throw new Error('Invalid element format. Expected "%s".');
+		}
+		this._element = value;
 	}
 
-	public browserSupport: IBrowserSupportOptions;
+	private _modifier: string;
+
+	get modifier() {
+		return this._modifier;
+	}
+
+	set modifier(value: string) {
+		if (!~value.indexOf('%s')) {
+			throw new Error('Invalid modifier format. Expected "%s".');
+		}
+		this._modifier = value;
+	}
+
+	private _chrome: number;
+
+	get chrome() {
+		return this._chrome;
+	}
+
+	set chrome(value: number) {
+		if (typeof value !== 'number') {
+			throw new Error('Invalid Chrome version. Expected number.');
+		}
+		this._chrome = value;
+	}
+
+	private _firefox: number;
+
+	get firefox() {
+		return this._firefox;
+	}
+
+	set firefox(value: number) {
+		if (typeof value !== 'number') {
+			throw new Error('Invalid Firefox version. Expected number.');
+		}
+		this._firefox = value;
+	}
+
+	private _ie: number;
+
+	get ie() {
+		return this._ie;
+	}
+
+	set ie(value: number) {
+		if (typeof value !== 'number') {
+			throw new Error('Invalid IE version. Expected number.');
+		}
+		this._ie = value;
+	}
+
+	private _opera: number;
+
+	get opera() {
+		return this._opera;
+	}
+
+	set opera(value: number) {
+		if (typeof value !== 'number') {
+			throw new Error('Invalid Opera version. Expected number.');
+		}
+		this._opera = value;
+	}
 
 	constructor(options?: IConfigurationOptions) {
-		this.set(options);
+		this.set(extend(require('../defaults.json'), options || {}));
 	}
 
 	public set(options?: IConfigurationOptions) {
-		options = options || {};
-		this.setOutputStyle(options);
-		this.setBEMOptions(options);
-		this.setBrowserSupport(options);
-	}
-
-	private setOutputStyle(options: IConfigurationOptions) {
-		this.outputStyle = options.outputStyle || 'nested';
-		this.oneIndent = options.oneIndent || '  ';
-		this.quoteType = options.quoteType || 'double';
-		this.newline = options.newline || os.EOL;
-	}
-
-	private setBEMOptions(options: IConfigurationOptions) {
-		this.blockFormat = options.blockFormat || '.%s';
-		this.elementFormat = options.elementFormat || '__%s';
-		this.modifierFormat = options.modifierFormat || '--%s';
-	}
-
-	private setBrowserSupport(options: IConfigurationOptions) {
-		var defaults: IBrowserSupportOptions = {
-			chrome: 31,
-			firefox: 27,
-			ie: 8,
-			opera: 20
-		};
-		this.browserSupport = extend(options.browserSupport, defaults);
+		Object.keys(options).forEach(key => {
+			this[key] = options[key];
+		});
 	}
 
 }

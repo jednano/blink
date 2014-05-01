@@ -18,7 +18,7 @@ class Block {
 	}
 
 	public compile(config: Configuration) {
-		var selector = config.blockFormat.replace('%s', this.name);
+		var selector = config.block.replace('%s', this.name);
 		var rules = [new Rule([selector], this.declarations).compile(config)];
 		rules.push.apply(rules, this.elements.map(element => {
 			return element.compile(selector, config);

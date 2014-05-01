@@ -1,21 +1,21 @@
-﻿import IBrowserSupportOptions = require('./IBrowserSupportOptions');
-
-
-interface IConfigurationOptions {
+﻿interface IConfigurationOptions {
 
 	// Output style
-	outputStyle?: string;
+	style?: string;
 	oneIndent?: string;
-	quoteType?: string;
+	quote?: string;
 	newline?: string;
 
 	// BEM
-	blockFormat?: string;
-	elementFormat?: string;
-	modifierFormat?: string;
+	block?: string;
+	element?: string;
+	modifier?: string;
 
 	// Cross-Browser Support
-	browserSupport?: IBrowserSupportOptions;
+	chrome?: number;
+	firefox?: number;
+	ie?: number;
+	opera?: number;
 
 }
 

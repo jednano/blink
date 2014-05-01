@@ -1,0 +1,15 @@
+﻿{
+  "style": "nested",
+  "oneIndent": "2s",
+  "newline": "os",
+  "quote": "double",
+
+  "block": ".%s",
+  "element": "__%s",
+  "modifier": "--%s",
+
+  "chrome": 31,
+  "firefox": 27,
+  "ie": 8,
+  "opera": 20
+}
