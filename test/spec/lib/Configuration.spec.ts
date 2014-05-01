@@ -29,6 +29,17 @@ describe('Configuration', () => {
 		expect(config['_opera']).to.eq(defaults.opera);
 	});
 
+	it('supports setting multiple configuration options in a batch', () => {
+		config.set({
+			style: 'expanded',
+			oneIndent: '1t',
+			newline: 'crlf'
+		});
+		expect(config['_style']).to.eq('expanded');
+		expect(config['_oneIndent']).to.eq('1t');
+		expect(config['_newline']).to.eq('crlf');
+	});
+
 	it('supports only nested, expanded, compact and compressed styles', () => {
 		['nested', 'expanded', 'compact', 'compressed'].forEach(style => {
 			config.style = style;
