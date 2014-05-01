@@ -46,10 +46,10 @@ export function execute(args): number {
 			.option('-m, --modifier <format>', 'BEM modifier format: ' + clc.cyan('--%s'), '--%s')
 
 			// Browser support
-			.option('--chrome <version>',  'Minimum Chrome version supported: ' + clc.cyan('31'), 31)
-			.option('--firefox <version>', 'Minimum FF version supported: ' + clc.cyan('27'), 27)
-			.option('--ie <version>',      'Minimum IE version supported: ' + clc.cyan('8'), 8)
-			.option('--opera <version>',   'Minimum Opera version supported: ' + clc.cyan('20'), 20)
+			.option('--chrome <version>',  'Minimum Chrome version supported: ' + clc.cyan('0'), 0)
+			.option('--firefox <version>', 'Minimum Firefox version supported: ' + clc.cyan('0'), 0)
+			.option('--ie <version>',      'Minimum IE version supported: ' + clc.cyan('0'), 0)
+			.option('--opera <version>',   'Minimum Opera version supported: ' + clc.cyan('0'), 0)
 
 			.on('help', cmd => {
 				cmd.outputIndented('Examples', [

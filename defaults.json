@@ -8,8 +8,8 @@
   "element": "__%s",
   "modifier": "--%s",
 
-  "chrome": 31,
-  "firefox": 27,
-  "ie": 8,
-  "opera": 20
+  "chrome": 0,
+  "firefox": 0,
+  "ie": 0,
+  "opera": 0
 }
