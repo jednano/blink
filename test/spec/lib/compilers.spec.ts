@@ -11,24 +11,26 @@ var newline = config.newline;
 describe('compilers', () => {
 
 	it('compiles extenders', () => {
+		var extender = () => {
+			return [
+				['foo', 'bar'],
+				['baz', 'qux']
+			];
+		};
 		var rules = [
 			new Blink.Rule(['.foo'], {
-				extend: [
-					Blink.helpers.inlineBlock
-				]
+				extend: [ extender ]
 			}),
 			new Blink.Rule(['.bar'], {
-				extend: [
-					Blink.helpers.inlineBlock
-				]
+				extend: [ extender ]
 			})
 		];
 		var args = [config];
 		args.push.apply(args, rules);
 		expect(compilers.compileRules.apply(null, args)).to.eq([
 			'.foo, .bar {',
-			'  display: inline-block;',
-			'  vertical-align: middle;',
+			'  foo: bar;',
+			'  baz: qux;',
 			'}'
 		].join(newline) + newline);
 		expect(typeof Blink.Rule).to.eq('function');

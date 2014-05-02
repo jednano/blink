@@ -30,13 +30,18 @@ describe('Rule', () => {
 	it('compiles includes', () => {
 		var rule = new Blink.Rule(['.foo'], {
 			include: [
-				Blink.helpers.inlineBlock
+				() => {
+					return [
+						['foo', 'bar'],
+						['baz', 'qux']
+					];
+				}
 			]
 		});
 		expect(rule.compile(config)).to.eq([
 			'.foo {',
-			'  display: inline-block;',
-			'  vertical-align: middle;',
+			'  foo: bar;',
+			'  baz: qux;',
 			'}'
 		].join(newline) + newline);
 	});
