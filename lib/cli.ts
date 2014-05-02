@@ -4,12 +4,14 @@ var clc = require('cli-color');
 var program = require('gitlike-cli');
 
 
+var defaultColor = clc.cyan;
+
 export function execute(args): number {
 	return program
 		.version(require('../package.json').version)
 
 		.command('compile <globs>...')
-			.description('Compile Blink stylesheets to CSS')
+			.description('Compile Blink stylesheets to CSS ' + defaultColor('(defaults in color)'))
 			.action(compile)
 
 			//// Configuration
@@ -35,26 +37,26 @@ export function execute(args): number {
 			//.option('--relative-assets',         'Asset helpers generate relative URLs')
 
 			// Formatting
-			.option('-s, --style <style>',          clc.cyan('nested') + ', expanded, compact, compressed', 'nested')
-			.option('-i, --one-indent <oneIndent>', clc.cyan('2s') + ', 4s, 1t', '2s')
-			.option('-n, --newline <newline>',      clc.cyan('os') + ', lf, crlf', 'os')
-			.option('--quote <type>',               clc.cyan('double') + ', single', 'double')
+			.option('-s, --style <style>',          defaultColor('nested') + ', expanded, compact, compressed', 'nested')
+			.option('-i, --one-indent <oneIndent>', defaultColor('2s') + ', 4s, 1t', '2s')
+			.option('-n, --newline <newline>',      defaultColor('os') + ', lf, crlf', 'os')
+			.option('--quote <type>',               defaultColor('double') + ', single', 'double')
 
 			// BEM support
-			.option('-b, --block <format>',    'BEM block format: ' + clc.cyan('.%s'), '.%s')
-			.option('-e, --element <format>',  'BEM element format: ' + clc.cyan('__%s'), '__%s')
-			.option('-m, --modifier <format>', 'BEM modifier format: ' + clc.cyan('--%s'), '--%s')
+			.option('-b, --block <format>',    'BEM block format: ' + defaultColor('.%s'), '.%s')
+			.option('-e, --element <format>',  'BEM element format: ' + defaultColor('__%s'), '__%s')
+			.option('-m, --modifier <format>', 'BEM modifier format: ' + defaultColor('--%s'), '--%s')
 
 			// Browser support
-			.option('--chrome <version>',  'Minimum Chrome version supported: ' + clc.cyan('0'), 0)
-			.option('--firefox <version>', 'Minimum Firefox version supported: ' + clc.cyan('0'), 0)
-			.option('--ie <version>',      'Minimum IE version supported: ' + clc.cyan('0'), 0)
-			.option('--opera <version>',   'Minimum Opera version supported: ' + clc.cyan('0'), 0)
+			.option('--chrome <version>',  'Minimum Chrome version supported: ' + defaultColor('0'), 0)
+			.option('--firefox <version>', 'Minimum Firefox version supported: ' + defaultColor('0'), 0)
+			.option('--ie <version>',      'Minimum IE version supported: ' + defaultColor('0'), 0)
+			.option('--opera <version>',   'Minimum Opera version supported: ' + defaultColor('0'), 0)
 
 			.on('help', cmd => {
 				cmd.outputIndented('Examples', [
-					'$ ' + clc.cyan('blink compile "app/styles/**/*.js"'),
-					'$ blink compile ' + clc.cyan('--style expanded --ie 7') + ' "app/styles/**/*.js"'
+					'$ blink compile "app/styles/**/*.js"',
+					'$ blink compile ' + '--style expanded --ie 7 "app/styles/**/*.js"'
 				]);
 			}).parent
 
