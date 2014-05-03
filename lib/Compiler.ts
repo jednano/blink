@@ -23,13 +23,14 @@ class Compiler {
 	private compileFiles(files: string[]) {
 		var results: ICompiledResult[] = [];
 		files.forEach(filename => {
-			var imported = require(path.resolve(filename));
+			var ext = new RegExp('\\.' + path.extname(filename).substr(1) + '$');
+			var imported = require(path.resolve(filename).replace(ext, ''));
 			var compile: Function = (imported instanceof Array)
 				? this.compileRules
 				: this.compileRule;
 			results.push({
 				src: filename,
-				dest: filename.replace(new RegExp(path.extname(filename) + '$'), '.css'),
+				dest: filename.replace(ext, '.css'),
 				contents: compile.call(this, imported)
 			});
 		});
