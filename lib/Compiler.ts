@@ -36,11 +36,17 @@ class Compiler {
 	}
 
 	compileRules(rules: Rule[]) {
-		var css = this.compileExtenders(rules);
+		var chunks = [];
+		push(this.compileExtenders(rules));
 		rules.forEach(rule => {
-			css += rule.compile(this.config);
+			push(rule.compile(this.config));
 		});
-		return css;
+		function push(css) {
+			if (css) {
+				chunks.push(css);
+			}
+		}
+		return chunks.join(this.config.newline);
 	}
 
 	private compileExtenders(rules: Rule[]) {
