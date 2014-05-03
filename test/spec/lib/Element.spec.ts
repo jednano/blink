@@ -3,14 +3,15 @@ var expect = sinonChai.expect;
 import Blink = require('../../../lib/Blink');
 
 
-var newline = Blink.configuration.newline;
+var config = Blink.config;
+var newline = Blink.config.newline;
 
 // ReSharper disable WrongExpressionStatement
 describe('Element', () => {
 
 	it('compiles an element', () => {
 		var element = new Blink.Element('b', { c: 'd' });
-		expect(element.compile('.a', Blink.configuration)).to.eq([
+		expect(element.compile('.a', config)).to.eq([
 			'.a__b {',
 			'  c: d;',
 			'}'
@@ -29,7 +30,7 @@ describe('Element', () => {
 				})
 			]
 		});
-		expect(element.compile('.a', Blink.configuration)).to.eq([
+		expect(element.compile('.a', config)).to.eq([
 			'.a__b {',
 			'  c: d;',
 			'}',

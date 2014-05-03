@@ -1,8 +1,13 @@
 ﻿///<reference path="../bower_components/dt-node/node.d.ts" />
+var extend = require('node.extend');
+import fs = require('fs');
+
 import _Block = require('./Block');
+import _Compiler = require('./Compiler');
 import _Element = require('./Element');
 import _helpers = require('./helpers');
 import _IBlockDeclarations = require('./interfaces/IBlockDeclarations');
+import _IConfigurationOptions = require('./interfaces/IConfigurationOptions');
 import _IDeclarationTree = require('./interfaces/IDeclarationTree');
 import _IElementDeclarations = require('./interfaces/IElementDeclarations');
 import _IModifierDeclarations = require('./interfaces/IModifierDeclarations');
@@ -13,7 +18,35 @@ import Configuration = require('./Configuration');
 
 module Blink {
 
-	export var configuration = new Configuration();
+	export var config = new Configuration();
+
+	export interface IConfigurationOptions extends _IConfigurationOptions {
+	}
+
+	export class Compiler extends _Compiler {
+	}
+
+	export function compile(options: IConfigurationOptions, files: string[],
+		callback: (exitCode: number) => void) {
+
+		var compiler = new Compiler(new Configuration(extend({}, config.raw, options)));
+		compiler.compile(files, (err, results) => {
+			if (err) {
+				throw err;
+			}
+			var count = results.length;
+			results.forEach(result => {
+				fs.writeFile(result.dest, result.contents, (err2) => {
+					if (err2) {
+						throw err2;
+					}
+					if (--count === 0) {
+						callback(0);
+					}
+				});
+			});
+		});
+	}
 
 	export interface IDeclarationTree extends _IDeclarationTree {
 	}

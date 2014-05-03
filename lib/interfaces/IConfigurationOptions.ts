@@ -1,5 +1,7 @@
 ﻿interface IConfigurationOptions {
 
+	config?: string;
+
 	// Output style
 	style?: string;
 	oneIndent?: string;

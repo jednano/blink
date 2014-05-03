@@ -8,7 +8,7 @@ class Rule {
 
 	private declarations: DeclarationTree;
 	public extend: Function[];
-	private include: Function[];
+	public include: Function[];
 	private declarationCompiler = new DeclarationCompiler();
 
 	constructor(public selectors: string[], declarations?: IRuleDeclarations) {
@@ -20,10 +20,14 @@ class Rule {
 	}
 
 	public compile(config: Configuration) {
+		var body = this.compileIncludes(config) + this.declarations.compile(config);
+		if (!body) {
+			return '';
+		}
 		var space = config.oneSpace;
 		var css = this.selectors.join(',' + space) + space + '{' + config.newline;
-		css += this.compileIncludes(config);
-		css += this.declarations.compile(config) + '}' + config.newline;
+		css += body;
+		css += '}' + config.newline;
 		return css;
 	}
 

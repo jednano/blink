@@ -3,7 +3,7 @@ var expect = sinonChai.expect;
 import Blink = require('../../../lib/Blink');
 
 
-var config = Blink.configuration;
+var config = Blink.config;
 var newline = config.newline;
 
 // ReSharper disable WrongExpressionStatement

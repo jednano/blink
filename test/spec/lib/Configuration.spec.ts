@@ -16,17 +16,17 @@ describe('Configuration', () => {
 	});
 
 	it('initializes default values from defaults.json file', () => {
-		expect(config['_style']).to.eq(defaults.style);
-		expect(config['_oneIndent']).to.eq(defaults.oneIndent);
-		expect(config['_newline']).to.eq(defaults.newline);
-		expect(config['_quote']).to.eq(defaults.quote);
-		expect(config['_block']).to.eq(defaults.block);
-		expect(config['_element']).to.eq(defaults.element);
-		expect(config['_modifier']).to.eq(defaults.modifier);
-		expect(config['_chrome']).to.eq(defaults.chrome);
-		expect(config['_firefox']).to.eq(defaults.firefox);
-		expect(config['_ie']).to.eq(defaults.ie);
-		expect(config['_opera']).to.eq(defaults.opera);
+		expect(config.raw.style).to.eq(defaults.style);
+		expect(config.raw.oneIndent).to.eq(defaults.oneIndent);
+		expect(config.raw.newline).to.eq(defaults.newline);
+		expect(config.raw.quote).to.eq(defaults.quote);
+		expect(config.raw.block).to.eq(defaults.block);
+		expect(config.raw.element).to.eq(defaults.element);
+		expect(config.raw.modifier).to.eq(defaults.modifier);
+		expect(config.raw.chrome).to.eq(defaults.chrome);
+		expect(config.raw.firefox).to.eq(defaults.firefox);
+		expect(config.raw.ie).to.eq(defaults.ie);
+		expect(config.raw.opera).to.eq(defaults.opera);
 	});
 
 	it('supports setting multiple configuration options in a batch', () => {
@@ -35,9 +35,9 @@ describe('Configuration', () => {
 			oneIndent: '1t',
 			newline: 'crlf'
 		});
-		expect(config['_style']).to.eq('expanded');
-		expect(config['_oneIndent']).to.eq('1t');
-		expect(config['_newline']).to.eq('crlf');
+		expect(config.raw.style).to.eq('expanded');
+		expect(config.raw.oneIndent).to.eq('1t');
+		expect(config.raw.newline).to.eq('crlf');
 	});
 
 	it('supports only nested, expanded, compact and compressed styles', () => {

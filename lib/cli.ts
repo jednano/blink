@@ -3,20 +3,24 @@
 var clc = require('cli-color');
 var program = require('gitlike-cli');
 
+import blink = require('./Blink');
+
 
 var defaultColor = clc.cyan;
 
-export function execute(args): number {
+export function execute(args, callback: (exitCode: number) => void): number {
 	return program
 		.version(require('../package.json').version)
 
-		.command('compile <globs>...')
+		.command('compile <files>...')
 			.description('Compile Blink stylesheets to CSS ' + defaultColor('(defaults in color)'))
-			.action(compile)
+			.action((args2, options) => {
+				blink.compile(options, args2.files, callback);
+			})
 
 			//// Configuration
 			//.option('-p, --project <dir>', 'The current directory if not specified', './')
-			//.option('-c, --config <path>', 'Specifly location of config file', '.blink')
+			.option('-c, --config <path>', 'Specifly location of config file')
 			//.option('--env <target>',      clc.cyan('dev') + ', prod')
 
 			//.option('--sourcemap', 'Generate a sourcemap')
@@ -61,9 +65,4 @@ export function execute(args): number {
 			}).parent
 
 		.parse(args);
-}
-
-function compile(args, options) {
-	console.log('args:', args);
-	console.log('options:', options);
 }

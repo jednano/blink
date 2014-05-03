@@ -4,7 +4,7 @@ import Blink = require('../../../lib/Blink');
 import DeclarationTree = require('../../../lib/DeclarationTree');
 
 
-var config = Blink.configuration;
+var config = Blink.config;
 var newline = config.newline;
 
 // ReSharper disable WrongExpressionStatement
