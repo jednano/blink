@@ -1,6 +1,7 @@
 ﻿import fs = require('fs');
 import path = require('path');
 
+import a = require('./helpers/array');
 import Configuration = require('./Configuration');
 import ExtenderRegistry = require('./ExtenderRegistry');
 import ICompiledResult = require('./interfaces/ICompiledResult');
@@ -25,13 +26,10 @@ class Compiler {
 		files.forEach(filename => {
 			var ext = new RegExp('\\.' + path.extname(filename).substr(1) + '$');
 			var imported = require(path.resolve(filename).replace(ext, ''));
-			var compile: Function = (imported instanceof Array)
-				? this.compileRules
-				: this.compileRule;
 			results.push({
 				src: filename,
 				dest: filename.replace(ext, '.css'),
-				contents: compile.call(this, imported)
+				contents: this.compileRules(a.flatten([imported]))
 			});
 		});
 		return results;
@@ -59,14 +57,6 @@ class Compiler {
 			var rule = new Rule(selectors, { include: [extender] });
 			return rule.compile(this.config);
 		}).join(this.config.newline);
-	}
-
-	private compileRule(rule: Rule) {
-		if (rule.extend) {
-			Array.prototype.shift.apply(rule.include, rule.extend);
-			delete rule.extend;
-		}
-		return rule.compile(this.config);
 	}
 
 }
