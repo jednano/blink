@@ -2,6 +2,7 @@
 import path = require('path');
 
 import Configuration = require('./Configuration');
+import ExtenderRegistry = require('./ExtenderRegistry');
 import ICompiledResult = require('./interfaces/ICompiledResult');
 import IConfigurationOptions = require('./interfaces/IConfigurationOptions');
 import IHashTable = require('./interfaces/IHashTable');
@@ -44,24 +45,17 @@ class Compiler {
 	}
 
 	private compileExtenders(rules: Rule[]) {
-		var helpers = new Map();
-		var registry = [];
+		var extenders = new ExtenderRegistry();
 		rules.forEach(rule => {
 			if (!rule.extend) {
 				return;
 			}
-			rule.extend.forEach(helper => {
-				if (!~registry.indexOf(helper)) {
-					registry.push(helper);
-				}
-				var selectors = <string[]>helpers.get(helper) || [];
-				selectors.push.apply(selectors, rule.selectors);
-				helpers.set(helper, selectors);
+			rule.extend.forEach(extender => {
+				extenders.add(extender, rule.selectors);
 			});
 		});
-		return registry.map((helper: Function) => {
-			var selectors = <string[]>helpers.get(helper);
-			var rule = new Rule(selectors, { include: [helper] });
+		return extenders.map((extender, selectors) => {
+			var rule = new Rule(selectors, { include: [extender] });
 			return rule.compile(this.config);
 		}).join(this.config.newline);
 	}
