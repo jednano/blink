@@ -31,7 +31,7 @@
     "node.extend": "^1.0.10",
     "typescript-require": "^0.2.6",
     "gitlike-cli": "0.0.10",
-    "cli-color": "^0.2.3"
+    "cli-color": "^0.3.2"
   },
   "devDependencies": {
     "chai": "^1.9.1",
