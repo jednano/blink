@@ -28,10 +28,10 @@
   },
   "homepage": "https://github.com/jedmao/blink",
   "dependencies": {
-    "bombom": "^0.1.2",
     "cli-color": "^0.3.2",
     "gitlike-cli": "0.0.10",
     "node.extend": "^1.0.10",
+    "strip-bom": "^0.1.0",
     "typescript-require": "^0.2.6"
   },
   "devDependencies": {

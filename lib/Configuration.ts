@@ -1,5 +1,5 @@
 ﻿///<reference path="../bower_components/dt-node/node.d.ts"/>
-var bombom = require('bombom');
+var stripBom = require('strip-bom');
 import fs = require('fs');
 import os = require('os');
 var extend = require('node.extend');
@@ -227,7 +227,7 @@ class Configuration implements IConfigurationOptions {
 		if (!fs.existsSync(filename)) {
 			throw new Error('Configuration file does not exist: ' + filename);
 		}
-		var contents = bombom.strip(fs.readFileSync(filename)).toString();
+		var contents = stripBom(fs.readFileSync(filename)).toString();
 		try {
 			var config = JSON.parse(contents);
 		} catch (e) {
