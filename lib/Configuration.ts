@@ -216,11 +216,15 @@ class Configuration implements IConfigurationOptions {
 	}
 
 	constructor(options?: IConfigurationOptions) {
+		this.set(extend(require('../defaults.json'), options || {}));
+	}
+
+	public set(options: IConfigurationOptions) {
 		options = options || {};
 		if (options.config) {
 			options = extend(this.loadConfig(options.config), options);
 		}
-		this.set(extend(require('../defaults.json'), options));
+		extend(this.raw, options);
 	}
 
 	private loadConfig(filename: string) {
@@ -234,10 +238,6 @@ class Configuration implements IConfigurationOptions {
 			throw new Error('Invalid JSON format: ' + filename);
 		}
 		return config;
-	}
-
-	public set(options: IConfigurationOptions) {
-		extend(this.raw, options);
 	}
 
 }
