@@ -41,21 +41,21 @@ export function execute(args, callback: (exitCode: number) => void): number {
 			//.option('--relative-assets',         'Asset helpers generate relative URLs')
 
 			// Formatting
-			.option('-s, --style <style>',          defaultColor('nested') + ', expanded, compact, compressed', 'nested')
-			.option('-i, --one-indent <oneIndent>', defaultColor('2s') + ', 4s, 1t', '2s')
-			.option('-n, --newline <newline>',      defaultColor('os') + ', lf, crlf', 'os')
-			.option('--quote <type>',               defaultColor('double') + ', single', 'double')
+			.option('-s, --style <style>',          defaultColor('nested') + ', expanded, compact, compressed')
+			.option('-i, --one-indent <oneIndent>', defaultColor('2s') + ', 4s, 1t')
+			.option('-n, --newline <newline>',      defaultColor('os') + ', lf, crlf')
+			.option('--quote <type>',               defaultColor('double') + ', single')
 
 			// BEM support
-			.option('-b, --block <format>',    'BEM block format: ' + defaultColor('.%s'), '.%s')
-			.option('-e, --element <format>',  'BEM element format: ' + defaultColor('__%s'), '__%s')
-			.option('-m, --modifier <format>', 'BEM modifier format: ' + defaultColor('--%s'), '--%s')
+			.option('-b, --block <format>',    'BEM block format: ' + defaultColor('.%s'))
+			.option('-e, --element <format>',  'BEM element format: ' + defaultColor('__%s'))
+			.option('-m, --modifier <format>', 'BEM modifier format: ' + defaultColor('--%s'))
 
 			// Browser support
-			.option('--chrome <version>',  'Minimum Chrome version supported: ' + defaultColor('0'), 0)
-			.option('--firefox <version>', 'Minimum Firefox version supported: ' + defaultColor('0'), 0)
-			.option('--ie <version>',      'Minimum IE version supported: ' + defaultColor('0'), 0)
-			.option('--opera <version>',   'Minimum Opera version supported: ' + defaultColor('0'), 0)
+			.option('--chrome <version>',  'Minimum Chrome version supported: ' + defaultColor('0'))
+			.option('--firefox <version>', 'Minimum Firefox version supported: ' + defaultColor('0'))
+			.option('--ie <version>',      'Minimum IE version supported: ' + defaultColor('0'))
+			.option('--opera <version>',   'Minimum Opera version supported: ' + defaultColor('0'))
 
 			.on('help', cmd => {
 				cmd.outputIndented('Examples', [
