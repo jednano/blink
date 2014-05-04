@@ -28,6 +28,7 @@
   },
   "homepage": "https://github.com/jedmao/blink",
   "dependencies": {
+    "bombom": "^0.1.1",
     "cli-color": "^0.3.2",
     "gitlike-cli": "0.0.10",
     "node.extend": "^1.0.10",

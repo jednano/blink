@@ -1,4 +1,5 @@
 ﻿///<reference path="../bower_components/dt-node/node.d.ts"/>
+var bombom = require('bombom');
 import fs = require('fs');
 import os = require('os');
 var extend = require('node.extend');
@@ -204,28 +205,27 @@ class Configuration implements IConfigurationOptions {
 	}
 
 	constructor(options?: IConfigurationOptions) {
-		options = options || {};
+		this.set(extend(require('../defaults.json'), options || {}));
+	}
+
+	public set(options: IConfigurationOptions) {
 		if (options.config) {
 			options = extend(this.loadConfig(options.config), options);
 		}
-		this.set(extend(require('../defaults.json'), options));
+		extend(this.raw, options);
 	}
 
 	private loadConfig(filename: string) {
 		if (!fs.existsSync(filename)) {
 			throw new Error('Configuration file does not exist: ' + filename);
 		}
-		var contents = <string><any>fs.readFileSync(filename, { encoding: 'utf8' });
+		var contents = bombom.strip(fs.readFileSync(filename)).toString();
 		try {
 			var config = JSON.parse(contents);
 		} catch (e) {
 			throw new Error('Invalid JSON format: ' + filename);
 		}
 		return config;
-	}
-
-	public set(options: IConfigurationOptions) {
-		extend(this.raw, options);
 	}
 
 }
