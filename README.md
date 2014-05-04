@@ -194,11 +194,14 @@ Great, but what about inline-block CSS hacks? Glad you asked! You can gain acces
 to the configuration for a case like this.
 
 ```ts
+///<reference path="./node_modules/blink/blink.d.ts"/>
+import blink = require('blink');
+
 function inlineBlock(options?: { verticalAlign?: string; }) {
 
 	options = options || {};
 
-	return [arguments, (config: Configuration) => {
+	return [arguments, (config: blink.Configuration) => {
 		var decs = [];
 
 		if (config.firefox < 3) {
