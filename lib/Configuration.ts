@@ -126,6 +126,17 @@ class Configuration implements IConfigurationOptions {
 		}
 	}
 
+	public get ruleSeparator() {
+		switch (this.style) {
+			case 'compact':
+				return newlines[this.raw.newline];
+			case 'compressed':
+				return '';
+			default:
+				return this.newline;
+		}
+	}
+
 	get block() {
 		return this.raw.block;
 	}
