@@ -52,11 +52,11 @@ class Compiler {
 	private compileExtenders(rules: Rule[]) {
 		var extenders = new ExtenderRegistry();
 		rules.forEach(rule => {
-			if (!rule.extend) {
-				return;
-			}
-			rule.extend.forEach(extender => {
-				extenders.add(extender, rule.selectors);
+			(rule.extend || []).forEach(extender => {
+				if (!extender.length) {
+					extender = extender();
+				}
+				extenders.add(extender[1], extender[0], rule.selectors);
 			});
 		});
 		return extenders.map((extender, selectors) => {

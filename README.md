@@ -19,8 +19,7 @@
 
 - Runs on [Node][]
 - OOCSS with [BEM syntax][]
-- Extensions
-- Mixins
+- Extenders
 - Rules
 - API
 - TypeScript source
@@ -92,15 +91,15 @@ This would generate the following CSS:
 ```
 
 
-### Extensions
+### Extenders
 
-Extenders are basically named functions without any required parameters. This means
-they always produce the same output, which is a 2D array of key-value pair CSS
-declarations. Here's an example of a fill extender:
+Extenders are named functions that return an array that is described in more detail
+below. An extender with no parameters always returns the same output. For example,
+here's an extender named fill that fills its container:
 
 ```ts
 export function fill() {
-	return () => {
+	return [arguments, () => {
 		return [
 			['position', 'absolute'],
 			['top', '0'],
@@ -108,12 +107,25 @@ export function fill() {
 			['bottom', '0'],
 			['left', '0']
 		];
-	}
+	}];
 }
 ```
 
-This way, if you had two blocks named `.foo` and `.bar`, extending the same fill
-extender, the output would be as follows:
+Let's create two blocks named `.foo` and `bar` that both extend fill.
+
+```ts
+console.log(blink.compileRules([
+	new blink.Block('foo', {
+		extend: [ fill ]
+	}),
+	new blink.Block('bar', {
+		extend: [ fill ]
+	})
+]));
+```
+
+These two blocks share the same extender, so there's no reason to generate the
+same CSS twice. The above code would output the following:
 
 ```css
 .foo, .bar {
@@ -130,48 +142,111 @@ Why, you ask? Because you only have to spit-out those declarations once! You can
 extend it from hundreds of blocks, but those lines never get written more than
 once. This keeps your CSS as lean as possible.
 
-You might be wondering why the extenders return a function. This is because you can
-also gain access to the current configuration. This is great when you want to
-write-out some CSS hacks, only when certain browsers are supported. Take this
-inlineBlock extender for example:
+Now, let's talk about building your own extenders. The basic structure of an
+extender is thus:
 
 ```ts
-///<reference path="./node_modules/blink/blink.d.ts"/>
-import blink = require('blink');
-
-export interface IInlineBlockOptions {
-	verticalAlign: string;
+export function nothing() {
+	return [arguments, () => {
+		return [];
+	}];
 }
+```
 
-export function inlineBlock(options: IInlineBlockOptions) {
-	options = options || <any>{};
-	return (config: blink.Configuration) => {
+This extender, as its name suggests, does nothing. The name, however, must be
+provided and must be unique.
+
+In this case, the extender has no arguments; yet, they must also be returned for
+unique registration purposes.
+
+Let's see what a more complicated, inlineBlock extender would look like.
+
+```ts
+export function inlineBlock() {
+	return [arguments, () => {
+		return ['display', 'inline-block'];
+	}];
+}
+```
+
+This is all fine and good, but it's pretty useless. We can add a verticalAlign
+option to make it more dynamic.
+
+```ts
+export function inlineBlock(options?: { verticalAlign?: string }) {
+
+	options = options || {};
+
+	return [arguments, () => {
 		var decs = [];
-		if (config.firefox < 3) {
-			decs.push(['display', '-moz-inline-stack']);
-		}
 		decs.push(['display', 'inline-block']);
+
 		if (options.verticalAlign !== null) {
 			decs.push(['vertical-align', options.verticalAlign || 'middle']);
 		}
+
+		return decs;
+	}];
+}
+```
+
+Great, but what about inline-block CSS hacks? Glad you asked! You can gain access
+to the configuration for a case like this.
+
+```ts
+function inlineBlock(options?: { verticalAlign?: string; }) {
+
+	options = options || {};
+
+	return [arguments, (config: Configuration) => {
+		var decs = [];
+
+		if (config.firefox < 3) {
+			decs.push(['display', '-moz-inline-stack']);
+		}
+
+		decs.push(['display', 'inline-block']);
+
+		if (options.verticalAlign !== null) {
+			decs.push(['vertical-align', options.verticalAlign || 'middle']);
+		}
+
 		if (config.ie < 8) {
 			decs.push(['*vertical-align', 'auto']);
 			decs.push(['zoom', '1']);
 			decs.push(['*display', 'inline']);
 		}
+
 		return decs;
-	};
+	}];
 }
 ```
 
-Once you change your configuration to support newer browsers, the CSS hacks
-disappear. No need to change any of your source code. It's all about the
-configuration.
+Now, that's a nice extender! Once you change your configuration to support newer
+browsers, the CSS hacks disappear. No need to change any of your source code. It's
+all about the configuration.
 
 
-### Mixins
+#### Extender registration
 
-TODO
+It's important for you to know that, behind the scenes, blink is really smart
+about extender registration. It doesn't just register your extender by function
+name, but also by the arguments you pass in. This means if you extend
+`inlineBlock({ verticalAlign: 'top' })` 50 times and
+`inlineBlock({ verticalAlign: 'bottom' })` 20 times, only two rules will be
+generated. Different input yields different output, so it has to generate two
+rules for this scenario.
+
+
+#### Where are the includes or mixins?
+
+You might be wondering if blink supports includes. The answer is yes and no.
+It is a blink philosophy that includes have traditionally been used in cases
+where extension was more appropriate. As such, the include paradigm has been
+included in the extenders themselves. All you have to do is extend everything
+and blink will determine whether your extension can be shared across rules or not.
+It's just one less thing for you to worry about and it results in automatically
+leaner CSS.
 
 
 ### Rules

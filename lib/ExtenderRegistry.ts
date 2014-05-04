@@ -6,25 +6,20 @@ class ExtenderRegistry {
 	private extenders: IHashTable<Function> = {};
 	private selectors: IHashTable<string[]> = {};
 
-	public get(extender: Function) {
-		return this.selectors[this.getName(extender)];
-	}
-
-	private getName(extender: Function) {
-		return (<any>extender).name;
-	}
-
-	public add(extender: Function, selectors: string[]) {
-		var key = this.getName(extender);
-		if (!this.exists(extender)) {
+	public add(extender: Function, args: IArguments, selectors: string[]) {
+		var key = this.createKey(extender, args);
+		if (!this.extenders.hasOwnProperty(key)) {
 			this.extenders[key] = extender;
+			this.selectors[key] = selectors;
+		} else {
+			Array.prototype.push.apply(this.selectors[key], selectors);
 		}
-		this.selectors[key] = this.selectors[key] || [];
-		Array.prototype.push.apply(this.selectors[key], selectors);
 	}
 
-	public exists(extender: Function) {
-		return this.extenders.hasOwnProperty(this.getName(extender));
+	private createKey(extender: Function, args: IArguments) {
+		var extenderName = (<any>args.callee).name;
+		var serializedArgs = JSON.stringify(Array.prototype.slice.call(args, 0));
+		return extenderName + serializedArgs;
 	}
 
 	public forEach(callback: (extender: Function, selectors: string[]) => void) {

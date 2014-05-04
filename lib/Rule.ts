@@ -7,7 +7,7 @@ import DeclarationCompiler = require('./DeclarationCompiler');
 class Rule {
 
 	private declarations: DeclarationTree;
-	public extend: Function[];
+	public extend: any[];
 	public include: Function[];
 	private declarationCompiler = new DeclarationCompiler();
 

@@ -2,7 +2,7 @@
 
 
 interface IRuleDeclarations extends IDeclarationTree {
-	extend?: Function[];
+	extend?: any[];
 }
 
 export = IRuleDeclarations;
