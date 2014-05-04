@@ -1,6 +1,5 @@
 ﻿import sinonChai = require('../../../sinon-chai');
 var expect = sinonChai.expect;
-import Blink = require('../../../../lib/Blink');
 
 
 var s = require('../../../../lib/helpers/string');
