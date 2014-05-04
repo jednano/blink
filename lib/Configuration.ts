@@ -1,5 +1,4 @@
 ﻿///<reference path="../bower_components/dt-node/node.d.ts"/>
-var bombom = require('bombom');
 import fs = require('fs');
 import os = require('os');
 var extend = require('node.extend');
@@ -127,17 +126,6 @@ class Configuration implements IConfigurationOptions {
 		}
 	}
 
-	public get ruleSeparator() {
-		switch (this.style) {
-			case 'compact':
-				return newlines[this.raw.newline];
-			case 'compressed':
-				return '';
-			default:
-				return this.newline;
-		}
-	}
-
 	get block() {
 		return this.raw.block;
 	}
@@ -216,27 +204,28 @@ class Configuration implements IConfigurationOptions {
 	}
 
 	constructor(options?: IConfigurationOptions) {
-		this.set(extend(require('../defaults.json'), options || {}));
-	}
-
-	public set(options: IConfigurationOptions) {
+		options = options || {};
 		if (options.config) {
 			options = extend(this.loadConfig(options.config), options);
 		}
-		extend(this.raw, options);
+		this.set(extend(require('../defaults.json'), options));
 	}
 
 	private loadConfig(filename: string) {
 		if (!fs.existsSync(filename)) {
 			throw new Error('Configuration file does not exist: ' + filename);
 		}
-		var contents = bombom.strip(fs.readFileSync(filename)).toString();
+		var contents = <string><any>fs.readFileSync(filename, { encoding: 'utf8' });
 		try {
 			var config = JSON.parse(contents);
 		} catch (e) {
 			throw new Error('Invalid JSON format: ' + filename);
 		}
 		return config;
+	}
+
+	public set(options: IConfigurationOptions) {
+		extend(this.raw, options);
 	}
 
 }

@@ -29,8 +29,7 @@ module Blink {
 	export function compile(options: IConfigurationOptions, files: string[],
 		callback: (exitCode: number) => void) {
 
-		config.set(options);
-		var compiler = new Compiler(config);
+		var compiler = new Compiler(new Configuration(extend({}, config.raw, options)));
 		compiler.compile(files, (err, results) => {
 			if (err) {
 				throw err;

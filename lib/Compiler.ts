@@ -46,7 +46,7 @@ class Compiler {
 				chunks.push(css);
 			}
 		}
-		return chunks.join(this.config.ruleSeparator);
+		return chunks.join(this.config.newline);
 	}
 
 	private compileExtenders(rules: Rule[]) {
