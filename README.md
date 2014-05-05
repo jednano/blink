@@ -241,15 +241,23 @@ generated. Different input yields different output, so it has to generate two
 rules for this scenario.
 
 
-#### Where are the includes or mixins?
+#### Where are the includes and mixins?
 
-You might be wondering if blink supports includes. The answer is yes and no.
-It is a blink philosophy that includes have traditionally been used in cases
-where extension was more appropriate. As such, the include paradigm has been
+You might be wondering if blink supports includes and mixins. The answer is yes
+and no. It is a blink philosophy that includes have traditionally been used in
+cases where extension was more appropriate. As such, the include paradigm has been
 included in the extenders themselves. All you have to do is extend everything
 and blink will determine whether your extension can be shared across rules or not.
 It's just one less thing for you to worry about and it results in automatically
 leaner CSS.
+
+As for mixins, they are really no different than functions, which are made
+available to you in normal JavaScript syntax.
+
+That said, you can, technically, include extenders in your rules. That is how
+blink works behind the scenes, so it does work, but it's undocumented,
+unsupported and encouraged against. If you come up with a valid use case, open
+an issue and it will be discussed.
 
 
 ### Rules
