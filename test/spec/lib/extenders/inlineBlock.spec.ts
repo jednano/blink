@@ -1,10 +1,10 @@
 ﻿import sinonChai = require('../../../sinon-chai');
 var expect = sinonChai.expect;
-import Blink = require('../../../../lib/Blink');
+import blink = require('../../../../lib/Blink');
 import inlineBlock = require('../../../../lib/extenders/inlineBlock');
 
 
-var config = Blink.config;
+var config = blink.config;
 
 // ReSharper disable WrongExpressionStatement
 describe('inlineBlock extender', () => {

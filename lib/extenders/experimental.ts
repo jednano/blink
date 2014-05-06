@@ -13,10 +13,10 @@ function experimental(property: string, value: any,
 
 	options = options || {};
 
-	return [arguments, () => {
+	return [arguments, (config: Configuration) => {
 		var decs = [];
 		['webkit', 'khtml', 'moz', 'ms', 'o'].forEach(vendor => {
-			if (options[vendor]) {
+			if (options[vendor] && config[vendor + 'Prefix']) {
 				decs.push(['-' + vendor + '-' + property, value]);
 			}
 		});

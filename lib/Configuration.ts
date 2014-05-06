@@ -215,6 +215,46 @@ class Configuration implements IConfigurationOptions {
 		this.raw.opera = value;
 	}
 
+	get webkitPrefix() {
+		return this.raw.webkitPrefix;
+	}
+
+	set webkitPrefix(value: boolean) {
+		this.raw.webkitPrefix = value;
+	}
+
+	get khtmlPrefix() {
+		return this.raw.khtmlPrefix;
+	}
+
+	set khtmlPrefix(value: boolean) {
+		this.raw.khtmlPrefix = value;
+	}
+
+	get mozPrefix() {
+		return this.raw.mozPrefix;
+	}
+
+	set mozPrefix(value: boolean) {
+		this.raw.mozPrefix = value;
+	}
+
+	get msPrefix() {
+		return this.raw.msPrefix;
+	}
+
+	set msPrefix(value: boolean) {
+		this.raw.msPrefix = value;
+	}
+
+	get oPrefix() {
+		return this.raw.oPrefix;
+	}
+
+	set oPrefix(value: boolean) {
+		this.raw.oPrefix = value;
+	}
+
 	constructor(options?: IConfigurationOptions) {
 		this.set(extend(require('../defaults.json'), options || {}));
 	}

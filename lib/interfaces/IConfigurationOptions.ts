@@ -13,11 +13,18 @@
 	element?: string;
 	modifier?: string;
 
-	// Cross-Browser Support
+	// Legacy browser support
 	chrome?: number;
 	firefox?: number;
 	ie?: number;
 	opera?: number;
+
+	// Experimental support
+	webkitPrefix?: boolean;
+	khtmlPrefix?: boolean;
+	mozPrefix?: boolean;
+	msPrefix?: boolean;
+	oPrefix?: boolean;
 
 }
 

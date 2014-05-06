@@ -51,11 +51,18 @@ export function execute(args, callback: (exitCode: number) => void): number {
 			.option('-e, --element <format>',  'BEM element format: ' + defaultColor('__%s'))
 			.option('-m, --modifier <format>', 'BEM modifier format: ' + defaultColor('--%s'))
 
-			// Browser support
+			// Legacy browser support
 			.option('--chrome <version>',  'Minimum Chrome version supported: ' + defaultColor('0'))
 			.option('--firefox <version>', 'Minimum Firefox version supported: ' + defaultColor('0'))
 			.option('--ie <version>',      'Minimum IE version supported: ' + defaultColor('0'))
 			.option('--opera <version>',   'Minimum Opera version supported: ' + defaultColor('0'))
+
+			// Experimental support
+			.option('--no-webkit-prefix', 'Disable experimental -webkit- prefix')
+			.option('--khtml-prefix',     'Enable experimental -khtml- prefix')
+			.option('--no-moz-prefix',    'Disable experimental -moz- prefix')
+			.option('--no-ms-prefix',     'Disable experimental -ms- prefix')
+			.option('--no-o-prefix',      'Disable experimental -o- prefix')
 
 			.on('help', cmd => {
 				cmd.outputIndented('Examples', [

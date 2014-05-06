@@ -98,7 +98,7 @@ below. An extender with no parameters always returns the same output. For exampl
 here's an extender named fill that fills its container:
 
 ```ts
-export function fill() {
+export function fill(): any[] {
 	return [arguments, () => {
 		return [
 			['position', 'absolute'],
@@ -146,7 +146,7 @@ Now, let's talk about building your own extenders. The basic structure of an
 extender is thus:
 
 ```ts
-export function nothing() {
+export function nothing(): any[] {
 	return [arguments, () => {
 		return [];
 	}];
@@ -162,7 +162,7 @@ unique registration purposes.
 Let's see what a more complicated, inlineBlock extender would look like.
 
 ```ts
-export function inlineBlock() {
+export function inlineBlock(): any[] {
 	return [arguments, () => {
 		return ['display', 'inline-block'];
 	}];
@@ -173,7 +173,7 @@ This is all fine and good, but it's pretty useless. We can add a verticalAlign
 option to make it more dynamic.
 
 ```ts
-export function inlineBlock(options?: { verticalAlign?: string }) {
+export function inlineBlock(options?: { verticalAlign?: string }): any[] {
 
 	options = options || {};
 
@@ -197,7 +197,7 @@ to the configuration for a case like this.
 ///<reference path="./node_modules/blink/blink.d.ts"/>
 import blink = require('blink');
 
-function inlineBlock(options?: { verticalAlign?: string; }) {
+function inlineBlock(options?: { verticalAlign?: string; }): any[] {
 
 	options = options || {};
 
@@ -239,6 +239,29 @@ name, but also by the arguments you pass in. This means if you extend
 `inlineBlock({ verticalAlign: 'bottom' })` 20 times, only two rules will be
 generated. Different input yields different output, so it has to generate two
 rules for this scenario.
+
+
+#### Extenders calling other extenders
+
+Extenders can call other extenders directly, but you must provide the extender
+with the configuration.
+
+```ts
+import blink = require('blink');
+
+function boxSizing(value: string): any[] {
+	return [arguments, (config: blink.Configuration) => {
+		return blink.extenders.experimental('box-sizing', value, {
+			official: true,  // Opera/IE 8+
+			  webkit: true,  // Safari/Chrome, other WebKit
+			     moz: true   // Firefox, other Gecko
+		})[1](config);
+	}];
+}
+```
+
+Notice that index 1 accessed the extender function. When calling an extender
+directly the arguments become useless, so we throw them away.
 
 
 #### Where are the includes and mixins?
