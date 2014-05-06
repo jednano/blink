@@ -1,6 +1,7 @@
 ﻿import Configuration = require('../Configuration');
 
 
+// ReSharper disable once UnusedLocals
 function experimental(property: string, value: any,
 	options?: {
 		official?: boolean;

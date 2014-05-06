@@ -3,6 +3,7 @@ import experimental = require('./experimental');
 import inlineBlock = require('./inlineBlock');
 
 
+// ReSharper disable once UnusedLocals
 var extenders: Function[] = [
 	boxSizing,
 	experimental,

@@ -1,6 +1,7 @@
 ﻿import Configuration = require('../Configuration');
 
 
+// ReSharper disable once UnusedLocals
 function inlineBlock(options?: {
 		verticalAlign?: string;
 	}): any[] {
