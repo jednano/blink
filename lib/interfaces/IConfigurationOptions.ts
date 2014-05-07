@@ -2,6 +2,11 @@
 
 	config?: string;
 
+	quiet?: boolean;
+	trace?: boolean;
+	force?: boolean;
+	boring?: boolean;
+
 	// Output style
 	style?: string;
 	oneIndent?: string;

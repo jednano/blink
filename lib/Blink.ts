@@ -14,6 +14,7 @@ import _IModifierDeclarations = require('./interfaces/IModifierDeclarations');
 import _Modifier = require('./Modifier');
 import _Rule = require('./Rule');
 import Configuration = require('./Configuration');
+import ICompiledResult = require('./interfaces/ICompiledResult');
 
 
 module Blink {
@@ -26,25 +27,13 @@ module Blink {
 	export class Compiler extends _Compiler {
 	}
 
-	export function compile(options: IConfigurationOptions, files: string[],
-		callback: (exitCode: number) => void) {
+	export function compile(options: IConfigurationOptions, sources: any[],
+		callback?: (err: Error, config: Configuration, result: ICompiledResult) => void) {
 
-		var compiler = new Compiler(new Configuration(extend({}, config.raw, options)));
-		compiler.compile(files, (err, results) => {
-			if (err) {
-				throw err;
-			}
-			var count = results.length;
-			results.forEach(result => {
-				fs.writeFile(result.dest, result.contents, (err2) => {
-					if (err2) {
-						throw err2;
-					}
-					if (--count === 0) {
-						callback(0);
-					}
-				});
-			});
+		var tempConfig = new Configuration(extend({}, config.raw, options));
+		var compiler = new Compiler(tempConfig);
+		compiler.compile(sources, (err, result) => {
+			callback(err, tempConfig, result);
 		});
 	}
 

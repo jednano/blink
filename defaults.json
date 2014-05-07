@@ -1,4 +1,9 @@
 ﻿{
+  "quiet": false,
+  "trace": false,
+  "force": false,
+  "boring": false,
+
   "style": "nested",
   "oneIndent": "2s",
   "newline": "os",

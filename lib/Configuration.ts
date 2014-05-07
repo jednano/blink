@@ -44,6 +44,38 @@ class Configuration implements IConfigurationOptions {
 		this.raw.config = path;
 	}
 
+	public get quiet() {
+		return this.raw.quiet;
+	}
+
+	public set quiet(value: boolean) {
+		this.raw.quiet = value;
+	}
+
+	public get trace() {
+		return this.raw.trace;
+	}
+
+	public set trace(value: boolean) {
+		this.raw.trace = value;
+	}
+
+	public get force() {
+		return this.raw.force;
+	}
+
+	public set force(value: boolean) {
+		this.raw.force = value;
+	}
+
+	public get boring() {
+		return this.raw.boring;
+	}
+
+	public set boring(value: boolean) {
+		this.raw.boring = value;
+	}
+
 	public get style() {
 		return this.raw.style;
 	}

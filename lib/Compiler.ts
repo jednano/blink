@@ -1,5 +1,7 @@
-﻿import fs = require('fs');
+﻿var mod = require('module');
 import path = require('path');
+import stream = require('stream');
+var stripBOM = require('strip-bom');
 
 import a = require('./helpers/array');
 import Configuration = require('./Configuration');
@@ -16,23 +18,37 @@ class Compiler {
 		this.config = config || new Configuration();
 	}
 
-	compile(files: string[],
-		callback: (err: Error, results?: ICompiledResult[]) => void) {
-		callback(null, this.compileFiles(files));
-	}
+	compile(sources: any[],
+		callback: (err: Error, result: ICompiledResult) => void) {
 
-	private compileFiles(files: string[]) {
-		var results: ICompiledResult[] = [];
-		files.forEach(filename => {
-			var ext = new RegExp('\\.' + path.extname(filename).substr(1) + '$');
-			var imported = require(path.resolve(filename).replace(ext, ''));
-			results.push({
-				src: filename,
-				dest: filename.replace(ext, '.css'),
-				contents: this.compileRules(a.flatten([imported]))
+		sources = sources || [];
+
+		sources.forEach(source => {
+			if (typeof source === 'string') {
+				this.tryCompileFile(source, callback);
+			}
+			if (source instanceof stream.Readable) {
+				this.tryCompileStream(source, callback);
+			}
+			callback(new Error('Unsupported source input'), {
+				src: source
 			});
 		});
-		return results;
+	}
+
+	private tryCompileFile(filename: string, callback: Function) {
+		var ext = new RegExp('\\.' + path.extname(filename).substr(1) + '$');
+		var result: ICompiledResult = {
+			src: filename,
+			dest: filename.replace(ext, '.css')
+		};
+		try {
+			var imported = require(path.resolve(filename));
+			result.contents = this.compileRules(a.flatten([imported]));
+			callback(null, result);
+		} catch (err) {
+			callback(err, result);
+		}
 	}
 
 	compileRules(rules: Rule[]) {
@@ -63,6 +79,35 @@ class Compiler {
 			var rule = new Rule(selectors, { include: [extender] });
 			return rule.compile(this.config);
 		}).join(this.config.newline);
+	}
+
+	private tryCompileStream(stream: stream.Readable, callback: Function) {
+		try {
+			this.readStream(contents => {
+				callback(null, {
+					contents: this.compileRules([this.compileModule(contents)])
+				});
+			});
+		} catch (err) {
+			callback(err);
+		}
+	}
+
+	private readStream(callback: (contents: string) => void) {
+		var contents = '';
+		process.stdin.setEncoding('utf8');
+		process.stdin.on('readable', () => {
+			contents += (<any>process.stdin).read() || '';
+		});
+		process.stdin.on('end', () => {
+			callback(stripBOM(contents));
+		});
+	}
+
+	private compileModule(contents: string) {
+		var m = new mod();
+		m._compile(contents);
+		return m.exports;
 	}
 
 }

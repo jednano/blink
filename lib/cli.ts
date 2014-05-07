@@ -1,6 +1,7 @@
 ﻿///<reference path="../bower_components/dt-node/node.d.ts"/>
 //var blink = require('./Blink');
 var clc = require('cli-color');
+import fs = require('fs');
 var program = require('gitlike-cli');
 
 import blink = require('./Blink');
@@ -12,10 +13,57 @@ export function execute(args, callback: (exitCode: number) => void): number {
 	return program
 		.version(require('../package.json').version)
 
-		.command('compile <files>...')
+		.command('compile <sources>...')
 			.description('Compile Blink stylesheets to CSS ' + defaultColor('(defaults in color)'))
 			.action((args2, options) => {
-				blink.compile(options, args2.files, callback);
+				var sources = args2.sources;
+				var count = sources.length;
+				blink.compile(options, args2.sources, (err, config, result) => {
+
+					function logError(err2) {
+						if (!err2 || config.quiet) {
+							return;
+						}
+						if (config.trace) {
+							throw err2;
+						}
+						var message = result.src + ': ' + err2.message;
+						if (!config.boring) {
+							message = clc.red(message);
+						}
+						console.log(message);
+					}
+
+					function writeFile() {
+						fs.writeFile(result.dest, result.contents, (err2) => {
+							logError(err2);
+							if (--count === 0) {
+								callback(0);
+							}
+						});
+					}
+
+					logError(err);
+
+					if (!result) {
+						return;
+					}
+
+					if (!result.dest) {
+						console.log(result.contents);
+						return;
+					}
+
+					if (config.force) {
+						writeFile();
+					} else {
+						fs.exists(result.dest, (exists) => {
+							if (!exists) {
+								writeFile();
+							}
+						});
+					}
+				});
 			})
 
 			//// Configuration
@@ -24,11 +72,11 @@ export function execute(args, callback: (exitCode: number) => void): number {
 			//.option('--env <target>',      clc.cyan('dev') + ', prod')
 
 			//.option('--sourcemap', 'Generate a sourcemap')
-			//.option('-q, --quiet', 'Quiet mode')
-			//.option('-t, --trace', 'Show a full stacktrace on error')
-			//.option('-f, --force', 'Overwrites existing files')
+			.option('-q, --quiet', 'Quiet mode')
+			.option('-t, --trace', 'Show a full stacktrace on error')
+			.option('-f, --force', 'Overwrites existing files')
 			//.option('--dry-run',   'Tells you what it plans to do')
-			//.option('--boring',    'Turn off colorized output')
+			.option('--boring',    'Turn off colorized output')
 
 			//// Application settings
 			//.option('--app <dir>',               'Base directory for your application')
