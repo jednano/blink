@@ -26,9 +26,11 @@ class Compiler {
 		sources.forEach(source => {
 			if (typeof source === 'string') {
 				this.tryCompileFile(source, callback);
+				return;
 			}
 			if (source instanceof stream.Readable) {
 				this.tryCompileStream(source, callback);
+				return;
 			}
 			callback(new Error('Unsupported source input'), {
 				src: source
