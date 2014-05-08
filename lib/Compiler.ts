@@ -1,4 +1,5 @@
-﻿var mod = require('module');
+﻿import fs = require('fs');
+var mod = require('module');
 import path = require('path');
 import stream = require('stream');
 var stripBOM = require('strip-bom');
@@ -25,11 +26,13 @@ class Compiler {
 
 		sources.forEach(source => {
 			if (typeof source === 'string') {
-				this.tryCompileFile(source, callback);
+				this.compileFile(source, callback);
 				return;
 			}
 			if (source instanceof stream.Readable) {
-				this.tryCompileStream(source, callback);
+				this.compileStream(source, (err, css) => {
+					callback(err, { contents: css });
+				});
 				return;
 			}
 			callback(new Error('Unsupported source input'), {
@@ -38,19 +41,62 @@ class Compiler {
 		});
 	}
 
-	private tryCompileFile(filename: string, callback: Function) {
+	private compileFile(filename: string, callback: Function) {
 		var ext = new RegExp('\\.' + path.extname(filename).substr(1) + '$');
 		var result: ICompiledResult = {
 			src: filename,
 			dest: filename.replace(ext, '.css')
 		};
-		try {
-			var imported = require(path.resolve(filename));
-			result.contents = this.compileRules(a.flatten([imported]));
-			callback(null, result);
-		} catch (err) {
+		var stream = <stream.Readable>fs.createReadStream(path.resolve(filename));
+		this.compileStream(stream, (err, css) => {
+			if (!err) {
+				result.contents = css;
+			}
 			callback(err, result);
+		});
+	}
+
+	private compileStream(stream: stream.Readable,
+		callback: (err: Error, css?: string) => void) {
+		this.readStream(stream, (err, contents) => {
+			if (err) {
+				callback(err);
+				return;
+			}
+			this.tryCompileRules(contents, callback);
+		});
+	}
+
+	private readStream(stream: stream.Readable,
+		callback: (err: Error, contents?: string) => void) {
+		var contents = '';
+		stream.setEncoding('utf8');
+		stream.on('readable', () => {
+			contents += (<any>stream).read() || '';
+		});
+		stream.on('error', (err: Error) => {
+			callback(err);
+		});
+		stream.on('end', () => {
+			callback(null, contents);
+		});
+	}
+
+	private tryCompileRules(contents: string,
+		callback: (err: Error, css?: string) => void) {
+		try {
+			callback(null, this.compileRules([
+				this.compileModule(stripBOM(contents))
+			]));
+		} catch (err) {
+			callback(err);
 		}
+	}
+
+	private compileModule(contents: string) {
+		var m = new mod();
+		m._compile(contents);
+		return m.exports;
 	}
 
 	compileRules(rules: Rule[]) {
@@ -81,35 +127,6 @@ class Compiler {
 			var rule = new Rule(selectors, { include: [extender] });
 			return rule.compile(this.config);
 		}).join(this.config.newline);
-	}
-
-	private tryCompileStream(stream: stream.Readable, callback: Function) {
-		try {
-			this.readStream(contents => {
-				callback(null, {
-					contents: this.compileRules([this.compileModule(contents)])
-				});
-			});
-		} catch (err) {
-			callback(err);
-		}
-	}
-
-	private readStream(callback: (contents: string) => void) {
-		var contents = '';
-		process.stdin.setEncoding('utf8');
-		process.stdin.on('readable', () => {
-			contents += (<any>process.stdin).read() || '';
-		});
-		process.stdin.on('end', () => {
-			callback(stripBOM(contents));
-		});
-	}
-
-	private compileModule(contents: string) {
-		var m = new mod();
-		m._compile(contents);
-		return m.exports;
 	}
 
 }

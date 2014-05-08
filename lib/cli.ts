@@ -27,7 +27,10 @@ export function execute(args, callback: (exitCode: number) => void): number {
 						if (config.trace) {
 							throw err2;
 						}
-						var message = result.src + ': ' + err2.message;
+						var message = err2.message;
+						if (result.src) {
+							message = result.src + ': ' + message;
+						}
 						if (!config.boring) {
 							message = clc.red(message);
 						}
@@ -50,7 +53,7 @@ export function execute(args, callback: (exitCode: number) => void): number {
 					}
 
 					if (!result.dest) {
-						console.log(result.contents);
+						console.log(result.contents || '');
 						return;
 					}
 
