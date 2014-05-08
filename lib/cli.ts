@@ -72,7 +72,7 @@ export function execute(args, callback: (exitCode: number) => void): number {
 			//// Configuration
 			//.option('-p, --project <dir>', 'The current directory if not specified', './')
 			.option('-c, --config <path>', 'Specifly location of config file')
-			//.option('--env <target>',      clc.cyan('dev') + ', prod')
+			//.option('--env <target>',      defaultColor('dev') + ', prod')
 
 			//.option('--sourcemap', 'Generate a sourcemap')
 			.option('-q, --quiet', 'Quiet mode')
