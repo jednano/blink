@@ -48,7 +48,7 @@ export function execute(args, callback: (exitCode: number) => void): number {
 
 					logError(err);
 
-					if (!result) {
+					if (err || !result) {
 						return;
 					}
 
