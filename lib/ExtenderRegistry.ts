@@ -10,10 +10,9 @@ class ExtenderRegistry {
 		var key = this.createKey(extender, args);
 		if (!this.extenders.hasOwnProperty(key)) {
 			this.extenders[key] = extender;
-			this.selectors[key] = selectors;
-		} else {
-			Array.prototype.push.apply(this.selectors[key], selectors);
+			this.selectors[key] = [];
 		}
+		Array.prototype.push.apply(this.selectors[key], selectors);
 	}
 
 	private createKey(extender: Function, args: IArguments) {

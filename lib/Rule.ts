@@ -6,7 +6,7 @@ import DeclarationCompiler = require('./DeclarationCompiler');
 
 class Rule {
 
-	private declarations: DeclarationTree;
+	public declarations: DeclarationTree;
 	public extend: any[];
 	public include: Function[];
 	private declarationCompiler = new DeclarationCompiler();
@@ -32,12 +32,10 @@ class Rule {
 	}
 
 	private compileIncludes(config: Configuration) {
-		return this.include.map(helper => {
-			var declarations;
-			if (helper.prototype.constructor.name === '') {
-				declarations = helper(config);
-			} else {
-				declarations = helper()(config);
+		return this.include.map(inc => {
+			var declarations = inc(config);
+			if (!declarations.length) {
+				declarations = declarations(config);
 			}
 			return this.declarationCompiler.compile(config, declarations);
 		}).join(config.newline);

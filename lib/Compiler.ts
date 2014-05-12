@@ -20,7 +20,7 @@ class Compiler {
 	}
 
 	compile(sources: any[],
-		callback: (err: Error, result: ICompiledResult) => void) {
+		callback: (err: Error, result?: ICompiledResult) => void) {
 
 		sources = sources || [];
 
@@ -35,10 +35,25 @@ class Compiler {
 				});
 				return;
 			}
+			if (source instanceof Rule) {
+				this.tryCompileRule(source, (err, contents) => {
+					callback(err, { contents: contents });
+				});
+				return;
+			}
 			callback(new Error('Unsupported source input'), {
 				src: source
 			});
 		});
+	}
+
+	private tryCompileRule(rule: Rule,
+		callback: (err: Error, contents?: string) => void) {
+		try {
+			callback(null, this.compileRules([rule]));
+		} catch (err) {
+			callback(err);
+		}
 	}
 
 	private compileFile(filename: string, callback: Function) {
@@ -102,6 +117,7 @@ class Compiler {
 	compileRules(rules: Rule[]) {
 		var chunks = [];
 		push(this.compileExtenders(rules));
+
 		rules.forEach(rule => {
 			push(rule.compile(this.config));
 		});
@@ -110,6 +126,7 @@ class Compiler {
 				chunks.push(css);
 			}
 		}
+
 		return chunks.join(this.config.ruleSeparator);
 	}
 
@@ -122,10 +139,20 @@ class Compiler {
 				}
 				extenders.add(extender[1], extender[0], rule.selectors);
 			});
+			var overrides = this.config.overrides;
+			var decs = rule.declarations.root;
+			Object.keys(decs).forEach(property => {
+				var override = overrides[property];
+				if (override) {
+					override = override(decs[property]);
+					extenders.add(override[1], override[0], rule.selectors);
+					delete decs[property];
+				}
+			});
 		});
 		return extenders.map((extender, selectors) => {
-			var rule = new Rule(selectors, { include: [extender] });
-			return rule.compile(this.config);
+			var r = new Rule(selectors, { include: [extender] });
+			return r.compile(this.config);
 		}).join(this.config.newline);
 	}
 

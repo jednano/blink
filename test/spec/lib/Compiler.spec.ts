@@ -71,4 +71,48 @@ describe('Compiler', () => {
 		].join(newline) + newline);
 	});
 
+	it('compiles overrides', () => {
+		config.overrides.cap = (value: string) => {
+			return [arguments, () => {
+				return [['cap', value.toUpperCase()]];
+			}];
+		};
+		var rules = [
+			new Blink.Rule(['.foo'], {
+				cap: 'qux',
+				waldo: 'WALDO'
+			}),
+			new Blink.Rule(['.bar'], {
+				cap: 'fred',
+				thud: 'THUD'
+			}),
+			new Blink.Rule(['.baz'], {
+				cap: 'qux',
+				garpley: 'GARPLEY'
+			})
+		];
+		expect(compiler.compileRules(rules)).to.eq([
+			'.foo, .baz {',
+			'  cap: QUX;',
+			'}',
+			'',
+			'.bar {',
+			'  cap: FRED;',
+			'}',
+			'',
+			'.foo {',
+			'  waldo: WALDO;',
+			'}',
+			'',
+			'.bar {',
+			'  thud: THUD;',
+			'}',
+			'',
+			'.baz {',
+			'  garpley: GARPLEY;',
+			'}'
+		].join(newline) + newline);
+		delete config.overrides.cap;
+	});
+
 });

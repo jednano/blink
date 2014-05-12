@@ -30,6 +30,38 @@ var quotes = {
 
 class Configuration implements IConfigurationOptions {
 
+	constructor(options?: IConfigurationOptions) {
+		this.set(extend(require('../defaults.json'), options || {}));
+	}
+
+	public clone() {
+		var clone = new Configuration(this.raw);
+		clone.overrides = this.overrides;
+		return clone;
+	}
+
+	public set(options: IConfigurationOptions) {
+		options = options || {};
+		if (options.config) {
+			options = extend(this.loadConfig(options.config), options);
+		}
+		extend(this.raw, options);
+		return this;
+	}
+
+	private loadConfig(filename: string) {
+		if (!fs.existsSync(filename)) {
+			throw new Error('Configuration file does not exist: ' + filename);
+		}
+		var contents = stripBom(fs.readFileSync(filename)).toString();
+		try {
+			var config = JSON.parse(contents);
+		} catch (e) {
+			throw new Error('Invalid JSON format: ' + filename);
+		}
+		return config;
+	}
+
 	public raw: IConfigurationOptions = {};
 
 	public toString() {
@@ -287,30 +319,7 @@ class Configuration implements IConfigurationOptions {
 		this.raw.oPrefix = value;
 	}
 
-	constructor(options?: IConfigurationOptions) {
-		this.set(extend(require('../defaults.json'), options || {}));
-	}
-
-	public set(options: IConfigurationOptions) {
-		options = options || {};
-		if (options.config) {
-			options = extend(this.loadConfig(options.config), options);
-		}
-		extend(this.raw, options);
-	}
-
-	private loadConfig(filename: string) {
-		if (!fs.existsSync(filename)) {
-			throw new Error('Configuration file does not exist: ' + filename);
-		}
-		var contents = stripBom(fs.readFileSync(filename)).toString();
-		try {
-			var config = JSON.parse(contents);
-		} catch (e) {
-			throw new Error('Invalid JSON format: ' + filename);
-		}
-		return config;
-	}
+	public overrides: any = {};
 
 }
 
