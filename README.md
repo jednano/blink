@@ -20,6 +20,7 @@
 - Runs on [Node][]
 - OOCSS with [BEM syntax][]
 - Extenders
+- Overrides
 - Rules
 - API
 - TypeScript source
@@ -281,6 +282,31 @@ That said, you can, technically, include extenders in your rules. That is how
 blink works behind the scenes, so it does work, but it's undocumented,
 unsupported and encouraged against. If you come up with a valid use case, open
 an issue and it will be discussed.
+
+
+### Overrides
+
+Overrides are functions &ndash; no different than extenders &ndash; that allow you
+to override a single CSS declaration with any number of declarations. In fact, you
+can and often will register extenders _as_ overrides. Overrides are registered on
+the configuration object. For example, say we want the box-sizing extender above
+to be registered as an override:
+
+```ts
+///<reference path="./node_modules/blink/blink.d.ts"/>
+import blink = require('blink');
+
+var overrides = blink.config.overrides;
+
+overrides['box-sizing'] = require('./lib/extenders/boxSizing');
+// Register more overrides here.
+```
+
+_Note: override keys are not dasherized for you._
+
+Now, every time someone declares `box-sizing: whatever` your override will be
+called with `whatever` as the first and only argument. The returned set of
+declarations will replace the original one.
 
 
 ### Rules
