@@ -8,33 +8,16 @@ var config = Blink.config;
 var newline = config.newline;
 
 // ReSharper disable WrongExpressionStatement
-describe.only('Formatter', () => {
+describe('Formatter', () => {
 
 	var f: Formatter;
 	before(() => {
 		f = new Formatter();
 	});
 
-	it('formats an empty array into an empty string', () => {
-		var css = f.format(config, []);
-		expect(css).to.eq('');
-	});
-
-	it('formats an empty rule into an empty string', () => {
-		var css = f.format(config, [
-			['.foo', []]
-		]);
-		expect(css).to.eq('');
-
-		css = f.format(config, [
-			['.foo', '']
-		]);
-		expect(css).to.eq('');
-	});
-
 	it('properly formats a rule with one declaration', () => {
 		var css = f.format(config, [
-			['.foo', [
+			[['.foo'], [
 				['bar', 'BAR']
 			]]
 		]);
@@ -47,7 +30,7 @@ describe.only('Formatter', () => {
 
 	it('properly formats a rule with two declarations', () => {
 		var css = f.format(config, [
-			['.foo', [
+			[['.foo'], [
 				['bar', 'BAR'],
 				['baz', 'BAZ']
 			]]
@@ -62,9 +45,9 @@ describe.only('Formatter', () => {
 
 	it('properly formats a deeply-nested at-rule', () => {
 		var css = f.format(config, [
-			['@foo', [
-				['@bar', [
-					['.baz', [
+			[['@foo'], [
+				[['@bar'], [
+					[['.baz'], [
 						['qux', 'QUX'],
 						['quux', 'QUUX']
 					]]

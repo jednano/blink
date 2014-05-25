@@ -2,7 +2,7 @@
 
 
 interface IRuleBody extends IHashTable<any> {
-	extend?: Function[];
+	extend?: any[];
 	include?: Function[];
 }
 

@@ -133,20 +133,20 @@ class Compiler {
 	private compileExtenders(rules: Rule[]) {
 		var extenders = new ExtenderRegistry();
 		rules.forEach(rule => {
-			(rule.extend || []).forEach(extender => {
+			(rule.extenders || []).forEach(extender => {
 				if (!extender.length) {
 					extender = extender();
 				}
 				extenders.add(extender[1], extender[0], rule.selectors);
 			});
 			var overrides = this.config.overrides;
-			var decs = rule.declarations.root;
-			Object.keys(decs).forEach(property => {
+			var body = rule.body;
+			Object.keys(body).forEach(property => {
 				var override = overrides[property];
 				if (override) {
-					override = override(decs[property]);
+					override = override(body[property]);
 					extenders.add(override[1], override[0], rule.selectors);
-					delete decs[property];
+					delete body[property];
 				}
 			});
 		});

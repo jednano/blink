@@ -7,16 +7,29 @@ class Formatter {
 
 	private config: Configuration;
 
-	format(config: Configuration, body: any[]) {
+	format(config: Configuration, rules: any[][]) {
 		this.config = config;
-		return this.formatBody(body, 0);
+		return this.formatRules(rules, 0);
 	}
 
-	private formatBody(body: any[], level: number) {
+	private formatRules(rules: any[][], level: number) {
+		return rules.map(rule => {
+			return this.formatRule(rule, level);
+		}).join(this.config.newline);
+	}
 
-		if (!body || !body.length) {
-			return '';
-		}
+	private formatRule(rule: any[][], level: number) {
+		var config = this.config;
+		var selectors = rule[0].join(',' + config.oneSpace);
+		var body = this.formatBody(rule[1], level + 1);
+		var indent = s.repeat(config.oneIndent, level);
+		var css = indent + selectors + config.oneSpace + '{' + config.newline;
+		css += body;
+		css += indent + '}' + config.newline;
+		return css;
+	}
+
+	private formatBody(body: any[][], level: number) {
 
 		var firstPair = body[0];
 		if (!firstPair || !firstPair.length) {
@@ -44,7 +57,7 @@ class Formatter {
 		return typeof value === 'string';
 	}
 
-	private formatDeclarations(decs: any[], level: number) {
+	private formatDeclarations(decs: string[][], level: number) {
 		var indent = s.repeat(this.config.oneIndent, level);
 		return decs.map(dec => {
 			var prop = dec[0];
@@ -61,30 +74,6 @@ class Formatter {
 			return value;
 		}
 		return (<string[]>value).join(' ');
-	}
-
-	private formatRules(rule: any[], level: number) {
-		var rules = [];
-		rule.forEach(pair => {
-			var formattedRule = this.formatRule(pair[0], pair[1], level);
-			if (formattedRule) {
-				rules.push(formattedRule);
-			}
-		});
-		return rules.join(this.config.newline);
-	}
-
-	private formatRule(selectors: string, value: any[], level: number) {
-		var body = this.formatBody(value, level + 1);
-		if (!body) {
-			return '';
-		}
-		var config = this.config;
-		var indent = s.repeat(config.oneIndent, level);
-		var css = indent + selectors + config.oneSpace + '{' + config.newline;
-		css += body;
-		css += indent + '}' + config.newline;
-		return css;
 	}
 
 }
