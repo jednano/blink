@@ -187,7 +187,7 @@ class Configuration implements IConfigurationOptions {
 			case 'compressed':
 				return '';
 			default:
-				return this.newline + this.oneIndent;
+				return this.newline;
 		}
 	}
 

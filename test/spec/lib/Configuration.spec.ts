@@ -171,7 +171,7 @@ describe('Configuration', () => {
 			config.oneIndent = '2s';
 			['nested', 'expanded'].forEach(style => {
 				config.style = style;
-				expect(config.declarationSeparator).to.eq('\n  ');
+				expect(config.declarationSeparator).to.eq('\n');
 			});
 		});
 
