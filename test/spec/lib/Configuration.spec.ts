@@ -166,12 +166,12 @@ describe('Configuration', () => {
 			expect(config.declarationSeparator).to.be.empty;
 		});
 
-		it('returns a newline + one indent when style is nested or expanded', () => {
+		it('returns a newline when style is nested or expanded', () => {
 			config.newline = 'lf';
 			config.oneIndent = '2s';
 			['nested', 'expanded'].forEach(style => {
 				config.style = style;
-				expect(config.declarationSeparator).to.eq('\n  ');
+				expect(config.declarationSeparator).to.eq('\n');
 			});
 		});
 

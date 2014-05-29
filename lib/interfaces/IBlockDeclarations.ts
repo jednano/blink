@@ -1,9 +1,9 @@
-﻿import IDeclarationTree = require('./IDeclarationTree');
-import Element = require('../Element');
+﻿import Element = require('../Element');
+import IRuleBody = require('./IRuleBody');
 import Modifier = require('../Modifier');
 
 
-interface IBlockDeclarations extends IDeclarationTree {
+interface IBlockDeclarations extends IRuleBody {
 	elements?: Element[];
 	modifiers?: Modifier[];
 }
