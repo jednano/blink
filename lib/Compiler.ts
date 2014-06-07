@@ -85,7 +85,8 @@ class Compiler {
 				callback(err);
 				return;
 			}
-			this.tryCompileRules(contents, callback);
+			var folder = path.dirname(stream['path']);
+			this.tryCompileRules(contents, folder, callback);
 		});
 	}
 
@@ -104,19 +105,20 @@ class Compiler {
 		});
 	}
 
-	private tryCompileRules(contents: string,
+	private tryCompileRules(contents: string, folder: string,
 		callback: (err: Error, css?: string) => void) {
 		try {
 			callback(null, this.compileRules([
-				this.compileModule(stripBOM(contents))
+				this.compileModule(stripBOM(contents), folder)
 			]));
 		} catch (err) {
 			callback(err);
 		}
 	}
 
-	private compileModule(contents: string) {
+	private compileModule(contents: string, folder: string) {
 		var m = new mod();
+		m.paths = mod._nodeModulePaths(folder);
 		m._compile(contents);
 		return m.exports;
 	}
