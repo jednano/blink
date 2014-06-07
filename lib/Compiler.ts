@@ -26,7 +26,13 @@ class Compiler {
 
 		sources.forEach(source => {
 			if (typeof source === 'string') {
-				this.compileFile(source, callback);
+				this.compileFile({ src: source, dest: path.dirname(source) }, callback);
+				return;
+			}
+			if (source.src && source.src instanceof Array) {
+				source.src.forEach(src => {
+					this.compileFile({ src: src, dest: source.dest }, callback);
+				});
 				return;
 			}
 			if (source instanceof stream.Readable) {
@@ -56,11 +62,12 @@ class Compiler {
 		}
 	}
 
-	private compileFile(filename: string, callback: Function) {
+	private compileFile(source: {src: string; dest: string;}, callback: Function) {
+		var filename = source.src;
 		var ext = new RegExp('\\.' + path.extname(filename).substr(1) + '$');
 		var result: ICompiledResult = {
 			src: filename,
-			dest: filename.replace(ext, '.css')
+			dest: path.join(source.dest, path.basename(filename).replace(ext, '.css'))
 		};
 		var stream = <stream.Readable>fs.createReadStream(path.resolve(filename));
 		this.compileStream(stream, (err, css) => {
