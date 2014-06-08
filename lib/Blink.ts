@@ -29,6 +29,27 @@ module Blink {
 		});
 	}
 
+	export function compileStream(options: IConfigurationOptions, stream: any,
+		callback?: (err: Error, config: Configuration, result: ICompiledResult) => void) {
+
+		var tempConfig = config.clone().set(options);
+		var compiler = new Compiler(tempConfig);
+		compiler.compileStream(stream, (err, result) => {
+			callback(err, tempConfig, result);
+		});
+	}
+
+	export function compileContents(options: IConfigurationOptions,
+		file: { src?: string; contents: string; },
+		callback?: (err: Error, config: Configuration, result: ICompiledResult) => void) {
+
+		var tempConfig = config.clone().set(options);
+		var compiler = new Compiler(tempConfig);
+		compiler.tryCompileContents(file, (err, result) => {
+			callback(err, tempConfig, result);
+		});
+	}
+
 	export class Compiler extends _Compiler {}
 	export class Rule     extends _Rule {}
 	export class Block    extends _Block {}

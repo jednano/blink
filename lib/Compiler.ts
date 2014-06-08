@@ -36,9 +36,7 @@ class Compiler {
 				return;
 			}
 			if (source instanceof stream.Readable) {
-				this.compileStream(source, (err, css) => {
-					callback(err, { contents: css });
-				});
+				this.compileStream(source, callback);
 				return;
 			}
 			if (source instanceof Rule) {
@@ -70,22 +68,26 @@ class Compiler {
 			dest: path.join(source.dest, path.basename(filename).replace(ext, '.css'))
 		};
 		var stream = <stream.Readable>fs.createReadStream(path.resolve(filename));
-		this.compileStream(stream, (err, css) => {
+		this.compileStream(stream, (err, compiled) => {
 			if (!err) {
-				result.contents = css;
+				callback(err, compiled);
+				return;
 			}
 			callback(err, result);
 		});
 	}
 
 	public compileStream(stream: stream.Readable,
-		callback: (err: Error, css?: string) => void) {
+		callback: (err: Error, result?: ICompiledResult) => void) {
 		this.readStream(stream, (err, contents) => {
 			if (err) {
 				callback(err);
 				return;
 			}
-			this.compileContents({ src: stream['path'], contents: contents }, callback);
+			this.tryCompileContents({
+				src: stream['path'],
+				contents: contents
+			}, callback);
 		});
 	}
 
@@ -104,12 +106,15 @@ class Compiler {
 		});
 	}
 
-	public compileContents(file: {src?: string; contents: string;},
-		callback: (err: Error, css?: string) => void) {
+	public tryCompileContents(file: {src?: string; contents: string;},
+		callback: (err: Error, result?: ICompiledResult) => void) {
 		try {
-			callback(null, this.compileRules([
-				this.compileModule(stripBOM(file.contents), path.dirname(file.src))
-			]));
+			callback(null, {
+				src: file.src,
+				contents: this.compileRules([
+					this.compileModule(stripBOM(file.contents), path.dirname(file.src))
+				])
+			});
 		} catch (err) {
 			callback(err);
 		}
