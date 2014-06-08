@@ -19,7 +19,7 @@ class Compiler {
 		this.config = config || new Configuration();
 	}
 
-	compile(sources: any[],
+	public compile(sources: any[],
 		callback: (err: Error, result?: ICompiledResult) => void) {
 
 		sources = sources || [];
@@ -78,15 +78,14 @@ class Compiler {
 		});
 	}
 
-	private compileStream(stream: stream.Readable,
+	public compileStream(stream: stream.Readable,
 		callback: (err: Error, css?: string) => void) {
 		this.readStream(stream, (err, contents) => {
 			if (err) {
 				callback(err);
 				return;
 			}
-			var folder = path.dirname(stream['path']);
-			this.tryCompileRules(contents, folder, callback);
+			this.compileContents({ src: stream['path'], contents: contents }, callback);
 		});
 	}
 
@@ -105,11 +104,11 @@ class Compiler {
 		});
 	}
 
-	private tryCompileRules(contents: string, folder: string,
+	public compileContents(file: {src?: string; contents: string;},
 		callback: (err: Error, css?: string) => void) {
 		try {
 			callback(null, this.compileRules([
-				this.compileModule(stripBOM(contents), folder)
+				this.compileModule(stripBOM(file.contents), path.dirname(file.src))
 			]));
 		} catch (err) {
 			callback(err);
