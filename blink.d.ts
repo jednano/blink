@@ -1,4 +1,4 @@
 declare module "blink" {
-	import Blink = require('lib/Blink');
-	export = Blink;
+	import blink = require('lib/Blink');
+	export = blink;
 }

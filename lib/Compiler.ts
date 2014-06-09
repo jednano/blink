@@ -1,14 +1,14 @@
 ﻿import fs = require('fs');
 var mod = require('module');
 import path = require('path');
-import stream = require('stream');
+import _stream = require('stream');
 var stripBOM = require('strip-bom');
 
 import a = require('./helpers/array');
 import Configuration = require('./Configuration');
 import ExtenderRegistry = require('./ExtenderRegistry');
-import ICompiledResult = require('./interfaces/ICompiledResult');
 import IConfigurationOptions = require('./interfaces/IConfigurationOptions');
+import IFile = require('./interfaces/IFile');
 import IHashTable = require('./interfaces/IHashTable');
 import Rule = require('./Rule');
 
@@ -19,12 +19,9 @@ class Compiler {
 		this.config = config || new Configuration();
 	}
 
-	public compile(sources: any[],
-		callback: (err: Error, result?: ICompiledResult) => void) {
+	public compile(sources: any[], callback: (err: Error, file?: IFile) => void) {
 
-		sources = sources || [];
-
-		sources.forEach(source => {
+		(sources || []).forEach(source => {
 			if (typeof source === 'string') {
 				this.compileFile({ src: source, dest: path.dirname(source) }, callback);
 				return;
@@ -35,7 +32,7 @@ class Compiler {
 				});
 				return;
 			}
-			if (source instanceof stream.Readable) {
+			if (source instanceof _stream.Readable) {
 				this.compileStream(source, callback);
 				return;
 			}
@@ -60,25 +57,21 @@ class Compiler {
 		}
 	}
 
-	private compileFile(source: {src: string; dest: string;}, callback: Function) {
-		var filename = source.src;
-		var ext = new RegExp('\\.' + path.extname(filename).substr(1) + '$');
-		var result: ICompiledResult = {
-			src: filename,
-			dest: path.join(source.dest, path.basename(filename).replace(ext, '.css'))
-		};
-		var stream = <stream.Readable>fs.createReadStream(path.resolve(filename));
+	private compileFile(file: IFile, callback: Function) {
+		var stream = fs.createReadStream(path.resolve(file.src));
 		this.compileStream(stream, (err, compiled) => {
 			if (!err) {
 				callback(err, compiled);
 				return;
 			}
-			callback(err, result);
+			file.dest = this.renameExtToCss(file);
+			callback(err, file);
 		});
 	}
 
-	public compileStream(stream: stream.Readable,
-		callback: (err: Error, result?: ICompiledResult) => void) {
+	public compileStream(stream: _stream.Readable,
+		callback: (err: Error, file?: IFile) => void) {
+
 		this.readStream(stream, (err, contents) => {
 			if (err) {
 				callback(err);
@@ -91,12 +84,12 @@ class Compiler {
 		});
 	}
 
-	private readStream(stream: stream.Readable,
+	private readStream(stream: _stream.Readable,
 		callback: (err: Error, contents?: string) => void) {
 		var contents = '';
 		stream.setEncoding('utf8');
 		stream.on('readable', () => {
-			contents += (<any>stream).read() || '';
+			contents += stream.read() || '';
 		});
 		stream.on('error', (err: Error) => {
 			callback(err);
@@ -106,11 +99,13 @@ class Compiler {
 		});
 	}
 
-	public tryCompileContents(file: {src?: string; contents: string;},
-		callback: (err: Error, result?: ICompiledResult) => void) {
+	public tryCompileContents(file: IFile,
+		callback: (err: Error, file?: IFile) => void) {
+
 		try {
 			callback(null, {
 				src: file.src,
+				dest: this.renameExtToCss(file),
 				contents: this.compileRules([
 					this.compileModule(stripBOM(file.contents), path.dirname(file.src))
 				])
@@ -118,6 +113,15 @@ class Compiler {
 		} catch (err) {
 			callback(err);
 		}
+	}
+
+	private renameExtToCss(file: IFile) {
+		if (!file.dest && file.src) {
+			var ext = new RegExp('\\.' + path.extname(file.src).substr(1) + '$');
+			return path.join(path.dirname(file.src),
+				path.basename(file.src).replace(ext, '.css'));
+		}
+		return file.dest;
 	}
 
 	private compileModule(contents: string, folder: string) {

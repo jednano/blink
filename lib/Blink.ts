@@ -12,7 +12,7 @@ import _IRuleBody = require('./interfaces/IRuleBody');
 import _Modifier = require('./Modifier');
 import _Rule = require('./Rule');
 import Configuration = require('./Configuration');
-import ICompiledResult = require('./interfaces/ICompiledResult');
+import IFile = require('./interfaces/IFile');
 
 
 module Blink {
@@ -20,33 +20,33 @@ module Blink {
 	export var config = new Configuration();
 
 	export function compile(options: IConfigurationOptions, sources: any[],
-		callback?: (err: Error, config: Configuration, result: ICompiledResult) => void) {
+		callback?: (err: Error, config: Configuration, file: IFile) => void) {
 
 		var tempConfig = config.clone().set(options);
 		var compiler = new Compiler(tempConfig);
-		compiler.compile(sources, (err, result) => {
-			callback(err, tempConfig, result);
+		compiler.compile(sources, (err, file) => {
+			callback(err, tempConfig, file);
 		});
 	}
 
 	export function compileStream(options: IConfigurationOptions, stream: any,
-		callback?: (err: Error, config: Configuration, result: ICompiledResult) => void) {
+		callback?: (err: Error, config: Configuration, file: IFile) => void) {
 
 		var tempConfig = config.clone().set(options);
 		var compiler = new Compiler(tempConfig);
-		compiler.compileStream(stream, (err, result) => {
-			callback(err, tempConfig, result);
+		compiler.compileStream(stream, (err, file) => {
+			callback(err, tempConfig, file);
 		});
 	}
 
 	export function compileContents(options: IConfigurationOptions,
 		file: { src?: string; contents: string; },
-		callback?: (err: Error, config: Configuration, result: ICompiledResult) => void) {
+		callback?: (err: Error, config: Configuration, file: IFile) => void) {
 
 		var tempConfig = config.clone().set(options);
 		var compiler = new Compiler(tempConfig);
-		compiler.tryCompileContents(file, (err, result) => {
-			callback(err, tempConfig, result);
+		compiler.tryCompileContents(file, (err, compiled) => {
+			callback(err, tempConfig, compiled);
 		});
 	}
 
