@@ -69,7 +69,7 @@ class Compiler {
 		});
 	}
 
-	public compileStream(stream: _stream.Readable,
+	public compileStream(stream: NodeJS.ReadableStream,
 		callback: (err: Error, file?: IFile) => void) {
 
 		this.readStream(stream, (err, contents) => {
@@ -84,7 +84,7 @@ class Compiler {
 		});
 	}
 
-	private readStream(stream: _stream.Readable,
+	private readStream(stream: NodeJS.ReadableStream,
 		callback: (err: Error, contents?: string) => void) {
 		var contents = '';
 		stream.setEncoding('utf8');
