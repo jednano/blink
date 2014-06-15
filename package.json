@@ -1,6 +1,6 @@
 {
   "name": "blink",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Blink converts Node.js modules into CSS and provides a CSS Authoring Framework, with BEM support.",
   "main": "./js/lib/blink.js",
   "scripts": {
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/jedmao/blink.git"
+    "url": "https://github.com/blinkjs/blink.git"
   },
   "keywords": [
     "blink",
@@ -20,9 +20,9 @@
   "author": "Jed Mao <jed.hunsaker+npm@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/jedmao/blink/issues"
+    "url": "https://github.com/blinkjs/blink/issues"
   },
-  "homepage": "https://github.com/jedmao/blink",
+  "homepage": "https://github.com/blinkjs/blink",
   "dependencies": {
     "node.extend": "^1.0.10",
     "strip-bom": "^0.3.1"
