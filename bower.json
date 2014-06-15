@@ -1,12 +1,18 @@
 {
   "name": "blink",
-  "version": "0.0.0",
   "homepage": "https://github.com/jedmao/blink",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jedmao/blink.git"
+  },
   "authors": [
     "Jed Mao <jed.hunsaker+npm@gmail.com>"
   ],
-  "description": "Blink is an open-source CSS Authoring Framework.",
-  "main": "./lib/api.js",
+  "description": "Blink converts Node.js modules into CSS and provides a CSS Authoring Framework, with BEM support.",
+  "main": [
+    "dist/blink.js",
+    "blink.d.ts"
+  ],
   "keywords": [
     "blink",
     "css",
@@ -15,13 +21,11 @@
     "framework"
   ],
   "license": "MIT",
-  "private": true,
   "ignore": [
     "**/.*",
     "node_modules",
     "bower_components",
-    "test",
-    "tests"
+    "test"
   ],
   "dependencies": {
     "dt-node": "https://github.com/jedmao/dt-node.git"

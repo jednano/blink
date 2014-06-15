@@ -4,7 +4,7 @@ var clc = require('cli-color');
 import fs = require('fs');
 var program = require('gitlike-cli');
 
-import blink = require('./Blink');
+import blink = require('./blink');
 
 
 var defaultColor = clc.cyan;

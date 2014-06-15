@@ -1,7 +1,7 @@
 ﻿import sinonChai = require('../../../sinon-chai');
 var expect = sinonChai.expect;
 import experimental = require('../../../../lib/extenders/experimental');
-import blink = require('../../../../lib/Blink');
+import blink = require('../../../../lib/blink');
 
 
 var config = blink.config;

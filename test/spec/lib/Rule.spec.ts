@@ -1,11 +1,11 @@
 ﻿import sinonChai = require('../../sinon-chai');
 var expect = sinonChai.expect;
-import Blink = require('../../../lib/Blink');
+import blink = require('../../../lib/blink');
 
 
 // ReSharper disable once InconsistentNaming
-var Rule = Blink.Rule;
-var config = Blink.config;
+var Rule = blink.Rule;
+var config = blink.config;
 
 // ReSharper disable WrongExpressionStatement
 describe('Rule', () => {

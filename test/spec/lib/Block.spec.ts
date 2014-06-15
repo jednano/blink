@@ -1,16 +1,16 @@
 ﻿import sinonChai = require('../../sinon-chai');
 var expect = sinonChai.expect;
-import Blink = require('../../../lib/Blink');
+import blink = require('../../../lib/blink');
 
 
-var config = Blink.config;
+var config = blink.config;
 var newline = config.newline;
 
 // ReSharper disable WrongExpressionStatement
 describe('Block', () => {
 
 	it('compiles a block', () => {
-		var block = new Blink.Block('a', { b: 'c' });
+		var block = new blink.Block('a', { b: 'c' });
 		expect(block.compile(config)).to.eq([
 			'.a {',
 			'  b: c;',
@@ -19,13 +19,13 @@ describe('Block', () => {
 	});
 
 	it('compiles a block with elements', () => {
-		var block = new Blink.Block('a', {
+		var block = new blink.Block('a', {
 			b: 'c',
 			elements: [
-				new Blink.Element('d', {
+				new blink.Element('d', {
 					e: 'f'
 				}),
-				new Blink.Element('g', {
+				new blink.Element('g', {
 					h: 'i'
 				})
 			]
@@ -46,13 +46,13 @@ describe('Block', () => {
 	});
 
 	it('compiles a block with modifiers', () => {
-		var block = new Blink.Block('a', {
+		var block = new blink.Block('a', {
 			b: 'c',
 			modifiers: [
-				new Blink.Modifier('d', {
+				new blink.Modifier('d', {
 					e: 'f'
 				}),
-				new Blink.Modifier('g', {
+				new blink.Modifier('g', {
 					h: 'i'
 				})
 			]
@@ -73,21 +73,21 @@ describe('Block', () => {
 	});
 
 	it('compiles a block with elements and modifiers', () => {
-		var block = new Blink.Block('a', {
+		var block = new blink.Block('a', {
 			b: 'c',
 			elements: [
-				new Blink.Element('d', {
+				new blink.Element('d', {
 					e: 'f'
 				}),
-				new Blink.Element('g', {
+				new blink.Element('g', {
 					h: 'i'
 				})
 			],
 			modifiers: [
-				new Blink.Modifier('j', {
+				new blink.Modifier('j', {
 					k: 'l'
 				}),
-				new Blink.Modifier('m', {
+				new blink.Modifier('m', {
 					n: 'o'
 				})
 			]
@@ -116,13 +116,13 @@ describe('Block', () => {
 	});
 
 	it('compiles a block with an element that has a modifier', () => {
-		var block = new Blink.Block('a', {
+		var block = new blink.Block('a', {
 			b: 'c',
 			elements: [
-				new Blink.Element('d', {
+				new blink.Element('d', {
 					e: 'f',
 					modifiers: [
-						new Blink.Modifier('g', {
+						new blink.Modifier('g', {
 							h: 'i'
 						})
 					]
@@ -145,13 +145,13 @@ describe('Block', () => {
 	});
 
 	it('compiles a block with a modifier that has an element', () => {
-		var block = new Blink.Block('a', {
+		var block = new blink.Block('a', {
 			b: 'c',
 			modifiers: [
-				new Blink.Modifier('d', {
+				new blink.Modifier('d', {
 					e: 'f',
 					elements: [
-						new Blink.Element('g', {
+						new blink.Element('g', {
 							h: 'i'
 						})
 					]

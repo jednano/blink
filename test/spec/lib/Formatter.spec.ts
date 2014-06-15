@@ -1,10 +1,10 @@
 ﻿import sinonChai = require('../../sinon-chai');
 var expect = sinonChai.expect;
-import Blink = require('../../../lib/Blink');
+import blink = require('../../../lib/blink');
 import Formatter = require('../../../lib/Formatter');
 
 
-var config = Blink.config;
+var config = blink.config;
 var newline = config.newline;
 
 // ReSharper disable WrongExpressionStatement

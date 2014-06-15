@@ -1,17 +1,17 @@
 ﻿import sinonChai = require('../../sinon-chai');
 var expect = sinonChai.expect;
-import Blink = require('../../../lib/Blink');
+import blink = require('../../../lib/blink');
 
 
-var config = Blink.config;
+var config = blink.config;
 var newline = config.newline;
 
 // ReSharper disable WrongExpressionStatement
 describe('Compiler', () => {
 
-	var compiler: Blink.Compiler;
+	var compiler: blink.Compiler;
 	beforeEach(() => {
-		compiler = new Blink.Compiler(config);
+		compiler = new blink.Compiler(config);
 	});
 
 	it('compiles extenders', () => {
@@ -25,10 +25,10 @@ describe('Compiler', () => {
 			}];
 		};
 		var rules = [
-			new Blink.Rule(['.foo'], {
+			new blink.Rule(['.foo'], {
 				extend: [ extender ]
 			}),
-			new Blink.Rule(['.bar'], {
+			new blink.Rule(['.bar'], {
 				extend: [ extender ]
 			})
 		];
@@ -50,13 +50,13 @@ describe('Compiler', () => {
 			}];
 		};
 		var rules = [
-			new Blink.Rule(['.foo'], {
+			new blink.Rule(['.foo'], {
 				extend: [ extender('quux') ]
 			}),
-			new Blink.Rule(['.bar'], {
+			new blink.Rule(['.bar'], {
 				extend: [ extender('corge') ]
 			}),
-			new Blink.Rule(['.baz'], {
+			new blink.Rule(['.baz'], {
 				extend: [ extender('quux') ]
 			})
 		];
@@ -78,15 +78,15 @@ describe('Compiler', () => {
 			}];
 		};
 		var rules = [
-			new Blink.Rule(['.foo'], {
+			new blink.Rule(['.foo'], {
 				cap: 'qux',
 				waldo: 'WALDO'
 			}),
-			new Blink.Rule(['.bar'], {
+			new blink.Rule(['.bar'], {
 				cap: 'fred',
 				thud: 'THUD'
 			}),
-			new Blink.Rule(['.baz'], {
+			new blink.Rule(['.baz'], {
 				cap: 'qux',
 				garpley: 'GARPLEY'
 			})
