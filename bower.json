@@ -1,9 +1,9 @@
 {
   "name": "blink",
-  "homepage": "https://github.com/jedmao/blink",
+  "homepage": "https://github.com/blinkjs/blink",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jedmao/blink.git"
+    "url": "https://github.com/blinkjs/blink.git"
   },
   "authors": [
     "Jed Mao <jed.hunsaker+npm@gmail.com>"
