@@ -1,0 +1,19 @@
+{
+  "name": "dt-node",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components"
+  ],
+  "homepage": "https://github.com/jedmao/dt-node",
+  "_release": "dcf81f3385",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "dcf81f3385bbc7e7e0899e3c13ec12747f81255f"
+  },
+  "_source": "https://github.com/jedmao/dt-node.git",
+  "_target": "*",
+  "_originalSource": "https://github.com/jedmao/dt-node.git",
+  "_direct": true
+}
