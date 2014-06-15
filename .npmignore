@@ -1,4 +1,6 @@
 .*
 *.sln*
-Gruntfile.js
+gulpfile.js
+dist
+lib
 test

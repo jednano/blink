@@ -1,14 +1,14 @@
 {
   "name": "blink",
-  "version": "0.3.2",
-  "description": "Blink is an open-source CSS Authoring Framework.",
+  "version": "0.3.3",
+  "description": "Blink converts Node.js modules into CSS and provides a CSS Authoring Framework, with BEM support.",
   "bin": {
     "blink": "./bin/blink"
   },
-  "main": "./lib/api.js",
+  "main": "./js/lib/blink.js",
   "scripts": {
     "postinstall": "bower install",
-    "test": "grunt test"
+    "test": "gulp test"
   },
   "repository": {
     "type": "git",
@@ -31,20 +31,20 @@
     "cli-color": "^0.3.2",
     "gitlike-cli": "0.0.10",
     "node.extend": "^1.0.10",
-    "strip-bom": "^0.1.0",
-    "typescript-require": "^0.2.6"
+    "strip-bom": "^0.1.0"
   },
   "devDependencies": {
     "chai": "^1.9.1",
-    "grunt": "^0.4.4",
-    "grunt-contrib-clean": "^0.5.0",
-    "grunt-contrib-watch": "^0.6.1",
-    "grunt-mocha-test": "^0.10.2",
-    "grunt-typescript-compile": "^0.2.0",
-    "load-grunt-tasks": "^0.4.0",
+    "gulp": "^3.8.0",
+    "gulp-browserify": "^0.5.0",
+    "gulp-clean": "^0.3.0",
+    "gulp-mocha": "^0.4.1",
+    "gulp-rename": "^1.2.0",
+    "gulp-tsc": "^0.9.1",
+    "gulp-uglify": "^0.3.0",
+    "gulp-util": "^2.2.17",
     "mocha": "^1.18.2",
     "sinon": "^1.9.1",
-    "sinon-chai": "^2.5.0",
-    "time-grunt": "^0.3.1"
+    "sinon-chai": "^2.5.0"
   }
 }

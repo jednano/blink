@@ -1,6 +1,6 @@
 ﻿import sinonChai = require('../../../sinon-chai');
 var expect = sinonChai.expect;
-import blink = require('../../../../lib/Blink');
+import blink = require('../../../../lib/blink');
 import boxSizing = require('../../../../lib/extenders/boxSizing');
 
 

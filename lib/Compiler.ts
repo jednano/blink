@@ -78,7 +78,7 @@ class Compiler {
 				return;
 			}
 			this.tryCompileContents({
-				src: stream['path'],
+				src: (<any>stream).path,
 				contents: contents
 			}, callback);
 		});
