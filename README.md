@@ -44,7 +44,7 @@ The possibilities are endless.
 Blink is designed with [BEM syntax][] in mind. You can create blocks, elements and
 modifiers and their CSS selectors will be generated for you. You can configure
 your BEM format however you want, but the default naming convention follows that
-which is defined in [MindBEMding � getting your head 'round BEM syntax][].
+which is defined in [MindBEMding &ndash; getting your head 'round BEM syntax][].
 
 Here's an example of a block with both an element and a modifier:
 
@@ -321,13 +321,13 @@ import blink = require('blink');
 
 var normalize = [
 
-	new blink.Rule(['html'], {
+	new blink.Rule('html', {
 		font: {
 			family: 'sans-serif'
 		}
 	}),
 
-	new blink.Rule(['body'], {
+	new blink.Rule('body', {
 		margin: 0
 	}),
 
@@ -452,7 +452,7 @@ Released under the MIT license.
 [Node.js]: http://nodejs.org/
 [Node]: http://nodejs.org/
 [BEM syntax]: http://csswizardry.com/2013/01/mindbemding-getting-your-head-round-bem-syntax/
-[MindBEMding � getting your head 'round BEM syntax]: http://csswizardry.com/2013/01/mindbemding-getting-your-head-round-bem-syntax/
+[MindBEMding &ndash; getting your head 'round BEM syntax]: http://csswizardry.com/2013/01/mindbemding-getting-your-head-round-bem-syntax/
 [TypeScript]: http://www.typescriptlang.org/
 [other editors]: http://msopentech.com/blog/2012/10/01/sublime-text-vi-emacs-typescript-enabled/
 [Visual Studio]: http://www.visualstudio.com/
