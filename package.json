@@ -22,7 +22,7 @@
   "bugs": {
     "url": "https://github.com/blinkjs/blink/issues"
   },
-  "homepage": "https://github.com/blinkjs/blink",
+  "homepage": "http://blinkjs.github.io/blink",
   "engines": {
     "node": ">=0.10.28 <0.12"
   },
