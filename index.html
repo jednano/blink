@@ -31,37 +31,432 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        <h3>
-<a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
+        <p><a href="http://travis-ci.org/blinkjs/blink"><img src="https://secure.travis-ci.org/blinkjs/blink.png?branch=master" alt="Build Status"></a>
+<a href="https://gemnasium.com/blinkjs/blink"><img src="https://gemnasium.com/blinkjs/blink.png" alt="Dependency Status"></a>
+<a href="http://badge.fury.io/js/blink"><img src="https://badge.fury.io/js/blink.png" alt="NPM version"></a>
+<a href="https://sourcegraph.com/github.com/blinkjs/blink"><img src="https://sourcegraph.com/api/repos/github.com/blinkjs/blink/counters/views-24h.png" alt="Views"></a></p>
 
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
+<p><a href="https://nodei.co/npm/blink/"><img src="https://nodei.co/npm/blink.png?downloads=true" alt="NPM"></a></p>
 
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
-</code></pre>
+<h2>
+<a name="requirements" class="anchor" href="#requirements"><span class="octicon octicon-link"></span></a>Requirements</h2>
 
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
+<ul>
+<li><a href="http://nodejs.org/">Node</a></li>
+</ul><h2>
+<a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a>Features</h2>
+
+<ul>
+<li>Runs on <a href="http://nodejs.org/">Node</a>
+</li>
+<li>OOCSS with <a href="http://csswizardry.com/2013/01/mindbemding-getting-your-head-round-bem-syntax/">BEM syntax</a>
+</li>
+<li>Extenders</li>
+<li>Overrides</li>
+<li>Rules</li>
+<li>API</li>
+<li>TypeScript source</li>
+</ul><h3>
+<a name="feature-roadmap" class="anchor" href="#feature-roadmap"><span class="octicon octicon-link"></span></a>Feature Roadmap</h3>
+
+<ul>
+<li>Responders</li>
+<li>Spriting</li>
+</ul><h3>
+<a name="runs-on-node" class="anchor" href="#runs-on-node"><span class="octicon octicon-link"></span></a>Runs on Node</h3>
+
+<p>Because blink runs on <a href="http://nodejs.org/">Node</a>, you have access to all JavaScript syntax, including
+variables and functions, as well as <a href="http://nodejs.org/api/fs.html">file I/O</a>.
+The possibilities are endless.</p>
 
 <h3>
-<a name="designer-templates" class="anchor" href="#designer-templates"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
+<a name="oocss-with-bem" class="anchor" href="#oocss-with-bem"><span class="octicon octicon-link"></span></a>OOCSS with BEM</h3>
 
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
+<p>Blink is designed with <a href="http://csswizardry.com/2013/01/mindbemding-getting-your-head-round-bem-syntax/">BEM syntax</a> in mind. You can create blocks, elements and
+modifiers and their CSS selectors will be generated for you. You can configure
+your BEM format however you want, but the default naming convention follows that
+which is defined in <a href="http://csswizardry.com/2013/01/mindbemding-getting-your-head-round-bem-syntax/">MindBEMding – getting your head 'round BEM syntax</a>.</p>
+
+<p>Here's an example of a block with both an element and a modifier:</p>
+
+<div class="highlight highlight-ts"><pre><span class="c1">///&lt;reference path="./node_modules/blink/blink.d.ts"/&gt;</span>
+<span class="kr">import</span> <span class="nx">blink</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'blink'</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">btn</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">blink</span><span class="p">.</span><span class="nx">Block</span><span class="p">(</span><span class="s1">'btn'</span><span class="p">,</span> <span class="p">{</span>
+
+    <span class="nx">min</span><span class="o">:</span> <span class="p">{</span>
+        <span class="nx">width</span>: <span class="kt">80</span>
+    <span class="p">},</span>
+
+    <span class="nx">elements</span><span class="o">:</span> <span class="p">[</span>
+        <span class="k">new</span> <span class="nx">blink</span><span class="p">.</span><span class="nx">Element</span><span class="p">(</span><span class="s1">'foreground'</span><span class="p">,</span> <span class="p">{</span>
+            <span class="nx">color</span><span class="o">:</span> <span class="s1">'black'</span>
+        <span class="p">})</span>
+    <span class="p">],</span>
+
+    <span class="nx">modifiers</span><span class="o">:</span> <span class="p">[</span>
+        <span class="k">new</span> <span class="nx">blink</span><span class="p">.</span><span class="nx">Modifier</span><span class="p">(</span><span class="s1">'wide'</span><span class="p">,</span> <span class="p">{</span>
+            <span class="nx">min</span><span class="o">:</span> <span class="p">{</span>
+                <span class="nx">width</span>: <span class="kt">120</span>
+            <span class="p">}</span>
+        <span class="p">})</span>
+    <span class="p">]</span>
+<span class="p">});</span>
+
+<span class="kr">export</span> <span class="o">=</span> <span class="nx">btn</span><span class="p">;</span>
+</pre></div>
+
+<p>This would generate the following CSS:</p>
+
+<div class="highlight highlight-css"><pre><span class="nc">.btn</span> <span class="p">{</span>
+    <span class="k">min-width</span><span class="o">:</span> <span class="m">80px</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.btn__foreground</span> <span class="p">{</span>
+    <span class="k">color</span><span class="o">:</span> <span class="nb">black</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.btn--wide</span> <span class="p">{</span>
+    <span class="k">min-width</span><span class="o">:</span> <span class="m">120px</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
 
 <h3>
-<a name="rather-drive-stick" class="anchor" href="#rather-drive-stick"><span class="octicon octicon-link"></span></a>Rather Drive Stick?</h3>
+<a name="extenders" class="anchor" href="#extenders"><span class="octicon octicon-link"></span></a>Extenders</h3>
 
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
+<p>Extenders are named functions that return an array that is described in more detail
+below. An extender with no parameters always returns the same output. For example,
+here's an extender named fill that fills its container:</p>
+
+<div class="highlight highlight-ts"><pre><span class="kr">export</span> <span class="kd">function</span> <span class="nx">fill</span><span class="p">()</span><span class="o">:</span> <span class="nx">any</span><span class="p">[]</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">[</span><span class="nx">arguments</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="p">[</span><span class="s1">'position'</span><span class="p">,</span> <span class="s1">'absolute'</span><span class="p">],</span>
+            <span class="p">[</span><span class="s1">'top'</span><span class="p">,</span> <span class="s1">'0'</span><span class="p">],</span>
+            <span class="p">[</span><span class="s1">'right'</span><span class="p">,</span> <span class="s1">'0'</span><span class="p">],</span>
+            <span class="p">[</span><span class="s1">'bottom'</span><span class="p">,</span> <span class="s1">'0'</span><span class="p">],</span>
+            <span class="p">[</span><span class="s1">'left'</span><span class="p">,</span> <span class="s1">'0'</span><span class="p">]</span>
+        <span class="p">];</span>
+    <span class="p">}];</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>Let's create two blocks named <code>.foo</code> and <code>bar</code> that both extend fill.</p>
+
+<div class="highlight highlight-ts"><pre><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">blink</span><span class="p">.</span><span class="nx">compileRules</span><span class="p">([</span>
+    <span class="k">new</span> <span class="nx">blink</span><span class="p">.</span><span class="nx">Block</span><span class="p">(</span><span class="s1">'foo'</span><span class="p">,</span> <span class="p">{</span>
+        <span class="nx">extend</span><span class="o">:</span> <span class="p">[</span> <span class="nx">fill</span> <span class="p">]</span>
+    <span class="p">}),</span>
+    <span class="k">new</span> <span class="nx">blink</span><span class="p">.</span><span class="nx">Block</span><span class="p">(</span><span class="s1">'bar'</span><span class="p">,</span> <span class="p">{</span>
+        <span class="nx">extend</span><span class="o">:</span> <span class="p">[</span> <span class="nx">fill</span> <span class="p">]</span>
+    <span class="p">})</span>
+<span class="p">]));</span>
+</pre></div>
+
+<p>These two blocks share the same extender, so there's no reason to generate the
+same CSS twice. The above code would output the following:</p>
+
+<div class="highlight highlight-css"><pre><span class="nc">.foo</span><span class="o">,</span> <span class="nc">.bar</span> <span class="p">{</span>
+    <span class="k">position</span><span class="o">:</span> <span class="k">absolute</span><span class="p">;</span>
+    <span class="k">top</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
+    <span class="k">right</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
+    <span class="k">bottom</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
+    <span class="k">left</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>This is very powerful, especially when you want to spit-out multiple declarations.
+Why, you ask? Because you only have to spit-out those declarations once! You can
+extend it from hundreds of blocks, but those lines never get written more than
+once. This keeps your CSS as lean as possible.</p>
+
+<p>Now, let's talk about building your own extenders. The basic structure of an
+extender is thus:</p>
+
+<div class="highlight highlight-ts"><pre><span class="kr">export</span> <span class="kd">function</span> <span class="nx">nothing</span><span class="p">()</span><span class="o">:</span> <span class="nx">any</span><span class="p">[]</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">[</span><span class="nx">arguments</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">[];</span>
+    <span class="p">}];</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>This extender, as its name suggests, does nothing. The name, however, must be
+provided and must be unique.</p>
+
+<p>In this case, the extender has no arguments; yet, they must also be returned for
+unique registration purposes.</p>
+
+<p>Let's see what a more complicated, inlineBlock extender would look like.</p>
+
+<div class="highlight highlight-ts"><pre><span class="kr">export</span> <span class="kd">function</span> <span class="nx">inlineBlock</span><span class="p">()</span><span class="o">:</span> <span class="nx">any</span><span class="p">[]</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">[</span><span class="nx">arguments</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s1">'display'</span><span class="p">,</span> <span class="s1">'inline-block'</span><span class="p">];</span>
+    <span class="p">}];</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>This is all fine and good, but it's pretty useless. We can add a verticalAlign
+option to make it more dynamic.</p>
+
+<div class="highlight highlight-ts"><pre><span class="kr">export</span> <span class="kd">function</span> <span class="nx">inlineBlock</span><span class="p">(</span><span class="nx">options</span><span class="o">?:</span> <span class="p">{</span> <span class="nx">verticalAlign?</span>: <span class="kt">string</span> <span class="p">})</span><span class="o">:</span> <span class="nx">any</span><span class="p">[]</span> <span class="p">{</span>
+
+    <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
+
+    <span class="k">return</span> <span class="p">[</span><span class="nx">arguments</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">decs</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="nx">decs</span><span class="p">.</span><span class="nx">push</span><span class="p">([</span><span class="s1">'display'</span><span class="p">,</span> <span class="s1">'inline-block'</span><span class="p">]);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">verticalAlign</span> <span class="o">!==</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">decs</span><span class="p">.</span><span class="nx">push</span><span class="p">([</span><span class="s1">'vertical-align'</span><span class="p">,</span> <span class="nx">options</span><span class="p">.</span><span class="nx">verticalAlign</span> <span class="o">||</span> <span class="s1">'middle'</span><span class="p">]);</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">decs</span><span class="p">;</span>
+    <span class="p">}];</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>Great, but what about inline-block CSS hacks? Glad you asked! You can gain access
+to the configuration for a case like this.</p>
+
+<div class="highlight highlight-ts"><pre><span class="c1">///&lt;reference path="./node_modules/blink/blink.d.ts"/&gt;</span>
+<span class="kr">import</span> <span class="nx">blink</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'blink'</span><span class="p">);</span>
+
+<span class="kd">function</span> <span class="nx">inlineBlock</span><span class="p">(</span><span class="nx">options</span><span class="o">?:</span> <span class="p">{</span> <span class="nx">verticalAlign?</span>: <span class="kt">string</span><span class="p">;</span> <span class="p">})</span><span class="o">:</span> <span class="nx">any</span><span class="p">[]</span> <span class="p">{</span>
+
+    <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
+
+    <span class="k">return</span> <span class="p">[</span><span class="nx">arguments</span><span class="p">,</span> <span class="p">(</span><span class="nx">config</span>: <span class="kt">blink.Configuration</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">decs</span> <span class="o">=</span> <span class="p">[];</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">firefox</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">decs</span><span class="p">.</span><span class="nx">push</span><span class="p">([</span><span class="s1">'display'</span><span class="p">,</span> <span class="s1">'-moz-inline-stack'</span><span class="p">]);</span>
+        <span class="p">}</span>
+
+        <span class="nx">decs</span><span class="p">.</span><span class="nx">push</span><span class="p">([</span><span class="s1">'display'</span><span class="p">,</span> <span class="s1">'inline-block'</span><span class="p">]);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">verticalAlign</span> <span class="o">!==</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">decs</span><span class="p">.</span><span class="nx">push</span><span class="p">([</span><span class="s1">'vertical-align'</span><span class="p">,</span> <span class="nx">options</span><span class="p">.</span><span class="nx">verticalAlign</span> <span class="o">||</span> <span class="s1">'middle'</span><span class="p">]);</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">ie</span> <span class="o">&lt;</span> <span class="mi">8</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">decs</span><span class="p">.</span><span class="nx">push</span><span class="p">([</span><span class="s1">'*vertical-align'</span><span class="p">,</span> <span class="s1">'auto'</span><span class="p">]);</span>
+            <span class="nx">decs</span><span class="p">.</span><span class="nx">push</span><span class="p">([</span><span class="s1">'zoom'</span><span class="p">,</span> <span class="s1">'1'</span><span class="p">]);</span>
+            <span class="nx">decs</span><span class="p">.</span><span class="nx">push</span><span class="p">([</span><span class="s1">'*display'</span><span class="p">,</span> <span class="s1">'inline'</span><span class="p">]);</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nx">decs</span><span class="p">;</span>
+    <span class="p">}];</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>Now, that's a nice extender! Once you change your configuration to support newer
+browsers, the CSS hacks disappear. No need to change any of your source code. It's
+all about the configuration.</p>
+
+<h4>
+<a name="extender-registration" class="anchor" href="#extender-registration"><span class="octicon octicon-link"></span></a>Extender registration</h4>
+
+<p>It's important for you to know that, behind the scenes, blink is really smart
+about extender registration. It doesn't just register your extender by function
+name, but also by the arguments you pass in. This means if you extend
+<code>inlineBlock({ verticalAlign: 'top' })</code> 50 times and
+<code>inlineBlock({ verticalAlign: 'bottom' })</code> 20 times, only two rules will be
+generated. Different input yields different output, so it has to generate two
+rules for this scenario.</p>
+
+<h4>
+<a name="extenders-calling-other-extenders" class="anchor" href="#extenders-calling-other-extenders"><span class="octicon octicon-link"></span></a>Extenders calling other extenders</h4>
+
+<p>Extenders can call other extenders directly, but you must provide the extender
+with the configuration.</p>
+
+<div class="highlight highlight-ts"><pre><span class="kr">import</span> <span class="nx">blink</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'blink'</span><span class="p">);</span>
+
+<span class="kd">function</span> <span class="nx">boxSizing</span><span class="p">(</span><span class="nx">value</span>: <span class="kt">string</span><span class="p">)</span><span class="o">:</span> <span class="nx">any</span><span class="p">[]</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">[</span><span class="nx">arguments</span><span class="p">,</span> <span class="p">(</span><span class="nx">config</span>: <span class="kt">blink.Configuration</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">blink</span><span class="p">.</span><span class="nx">extenders</span><span class="p">.</span><span class="nx">experimental</span><span class="p">(</span><span class="s1">'box-sizing'</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="p">{</span>
+            <span class="nx">official</span>: <span class="kt">true</span><span class="p">,</span>  <span class="c1">// Opera/IE 8+</span>
+              <span class="nx">webkit</span>: <span class="kt">true</span><span class="p">,</span>  <span class="c1">// Safari/Chrome, other WebKit</span>
+                 <span class="nx">moz</span>: <span class="kt">true</span>   <span class="c1">// Firefox, other Gecko</span>
+        <span class="p">})[</span><span class="mi">1</span><span class="p">](</span><span class="nx">config</span><span class="p">);</span>
+    <span class="p">}];</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>Notice that index 1 accessed the extender function. When calling an extender
+directly the arguments become useless, so we throw them away.</p>
+
+<h4>
+<a name="where-are-the-includes-and-mixins" class="anchor" href="#where-are-the-includes-and-mixins"><span class="octicon octicon-link"></span></a>Where are the includes and mixins?</h4>
+
+<p>You might be wondering if blink supports includes and mixins. The answer is yes
+and no. It is a blink philosophy that includes have traditionally been used in
+cases where extension was more appropriate. As such, the include paradigm has been
+included in the extenders themselves. All you have to do is extend everything
+and blink will determine whether your extension can be shared across rules or not.
+It's just one less thing for you to worry about and it results in automatically
+leaner CSS.</p>
+
+<p>As for mixins, they are really no different than functions, which are made
+available to you in normal JavaScript syntax.</p>
+
+<p>That said, you can, technically, include extenders in your rules. That is how
+blink works behind the scenes, so it does work, but it's undocumented,
+unsupported and encouraged against. If you come up with a valid use case, open
+an issue and it will be discussed.</p>
 
 <h3>
-<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
+<a name="overrides" class="anchor" href="#overrides"><span class="octicon octicon-link"></span></a>Overrides</h3>
 
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
+<p>Overrides are functions – no different than extenders – that allow you
+to override a single CSS declaration with any number of declarations. In fact, you
+can and often will register extenders <em>as</em> overrides. Overrides are registered on
+the configuration object. For example, say we want the box-sizing extender above
+to be registered as an override:</p>
+
+<div class="highlight highlight-ts"><pre><span class="c1">///&lt;reference path="./node_modules/blink/blink.d.ts"/&gt;</span>
+<span class="kr">import</span> <span class="nx">blink</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'blink'</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">overrides</span> <span class="o">=</span> <span class="nx">blink</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">overrides</span><span class="p">;</span>
+
+<span class="nx">overrides</span><span class="p">[</span><span class="s1">'box-sizing'</span><span class="p">]</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'./lib/extenders/boxSizing'</span><span class="p">);</span>
+<span class="c1">// Register more overrides here.</span>
+</pre></div>
+
+<p><em>Note: override keys are not dasherized for you.</em></p>
+
+<p>Now, every time someone declares <code>box-sizing: whatever</code> your override will be
+called with <code>whatever</code> as the first and only argument. The returned set of
+declarations will replace the original one.</p>
 
 <h3>
-<a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
+<a name="rules" class="anchor" href="#rules"><span class="octicon octicon-link"></span></a>Rules</h3>
 
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
+<p>Outside of BEM blocks, you'll definitely need to write rules for page defaults.
+For this, a Rule class is made available to you:</p>
+
+<div class="highlight highlight-ts"><pre><span class="c1">///&lt;reference path="./node_modules/blink/blink.d.ts"/&gt;</span>
+<span class="kr">import</span> <span class="nx">blink</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'blink'</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">normalize</span> <span class="o">=</span> <span class="p">[</span>
+
+    <span class="k">new</span> <span class="nx">blink</span><span class="p">.</span><span class="nx">Rule</span><span class="p">([</span><span class="s1">'html'</span><span class="p">],</span> <span class="p">{</span>
+        <span class="nx">font</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">family</span><span class="o">:</span> <span class="s1">'sans-serif'</span>
+        <span class="p">}</span>
+    <span class="p">}),</span>
+
+    <span class="k">new</span> <span class="nx">blink</span><span class="p">.</span><span class="nx">Rule</span><span class="p">([</span><span class="s1">'body'</span><span class="p">],</span> <span class="p">{</span>
+        <span class="nx">margin</span>: <span class="kt">0</span>
+    <span class="p">}),</span>
+
+    <span class="k">new</span> <span class="nx">blink</span><span class="p">.</span><span class="nx">Rule</span><span class="p">([</span><span class="s1">'a:active'</span><span class="p">,</span> <span class="s1">'a:hover'</span><span class="p">],</span> <span class="p">{</span>
+        <span class="nx">outline</span>: <span class="kt">0</span>
+    <span class="p">})</span>
+
+    <span class="c1">// ...</span>
+
+<span class="p">];</span>
+
+<span class="kr">export</span> <span class="o">=</span> <span class="nx">normalize</span><span class="p">;</span>
+</pre></div>
+
+<p>You are encouraged to use BEM blocks for all of your components. There's nothing
+stopping you from using basic rules, but you should avoid them if at all possible.</p>
+
+<h3>
+<a name="node-api" class="anchor" href="#node-api"><span class="octicon octicon-link"></span></a>Node API</h3>
+
+<p>With all the new build tools and taks runners springing up, blink was built with
+that in mind, that various tools would need access to the compiled results without
+writing any files to the disk.</p>
+
+<h3>
+<a name="typescript-source" class="anchor" href="#typescript-source"><span class="octicon octicon-link"></span></a>TypeScript source</h3>
+
+<p>Since blink source code is written in <a href="http://www.typescriptlang.org/">TypeScript</a>, you don't need to constantly
+look-up documentation to gain insight as to how you can use the blink API.
+Unfortunately, although there is <a href="http://www.typescriptlang.org/">TypeScript</a> support for <a href="http://msopentech.com/blog/2012/10/01/sublime-text-vi-emacs-typescript-enabled/">other editors</a>, you
+won't get the powerful feature of Intellisense unless you are using
+<a href="http://www.visualstudio.com/">Visual Studio</a>.</p>
+
+<p>BTW, you can write your blink files in <a href="http://www.typescriptlang.org/">TypeScript</a> or JavaScript. It really
+doesn't matter as long as it ends up in JavaScript.</p>
+
+<h2>
+<a name="getting-started" class="anchor" href="#getting-started"><span class="octicon octicon-link"></span></a>Getting Started</h2>
+
+<h3>
+<a name="cli-usage" class="anchor" href="#cli-usage"><span class="octicon octicon-link"></span></a>CLI Usage</h3>
+
+<div class="highlight highlight-bash"><pre><span class="nv">$ </span>npm install -g blink
+</pre></div>
+
+<h3>
+<a name="library-usage" class="anchor" href="#library-usage"><span class="octicon octicon-link"></span></a>Library Usage</h3>
+
+<div class="highlight highlight-bash"><pre><span class="nv">$ </span>npm install --save-dev blink
+</pre></div>
+
+<div class="highlight highlight-ts"><pre><span class="c1">///&lt;reference path="./node_modules/blink/blink.d.ts"/&gt;</span>
+<span class="kr">import</span> <span class="nx">blink</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'blink'</span><span class="p">);</span>
+</pre></div>
+
+<h4>
+<a name="compileoptions-iconfigurationoptions-files-string-callback-exitcode-number--void-void" class="anchor" href="#compileoptions-iconfigurationoptions-files-string-callback-exitcode-number--void-void"><span class="octicon octicon-link"></span></a>compile(options: IConfigurationOptions, files: string[], callback: (exitCode: number) =&gt; void): void</h4>
+
+<h4>
+<a name="compilerpublic-config-configuration" class="anchor" href="#compilerpublic-config-configuration"><span class="octicon octicon-link"></span></a>Compiler(public config?: Configuration)</h4>
+
+<h5>
+<a name="compilefiles-string-callback-err-error-results-icompiledresult--void-void" class="anchor" href="#compilefiles-string-callback-err-error-results-icompiledresult--void-void"><span class="octicon octicon-link"></span></a>compile(files: string[], callback: (err: Error, results?: ICompiledResult[]) =&gt; void): void</h5>
+
+<h5>
+<a name="compilerulesrules-rule-string" class="anchor" href="#compilerulesrules-rule-string"><span class="octicon octicon-link"></span></a>compileRules(rules: Rule[]): string</h5>
+
+<h4>
+<a name="icompiledresult" class="anchor" href="#icompiledresult"><span class="octicon octicon-link"></span></a>ICompiledResult</h4>
+
+<div class="highlight highlight-ts"><pre><span class="kr">interface</span> <span class="nx">ICompiledResult</span> <span class="p">{</span>
+    <span class="nx">src</span>: <span class="kt">string</span><span class="p">;</span>
+    <span class="nx">dest</span>: <span class="kt">string</span><span class="p">;</span>
+    <span class="nx">contents</span>: <span class="kt">string</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+<h4>
+<a name="iconfigurationoptions" class="anchor" href="#iconfigurationoptions"><span class="octicon octicon-link"></span></a>IConfigurationOptions</h4>
+
+<div class="highlight highlight-ts"><pre><span class="kr">interface</span> <span class="nx">IConfigurationOptions</span> <span class="p">{</span>
+
+    <span class="nx">config?</span>: <span class="kt">string</span><span class="p">;</span>
+
+    <span class="c1">// Output style</span>
+    <span class="nx">style?</span>: <span class="kt">string</span><span class="p">;</span>
+    <span class="nx">oneIndent?</span>: <span class="kt">string</span><span class="p">;</span>
+    <span class="nx">quote?</span>: <span class="kt">string</span><span class="p">;</span>
+    <span class="nx">newline?</span>: <span class="kt">string</span><span class="p">;</span>
+
+    <span class="c1">// BEM</span>
+    <span class="nx">block?</span>: <span class="kt">string</span><span class="p">;</span>
+    <span class="nx">element?</span>: <span class="kt">string</span><span class="p">;</span>
+    <span class="nx">modifier?</span>: <span class="kt">string</span><span class="p">;</span>
+
+    <span class="c1">// Cross-Browser Support</span>
+    <span class="nx">chrome?</span>: <span class="kt">number</span><span class="p">;</span>
+    <span class="nx">firefox?</span>: <span class="kt">number</span><span class="p">;</span>
+    <span class="nx">ie?</span>: <span class="kt">number</span><span class="p">;</span>
+    <span class="nx">opera?</span>: <span class="kt">number</span><span class="p">;</span>
+
+<span class="p">}</span>
+</pre></div>
+
+<h2>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
+
+<p>Released under the MIT license.</p>
+
+<p><a href="https://bitdeli.com/free" title="Bitdeli Badge"><img src="https://d2weczhvl823v0.cloudfront.net/blinkjs/blink/trend.png" alt="Bitdeli Badge"></a></p>
       </section>
     </div>
 
