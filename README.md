@@ -2,10 +2,10 @@
 
 > Blink converts [Node.js][] modules into CSS and provides a CSS Authoring Framework, with BEM support.
 
-[![Build Status][]](http://travis-ci.org/jedmao/blink)
-[![Dependency Status][]](https://gemnasium.com/jedmao/blink)
+[![Build Status][]](http://travis-ci.org/blinkjs/blink)
+[![Dependency Status][]](https://gemnasium.com/blinkjs/blink)
 [![NPM version][]](http://badge.fury.io/js/blink)
-[![Views][]](https://sourcegraph.com/github.com/jedmao/blink)
+[![Views][]](https://sourcegraph.com/github.com/blinkjs/blink)
 
 [![NPM](https://nodei.co/npm/blink.png?downloads=true)](https://nodei.co/npm/blink/)
 
@@ -441,14 +441,14 @@ interface IConfigurationOptions {
 
 Released under the MIT license.
 
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/jedmao/blink/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/blinkjs/blink/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
 
 
-[Build Status]: https://secure.travis-ci.org/jedmao/blink.png?branch=master
-[Dependency Status]: https://gemnasium.com/jedmao/blink.png
+[Build Status]: https://secure.travis-ci.org/blinkjs/blink.png?branch=master
+[Dependency Status]: https://gemnasium.com/blinkjs/blink.png
 [NPM version]: https://badge.fury.io/js/blink.png
-[Views]: https://sourcegraph.com/api/repos/github.com/jedmao/blink/counters/views-24h.png
+[Views]: https://sourcegraph.com/api/repos/github.com/blinkjs/blink/counters/views-24h.png
 [Node.js]: http://nodejs.org/
 [Node]: http://nodejs.org/
 [BEM syntax]: http://csswizardry.com/2013/01/mindbemding-getting-your-head-round-bem-syntax/
