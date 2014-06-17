@@ -1,4 +1,4 @@
-<img src="https://github.com/blinkjs/blink/blob/master/artwork/blink_256_transparent_bg.png?raw=true" width="256" height="256" alt="blink" align="right">
+<img src="https://github.com/blinkjs/blink/blob/master/artwork/blink_256_nobg.png?raw=true" width="256" height="256" alt="blink" align="right">
 
 > Blink converts [Node.js][] modules into CSS and provides a CSS Authoring Framework, with BEM support.
 
