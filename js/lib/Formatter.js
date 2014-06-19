@@ -10,9 +10,12 @@ var Formatter = (function () {
 
     Formatter.prototype.formatRules = function (rules, level) {
         var _this = this;
+        if (typeof rules === 'undefined') {
+            console.log('undefined');
+        }
         return rules.map(function (rule) {
             return _this.formatRule(rule, level);
-        }).join(this.config.newline);
+        }).join('');
     };
 
     Formatter.prototype.formatRule = function (rule, level) {

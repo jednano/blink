@@ -4,6 +4,7 @@ import a = require('./helpers/array');
 import Configuration = require('./Configuration');
 import Formatter = require('./Formatter');
 import IRuleBody = require('./interfaces/IRuleBody');
+import MediaAtRule = require('./MediaAtRule');
 import s = require('./helpers/string');
 
 
@@ -20,15 +21,31 @@ class Rule {
 		return this.body.include;
 	}
 
-	public selectors: string[];
+	public get responders() {
+		return this.body.respond;
+	}
 
-	constructor(selectors: any, public body?: IRuleBody) {
-		if (typeof selectors === 'string') {
-			selectors = this.splitSelectors(selectors);
+	private _selectors: string[];
+
+	public get selectors() {
+		return this._selectors;
+	}
+
+	public set selectors(value: any) {
+		if (!value) {
+			this._selectors = [];
+			return;
 		}
-		this.selectors = selectors.map(selector => {
+		if (typeof value === 'string') {
+			value = this.splitSelectors(value);
+		}
+		this._selectors = value.map(selector => {
 			return selector.trim();
 		});
+	}
+
+	constructor(selectors: any, public body?: IRuleBody) {
+		this.selectors = selectors;
 	}
 
 	private splitSelectors(selectors: string) {
@@ -41,6 +58,7 @@ class Rule {
 		var body = clone.body;
 		delete body.extend;
 		delete body.include;
+		delete body.respond;
 
 		var resolved = [];
 
@@ -145,7 +163,7 @@ class Rule {
 	private compilePrimitive(value: any) {
 		switch (typeof value) {
 			case 'string':
-				if (~value.indexOf(' ')) {
+				if (value.indexOf(' ') > -1) {
 					var quote = this.config.quote;
 					return quote + value.replace(new RegExp(quote, 'g'), '\\' + quote) + quote;
 				}

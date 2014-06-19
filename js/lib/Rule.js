@@ -7,12 +7,7 @@ var s = require('./helpers/string');
 var Rule = (function () {
     function Rule(selectors, body) {
         this.body = body;
-        if (typeof selectors === 'string') {
-            selectors = this.splitSelectors(selectors);
-        }
-        this.selectors = selectors.map(function (selector) {
-            return selector.trim();
-        });
+        this.selectors = selectors;
     }
     Object.defineProperty(Rule.prototype, "extenders", {
         get: function () {
@@ -30,6 +25,35 @@ var Rule = (function () {
         configurable: true
     });
 
+    Object.defineProperty(Rule.prototype, "responders", {
+        get: function () {
+            return this.body.respond;
+        },
+        enumerable: true,
+        configurable: true
+    });
+
+    Object.defineProperty(Rule.prototype, "selectors", {
+        get: function () {
+            return this._selectors;
+        },
+        set: function (value) {
+            if (!value) {
+                this._selectors = [];
+                return;
+            }
+            if (typeof value === 'string') {
+                value = this.splitSelectors(value);
+            }
+            this._selectors = value.map(function (selector) {
+                return selector.trim();
+            });
+        },
+        enumerable: true,
+        configurable: true
+    });
+
+
     Rule.prototype.splitSelectors = function (selectors) {
         return selectors.split(/ *, */);
     };
@@ -41,6 +65,7 @@ var Rule = (function () {
         var body = clone.body;
         delete body.extend;
         delete body.include;
+        delete body.respond;
 
         var resolved = [];
 
@@ -148,7 +173,7 @@ var Rule = (function () {
     Rule.prototype.compilePrimitive = function (value) {
         switch (typeof value) {
             case 'string':
-                if (~value.indexOf(' ')) {
+                if (value.indexOf(' ') > -1) {
                     var quote = this.config.quote;
                     return quote + value.replace(new RegExp(quote, 'g'), '\\' + quote) + quote;
                 }

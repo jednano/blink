@@ -43,6 +43,48 @@ describe('Formatter', () => {
 		].join(newline) + newline);
 	});
 
+	it('properly formats two rules', () => {
+		var css = f.format(config, [
+			[['.foo'], [
+				['bar', 'BAR']
+			]],
+			[['.baz'], [
+				['qux', 'QUX']
+			]]
+		]);
+		expect(css).to.eq([
+			'.foo {',
+			'  bar: BAR;',
+			'}',
+			'.baz {',
+			'  qux: QUX;',
+			'}'
+		].join(newline) + newline);
+	});
+
+	it('properly formats a nested at-rule with two inner rules', () => {
+		var css = f.format(config, [
+			[['@foo'], [
+				[['.bar'], [
+					['baz', 'BAZ']
+				]],
+				[['.qux'], [
+					['quux', 'QUUX']
+				]]
+			]]
+		]);
+		expect(css).to.eq([
+			'@foo {',
+			'  .bar {',
+			'    baz: BAZ;',
+			'  }',
+			'  .qux {',
+			'    quux: QUUX;',
+			'  }',
+			'}'
+		].join(newline) + newline);
+	});
+
 	it('properly formats a deeply-nested at-rule', () => {
 		var css = f.format(config, [
 			[['@foo'], [

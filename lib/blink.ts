@@ -9,6 +9,7 @@ import _IConfigurationOptions = require('./interfaces/IConfigurationOptions');
 import _IElementDeclarations = require('./interfaces/IElementDeclarations');
 import _IModifierDeclarations = require('./interfaces/IModifierDeclarations');
 import _IRuleBody = require('./interfaces/IRuleBody');
+import _MediaAtRule = require('./MediaAtRule');
 import _Modifier = require('./Modifier');
 import _Rule = require('./Rule');
 import Configuration = require('./Configuration');
@@ -50,11 +51,12 @@ module Blink {
 		});
 	}
 
-	export class Compiler extends _Compiler {}
-	export class Rule     extends _Rule {}
-	export class Block    extends _Block {}
-	export class Element  extends _Element {}
-	export class Modifier extends _Modifier {}
+	export class Compiler    extends _Compiler {}
+	export class Rule        extends _Rule {}
+	export class Block       extends _Block {}
+	export class Element     extends _Element {}
+	export class MediaAtRule extends _MediaAtRule {}
+	export class Modifier    extends _Modifier {}
 
 	export interface IConfigurationOptions extends _IConfigurationOptions {}
 	export interface IBlockDeclarations    extends _IBlockDeclarations {}

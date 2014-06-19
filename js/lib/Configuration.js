@@ -251,7 +251,7 @@ var Configuration = (function () {
             return this.raw.block;
         },
         set: function (value) {
-            if (!~value.indexOf('%s')) {
+            if (value.indexOf('%s') === -1) {
                 throw new Error('Invalid block format. Expected "%s".');
             }
             this.raw.block = value;
@@ -266,7 +266,7 @@ var Configuration = (function () {
             return this.raw.element;
         },
         set: function (value) {
-            if (!~value.indexOf('%s')) {
+            if (value.indexOf('%s') === -1) {
                 throw new Error('Invalid element format. Expected "%s".');
             }
             this.raw.element = value;
@@ -281,7 +281,7 @@ var Configuration = (function () {
             return this.raw.modifier;
         },
         set: function (value) {
-            if (!~value.indexOf('%s')) {
+            if (value.indexOf('%s') === -1) {
                 throw new Error('Invalid modifier format. Expected "%s".');
             }
             this.raw.modifier = value;
