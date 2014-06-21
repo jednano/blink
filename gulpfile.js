@@ -28,7 +28,7 @@ var paths = {
 };
 
 gulp.task('clean', function() {
-	return gulp.src(['js', 'dist'], { read: false })
+	return gulp.src(['js', 'd.ts', 'dist'], { read: false })
 		.pipe(clean());
 });
 
@@ -44,6 +44,15 @@ gulp.task('ts', function() {
 	return gulp.src(paths.test.spec.ts)
 		.pipe(tsc({ target: 'es5' }))
 		.pipe(gulp.dest('js'));
+});
+
+gulp.task('d.ts', function() {
+	return gulp.src(paths.lib.ts)
+		.pipe(tsc({
+			target: 'es5',
+			declaration: true
+		}))
+		.pipe(gulp.dest('d.ts'));
 });
 
 gulp.task('test', ['copy', 'ts'], function() {

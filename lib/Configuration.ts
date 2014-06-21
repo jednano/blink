@@ -207,7 +207,7 @@ class Configuration implements IConfigurationOptions {
 	}
 
 	set block(value: string) {
-		if (!~value.indexOf('%s')) {
+		if (value.indexOf('%s') === -1) {
 			throw new Error('Invalid block format. Expected "%s".');
 		}
 		this.raw.block = value;
@@ -218,7 +218,7 @@ class Configuration implements IConfigurationOptions {
 	}
 
 	set element(value: string) {
-		if (!~value.indexOf('%s')) {
+		if (value.indexOf('%s') === -1) {
 			throw new Error('Invalid element format. Expected "%s".');
 		}
 		this.raw.element = value;
@@ -229,7 +229,7 @@ class Configuration implements IConfigurationOptions {
 	}
 
 	set modifier(value: string) {
-		if (!~value.indexOf('%s')) {
+		if (value.indexOf('%s') === -1) {
 			throw new Error('Invalid modifier format. Expected "%s".');
 		}
 		this.raw.modifier = value;

@@ -17,19 +17,21 @@
 
 ## Features
 
-- Runs on [Node][]
-- OOCSS with [BEM syntax][]
-- Extenders
-- Overrides
-- Rules
-- API
-- TypeScript source
-
-
-### Feature Roadmap
-
-- Responders
-- Spriting
+- [Runs on Node](#runs-on-node)
+- [OOCSS with BEM Syntax](#oocss-with-bem)
+- [Rules](#rules)
+- [Includes](#includes)
+- [Mixins](#mixins)
+- [Extenders](#extenders)
+- [Overrides](#overrides)
+- [Responders](#responders)
+- [TypeScript Source](#typescript-source)
+- [CLI](https://github.com/blinkjs/blink-cli)
+- [API](https://github.com/blinkjs/blink/blob/master/blink.d.ts)
+- [gulp.js plugin](https://github.com/blinkjs/gulp-blink)
+- [Grunt plugin](https://github.com/blinkjs/grunt-blink)
+- Feature Roadmap
+	- [Spriting](#spriting)
 
 
 ### Runs on Node
@@ -91,6 +93,71 @@ This would generate the following CSS:
 	min-width: 120px;
 }
 ```
+
+
+### Rules
+
+All BEM classes extend off of the standard Rule class. The Rule class allows you to
+specify a standard CSS rule and can be useful when styling page defaults.
+
+
+```ts
+///<reference path="./node_modules/blink/blink.d.ts"/>
+import blink = require('blink');
+
+var normalize = [
+
+	new blink.Rule('html', {
+		font: {
+			family: 'sans-serif'
+		}
+	}),
+
+	new blink.Rule('body', {
+		margin: 0
+	}),
+
+	new blink.Rule('a:active, a:hover', {
+		outline: 0
+	})
+
+	// ...
+
+];
+
+export = normalize;
+```
+
+You are encouraged to use BEM blocks for all of your components. There's nothing
+stopping you from using basic rules, but you should avoid them if at all possible.
+
+
+### Includes
+
+Blink supports includes, but not in the way you might be used to. Includes are
+just functions that return an array of declarations. As such, you should lean
+against using them at all costs. Why? Say your include spits out 10 declarations.
+Every time you include that function you'll add another 10 lines of CSS to your
+file. Instead, use [extenders](#extenders) and [overrides](#overrides) when
+possible.
+
+You might be wondering why blink supports includes at all if you aren't supposed
+to use them. This is because blink uses includes in the background to make
+[extenders](#extenders) work. As such, includes may be removed at a future date,
+if they can be worked out of the extender logic.
+
+Still, if you find yourself needing an include, refer to
+[the Rule spec](https://github.com/blinkjs/blink/blob/master/test/spec/lib/Rule.spec.ts#L80-L97)
+for a working example.
+
+
+### Mixins
+
+If you're coming from [Sass](http://sass-lang.com/), you might be familiar with
+[mixins](http://sass-lang.com/guide). Really, Sass mixins are no different than
+functions in JavaScript; thus, blink supports them. All you have to do is create
+a function that returns an array of declarations. This is, in fact, how
+[extenders](#extenders) and [overrides](#overrides) work.
 
 
 ### Extenders
@@ -255,8 +322,8 @@ function boxSizing(value: string): any[] {
 	return [arguments, (config: blink.Configuration) => {
 		return blink.extenders.experimental('box-sizing', value, {
 			official: true,  // Opera/IE 8+
-			  webkit: true,  // Safari/Chrome, other WebKit
-			     moz: true   // Firefox, other Gecko
+				webkit: true,  // Safari/Chrome, other WebKit
+					 moz: true   // Firefox, other Gecko
 		})[1](config);
 	}];
 }
@@ -264,25 +331,6 @@ function boxSizing(value: string): any[] {
 
 Notice that index 1 accessed the extender function. When calling an extender
 directly the arguments become useless, so we throw them away.
-
-
-#### Where are the includes and mixins?
-
-You might be wondering if blink supports includes and mixins. The answer is yes
-and no. It is a blink philosophy that includes have traditionally been used in
-cases where extension was more appropriate. As such, the include paradigm has been
-included in the extenders themselves. All you have to do is extend everything
-and blink will determine whether your extension can be shared across rules or not.
-It's just one less thing for you to worry about and it results in automatically
-leaner CSS.
-
-As for mixins, they are really no different than functions, which are made
-available to you in normal JavaScript syntax.
-
-That said, you can, technically, include extenders in your rules. That is how
-blink works behind the scenes, so it does work, but it's undocumented,
-unsupported and encouraged against. If you come up with a valid use case, open
-an issue and it will be discussed.
 
 
 ### Overrides
@@ -310,40 +358,43 @@ called with `whatever` as the first and only argument. The returned set of
 declarations will replace the original one.
 
 
-### Rules
+### Responders
 
-Outside of BEM blocks, you'll definitely need to write rules for page defaults.
-For this, a Rule class is made available to you:
+Responders currently only support
+[MediaAtRules](https://github.com/blinkjs/blink/blob/master/lib/MediaAtRule.ts),
+which allow you to create responsive websites. Here's an example of a basic
+responder:
 
 ```ts
 ///<reference path="./node_modules/blink/blink.d.ts"/>
 import blink = require('blink');
 
-var normalize = [
 
-	new blink.Rule('html', {
-		font: {
-			family: 'sans-serif'
-		}
-	}),
+var foo = new blink.Block('foo', {
+	respond: [
+		new blink.MediaAtRule('screen and (max-width: 320)', {
+			width: 100
+		})
+	]
+});
 
-	new blink.Rule('body', {
-		margin: 0
-	}),
-
-	new blink.Rule(['a:active', 'a:hover'], {
-		outline: 0
-	})
-
-	// ...
-
-];
-
-export = normalize;
+export = foo;
 ```
 
-You are encouraged to use BEM blocks for all of your components. There's nothing
-stopping you from using basic rules, but you should avoid them if at all possible.
+This generates the following CSS:
+
+```css
+@media screen and (max-width: 320) {
+	.foo {
+		width: 100px;
+	}
+}
+```
+
+[Unlike Sass](http://thesassway.com/intermediate/responsive-web-design-in-sass-using-media-queries-in-sass-32),
+at the time of this writing, blink supports extenders inside of media queries.
+Blink also merges similar media queries for you. So feel free to go to town with
+some complicated responders!
 
 
 ### Node API
@@ -353,7 +404,7 @@ that in mind, that various tools would need access to the compiled results witho
 writing any files to the disk.
 
 
-### TypeScript source
+### TypeScript Source
 
 Since blink source code is written in [TypeScript][], you don't need to constantly
 look-up documentation to gain insight as to how you can use the blink API.

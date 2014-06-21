@@ -54,7 +54,7 @@ var Block = (function () {
 
 module.exports = Block;
 
-},{"./Rule":9}],3:[function(require,module,exports){
+},{"./Rule":10}],3:[function(require,module,exports){
 var fs = require('fs');
 var mod = require('module');
 var path = require('path');
@@ -63,6 +63,7 @@ var stripBOM = require('strip-bom');
 
 var Configuration = require('./Configuration');
 var ExtenderRegistry = require('./ExtenderRegistry');
+var Formatter = require('./Formatter');
 
 var Rule = require('./Rule');
 
@@ -179,25 +180,53 @@ var Compiler = (function () {
     };
 
     Compiler.prototype.compileRules = function (rules) {
-        var _this = this;
-        var chunks = [];
-        push(this.compileExtenders(rules));
+        return new Formatter().format(this.config, this.resolveRules(rules));
+    };
 
-        rules.forEach(function (rule) {
-            push(rule.compile(_this.config));
+    Compiler.prototype.resolveRules = function (rules) {
+        var _this = this;
+        var resolved = [];
+
+        this.resolveExtenders(rules).forEach(function (extended) {
+            resolved.push(extended[0]);
         });
-        function push(css) {
-            if (css) {
-                chunks.push(css);
+        rules.forEach(function (rule) {
+            push(rule.resolve(_this.config));
+        });
+        push(this.resolveResponders(rules));
+
+        function push(val) {
+            if (val && val.length) {
+                resolved.push(val[0]);
             }
         }
 
-        return chunks.join(this.config.ruleSeparator);
+        return resolved;
     };
 
     Compiler.prototype.compileExtenders = function (rules) {
+        return this.resolveExtenders(rules);
+    };
+
+    Compiler.prototype.format = function (rules) {
+        return new Formatter().format(this.config, rules);
+    };
+
+    Compiler.prototype.resolveExtenders = function (rules) {
         var _this = this;
         var extenders = new ExtenderRegistry();
+        this.registerExtenders(extenders, rules);
+        return extenders.map(function (extender, selectors) {
+            var r = new Rule(selectors, { include: [extender] });
+            return r.resolve(_this.config);
+        });
+    };
+
+    Compiler.prototype.registerExtenders = function (extenders, rules) {
+        var _this = this;
+        if (!rules) {
+            return;
+        }
         rules.forEach(function (rule) {
             (rule.extenders || []).forEach(function (extender) {
                 if (!extender.length) {
@@ -216,17 +245,63 @@ var Compiler = (function () {
                 }
             });
         });
-        return extenders.map(function (extender, selectors) {
-            var r = new Rule(selectors, { include: [extender] });
-            return r.compile(_this.config);
-        }).join(this.config.newline);
+    };
+
+    Compiler.prototype.resolveResponders = function (responders) {
+        var _this = this;
+        var registry = {};
+        responders.forEach(function (responder) {
+            _this.registerResponders(registry, responder.selectors, responder.responders);
+        });
+        return this.resolveTree(registry);
+    };
+
+    Compiler.prototype.registerResponders = function (registry, selectors, responders) {
+        var _this = this;
+        (responders || []).forEach(function (responder) {
+            var condition = responder.condition;
+            var scope = registry[condition] = registry[condition] || {};
+            responder.selectors = selectors;
+            scope.__extended = scope.__extended || new ExtenderRegistry();
+            _this.registerExtenders(scope.__extended, responders);
+            var resolved = responder.resolve(_this.config);
+            if (resolved.length) {
+                resolved = resolved[0];
+                scope[resolved[0].join(',' + _this.config.oneSpace)] = resolved[1];
+            }
+            _this.registerResponders(scope, selectors, responder.responders);
+        });
+    };
+
+    Compiler.prototype.resolveTree = function (tree) {
+        var _this = this;
+        var result = [];
+        Object.keys(tree).forEach(function (key) {
+            var value = tree[key];
+            if (value instanceof ExtenderRegistry) {
+                value.forEach(function (extender, selectors) {
+                    var r = new Rule(selectors, { include: [extender] });
+                    result.push(r.resolve(_this.config)[0]);
+                });
+                delete tree[key];
+            }
+        });
+        Object.keys(tree).forEach(function (key) {
+            var value = tree[key];
+            if (value instanceof Array) {
+                result.push([[key], value]);
+            } else if (value) {
+                result.push([[key], _this.resolveTree(value)]);
+            }
+        });
+        return result;
     };
     return Compiler;
 })();
 
 module.exports = Compiler;
 
-},{"./Configuration":4,"./ExtenderRegistry":6,"./Rule":9,"fs":12,"module":12,"path":19,"stream":22,"strip-bom":34}],4:[function(require,module,exports){
+},{"./Configuration":4,"./ExtenderRegistry":6,"./Formatter":7,"./Rule":10,"fs":13,"module":13,"path":20,"stream":23,"strip-bom":35}],4:[function(require,module,exports){
 ///<reference path="../bower_components/dt-node/node.d.ts"/>
 var stripBom = require('strip-bom');
 var fs = require('fs');
@@ -480,7 +555,7 @@ var Configuration = (function () {
             return this.raw.block;
         },
         set: function (value) {
-            if (!~value.indexOf('%s')) {
+            if (value.indexOf('%s') === -1) {
                 throw new Error('Invalid block format. Expected "%s".');
             }
             this.raw.block = value;
@@ -495,7 +570,7 @@ var Configuration = (function () {
             return this.raw.element;
         },
         set: function (value) {
-            if (!~value.indexOf('%s')) {
+            if (value.indexOf('%s') === -1) {
                 throw new Error('Invalid element format. Expected "%s".');
             }
             this.raw.element = value;
@@ -510,7 +585,7 @@ var Configuration = (function () {
             return this.raw.modifier;
         },
         set: function (value) {
-            if (!~value.indexOf('%s')) {
+            if (value.indexOf('%s') === -1) {
                 throw new Error('Invalid modifier format. Expected "%s".');
             }
             this.raw.modifier = value;
@@ -644,7 +719,7 @@ var Configuration = (function () {
 
 module.exports = Configuration;
 
-},{"../defaults.json":1,"./helpers/string":11,"fs":12,"node.extend":31,"os":18,"strip-bom":34}],5:[function(require,module,exports){
+},{"../defaults.json":1,"./helpers/string":12,"fs":13,"node.extend":32,"os":19,"strip-bom":35}],5:[function(require,module,exports){
 var Rule = require('./Rule');
 
 var Element = (function () {
@@ -667,7 +742,7 @@ var Element = (function () {
 
 module.exports = Element;
 
-},{"./Rule":9}],6:[function(require,module,exports){
+},{"./Rule":10}],6:[function(require,module,exports){
 var ExtenderRegistry = (function () {
     function ExtenderRegistry() {
         this.extenders = {};
@@ -720,9 +795,12 @@ var Formatter = (function () {
 
     Formatter.prototype.formatRules = function (rules, level) {
         var _this = this;
+        if (typeof rules === 'undefined') {
+            console.log('undefined');
+        }
         return rules.map(function (rule) {
             return _this.formatRule(rule, level);
-        }).join(this.config.newline);
+        }).join('');
     };
 
     Formatter.prototype.formatRule = function (rule, level) {
@@ -787,7 +865,29 @@ var Formatter = (function () {
 
 module.exports = Formatter;
 
-},{"./helpers/string":11}],8:[function(require,module,exports){
+},{"./helpers/string":12}],8:[function(require,module,exports){
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var Rule = require('./Rule');
+
+var MediaAtRule = (function (_super) {
+    __extends(MediaAtRule, _super);
+    function MediaAtRule(condition, body) {
+        _super.call(this, null, body);
+        this.condition = condition;
+        this.body = body;
+        this.condition = '@media ' + condition;
+    }
+    return MediaAtRule;
+})(Rule);
+
+module.exports = MediaAtRule;
+
+},{"./Rule":10}],9:[function(require,module,exports){
 var Rule = require('./Rule');
 
 var Modifier = (function () {
@@ -810,7 +910,7 @@ var Modifier = (function () {
 
 module.exports = Modifier;
 
-},{"./Rule":9}],9:[function(require,module,exports){
+},{"./Rule":10}],10:[function(require,module,exports){
 var extend = require('node.extend');
 
 var Formatter = require('./Formatter');
@@ -820,12 +920,7 @@ var s = require('./helpers/string');
 var Rule = (function () {
     function Rule(selectors, body) {
         this.body = body;
-        if (typeof selectors === 'string') {
-            selectors = this.splitSelectors(selectors);
-        }
-        this.selectors = selectors.map(function (selector) {
-            return selector.trim();
-        });
+        this.selectors = selectors;
     }
     Object.defineProperty(Rule.prototype, "extenders", {
         get: function () {
@@ -843,6 +938,35 @@ var Rule = (function () {
         configurable: true
     });
 
+    Object.defineProperty(Rule.prototype, "responders", {
+        get: function () {
+            return this.body.respond;
+        },
+        enumerable: true,
+        configurable: true
+    });
+
+    Object.defineProperty(Rule.prototype, "selectors", {
+        get: function () {
+            return this._selectors;
+        },
+        set: function (value) {
+            if (!value) {
+                this._selectors = [];
+                return;
+            }
+            if (typeof value === 'string') {
+                value = this.splitSelectors(value);
+            }
+            this._selectors = value.map(function (selector) {
+                return selector.trim();
+            });
+        },
+        enumerable: true,
+        configurable: true
+    });
+
+
     Rule.prototype.splitSelectors = function (selectors) {
         return selectors.split(/ *, */);
     };
@@ -854,6 +978,7 @@ var Rule = (function () {
         var body = clone.body;
         delete body.extend;
         delete body.include;
+        delete body.respond;
 
         var resolved = [];
 
@@ -961,7 +1086,7 @@ var Rule = (function () {
     Rule.prototype.compilePrimitive = function (value) {
         switch (typeof value) {
             case 'string':
-                if (~value.indexOf(' ')) {
+                if (value.indexOf(' ') > -1) {
                     var quote = this.config.quote;
                     return quote + value.replace(new RegExp(quote, 'g'), '\\' + quote) + quote;
                 }
@@ -981,7 +1106,7 @@ var Rule = (function () {
 
 module.exports = Rule;
 
-},{"./Formatter":7,"./helpers/string":11,"node.extend":31}],10:[function(require,module,exports){
+},{"./Formatter":7,"./helpers/string":12,"node.extend":32}],11:[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -992,6 +1117,7 @@ var _Block = require('./Block');
 var _Compiler = require('./Compiler');
 var _Element = require('./Element');
 
+var _MediaAtRule = require('./MediaAtRule');
 var _Modifier = require('./Modifier');
 var _Rule = require('./Rule');
 var Configuration = require('./Configuration');
@@ -1059,6 +1185,14 @@ var Blink;
         return Element;
     })(_Element);
     Blink.Element = Element;
+    var MediaAtRule = (function (_super) {
+        __extends(MediaAtRule, _super);
+        function MediaAtRule() {
+            _super.apply(this, arguments);
+        }
+        return MediaAtRule;
+    })(_MediaAtRule);
+    Blink.MediaAtRule = MediaAtRule;
     var Modifier = (function (_super) {
         __extends(Modifier, _super);
         function Modifier() {
@@ -1071,7 +1205,7 @@ var Blink;
 
 module.exports = Blink;
 
-},{"./Block":2,"./Compiler":3,"./Configuration":4,"./Element":5,"./Modifier":8,"./Rule":9}],11:[function(require,module,exports){
+},{"./Block":2,"./Compiler":3,"./Configuration":4,"./Element":5,"./MediaAtRule":8,"./Modifier":9,"./Rule":10}],12:[function(require,module,exports){
 // ReSharper disable InconsistentNaming
 var STRING_DASHERIZE = /[ _]/g;
 var STRING_DASHERIZE_CACHE = {};
@@ -1107,9 +1241,9 @@ function decamelize(s) {
 }
 exports.decamelize = decamelize;
 
-},{}],12:[function(require,module,exports){
-
 },{}],13:[function(require,module,exports){
+
+},{}],14:[function(require,module,exports){
 /*!
  * The buffer module from node.js, for the browser.
  *
@@ -2220,7 +2354,7 @@ function assert (test, message) {
   if (!test) throw new Error(message || 'Failed assertion')
 }
 
-},{"base64-js":14,"ieee754":15}],14:[function(require,module,exports){
+},{"base64-js":15,"ieee754":16}],15:[function(require,module,exports){
 var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 ;(function (exports) {
@@ -2342,7 +2476,7 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 	exports.fromByteArray = uint8ToBase64
 }(typeof exports === 'undefined' ? (this.base64js = {}) : exports))
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 exports.read = function(buffer, offset, isLE, mLen, nBytes) {
   var e, m,
       eLen = nBytes * 8 - mLen - 1,
@@ -2428,7 +2562,7 @@ exports.write = function(buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128;
 };
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -2733,7 +2867,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -2758,7 +2892,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 exports.endianness = function () { return 'LE' };
 
 exports.hostname = function () {
@@ -2805,7 +2939,7 @@ exports.tmpdir = exports.tmpDir = function () {
 
 exports.EOL = '\n';
 
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -3033,7 +3167,7 @@ var substr = 'ab'.substr(-1) === 'b'
 ;
 
 }).call(this,require("ngpmcQ"))
-},{"ngpmcQ":20}],20:[function(require,module,exports){
+},{"ngpmcQ":21}],21:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -3098,7 +3232,7 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -3172,7 +3306,7 @@ function onend() {
   });
 }
 
-},{"./readable.js":25,"./writable.js":27,"inherits":17,"process/browser.js":23}],22:[function(require,module,exports){
+},{"./readable.js":26,"./writable.js":28,"inherits":18,"process/browser.js":24}],23:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -3301,7 +3435,7 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"./duplex.js":21,"./passthrough.js":24,"./readable.js":25,"./transform.js":26,"./writable.js":27,"events":16,"inherits":17}],23:[function(require,module,exports){
+},{"./duplex.js":22,"./passthrough.js":25,"./readable.js":26,"./transform.js":27,"./writable.js":28,"events":17,"inherits":18}],24:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -3356,7 +3490,7 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -3399,7 +3533,7 @@ PassThrough.prototype._transform = function(chunk, encoding, cb) {
   cb(null, chunk);
 };
 
-},{"./transform.js":26,"inherits":17}],25:[function(require,module,exports){
+},{"./transform.js":27,"inherits":18}],26:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -4336,7 +4470,7 @@ function indexOf (xs, x) {
 }
 
 }).call(this,require("ngpmcQ"))
-},{"./index.js":22,"buffer":13,"events":16,"inherits":17,"ngpmcQ":20,"process/browser.js":23,"string_decoder":28}],26:[function(require,module,exports){
+},{"./index.js":23,"buffer":14,"events":17,"inherits":18,"ngpmcQ":21,"process/browser.js":24,"string_decoder":29}],27:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -4542,7 +4676,7 @@ function done(stream, er) {
   return stream.push(null);
 }
 
-},{"./duplex.js":21,"inherits":17}],27:[function(require,module,exports){
+},{"./duplex.js":22,"inherits":18}],28:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -4930,7 +5064,7 @@ function endWritable(stream, state, cb) {
   state.ended = true;
 }
 
-},{"./index.js":22,"buffer":13,"inherits":17,"process/browser.js":23}],28:[function(require,module,exports){
+},{"./index.js":23,"buffer":14,"inherits":18,"process/browser.js":24}],29:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -5123,14 +5257,14 @@ function base64DetectIncompleteChar(buffer) {
   return incomplete;
 }
 
-},{"buffer":13}],29:[function(require,module,exports){
+},{"buffer":14}],30:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],30:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -5720,11 +5854,11 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this,require("ngpmcQ"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":29,"inherits":17,"ngpmcQ":20}],31:[function(require,module,exports){
+},{"./support/isBuffer":30,"inherits":18,"ngpmcQ":21}],32:[function(require,module,exports){
 module.exports = require('./lib/extend');
 
 
-},{"./lib/extend":32}],32:[function(require,module,exports){
+},{"./lib/extend":33}],33:[function(require,module,exports){
 /*!
  * node.extend
  * Copyright 2011, John Resig
@@ -5808,7 +5942,7 @@ extend.version = '1.0.8';
 module.exports = extend;
 
 
-},{"is":33}],33:[function(require,module,exports){
+},{"is":34}],34:[function(require,module,exports){
 
 /**!
  * is
@@ -6522,7 +6656,7 @@ is.string = function (value) {
 };
 
 
-},{}],34:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 (function (Buffer){
 'use strict';
 var isUtf8 = require('is-utf8');
@@ -6550,7 +6684,7 @@ stripBom.stream = function () {
 };
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":13,"first-chunk-stream":35,"is-utf8":36}],35:[function(require,module,exports){
+},{"buffer":14,"first-chunk-stream":36,"is-utf8":37}],36:[function(require,module,exports){
 (function (Buffer){
 'use strict';
 var util = require('util');
@@ -6647,7 +6781,7 @@ module.exports = function () {
 module.exports.ctor = ctor;
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":13,"stream":22,"util":30}],36:[function(require,module,exports){
+},{"buffer":14,"stream":23,"util":31}],37:[function(require,module,exports){
 
 exports = module.exports = function(bytes)
 {
@@ -6725,4 +6859,4 @@ exports = module.exports = function(bytes)
     return true;
 }
 
-},{}]},{},[10])
+},{}]},{},[11])

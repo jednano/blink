@@ -8,6 +8,7 @@ var _Block = require('./Block');
 var _Compiler = require('./Compiler');
 var _Element = require('./Element');
 
+var _MediaAtRule = require('./MediaAtRule');
 var _Modifier = require('./Modifier');
 var _Rule = require('./Rule');
 var Configuration = require('./Configuration');
@@ -75,6 +76,14 @@ var Blink;
         return Element;
     })(_Element);
     Blink.Element = Element;
+    var MediaAtRule = (function (_super) {
+        __extends(MediaAtRule, _super);
+        function MediaAtRule() {
+            _super.apply(this, arguments);
+        }
+        return MediaAtRule;
+    })(_MediaAtRule);
+    Blink.MediaAtRule = MediaAtRule;
     var Modifier = (function (_super) {
         __extends(Modifier, _super);
         function Modifier() {

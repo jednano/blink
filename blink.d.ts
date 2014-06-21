@@ -52,7 +52,9 @@ declare module "blink" {
 		private decs;
 		public extenders: any[];
 		public includes: Function[];
-		public selectors: string[];
+		public responders: MediaAtRule[];
+		private _selectors;
+		public selectors: any;
 		constructor(selectors: any, body?: IRuleBody);
 		private splitSelectors(selectors);
 		public resolve(config: Configuration): any[][];
@@ -75,7 +77,6 @@ declare module "blink" {
 		constructor(name: string, declarations: IBlockDeclarations);
 		public compile(config: Configuration): string;
 	}
-
 	class Compiler {
 		public config: Configuration;
 		constructor(config?: Configuration);
@@ -88,7 +89,14 @@ declare module "blink" {
 		private renameExtToCss(file);
 		private compileModule(contents, folder);
 		public compileRules(rules: Rule[]): string;
+		private resolveRules(rules);
 		private compileExtenders(rules);
+		private format(rules);
+		private resolveExtenders(rules);
+		private registerExtenders(extenders, rules);
+		private resolveResponders(responders);
+		private registerResponders(registry, selectors, responders);
+		private resolveTree(tree);
 	}
 	class Element {
 		public name: string;
@@ -96,6 +104,11 @@ declare module "blink" {
 		public modifiers: Modifier[];
 		constructor(name: string, declarations: IElementDeclarations);
 		public compile(selector: string, config: Configuration): string;
+	}
+	class MediaAtRule extends Rule {
+		public condition: string;
+		public body: IRuleBody;
+		constructor(condition: string, body?: IRuleBody);
 	}
 	class Modifier {
 		public name: string;
@@ -140,6 +153,7 @@ declare module "blink" {
 	interface IRuleBody extends IHashTable<any> {
 		extend?: any[];
 		include?: Function[];
+		respond?: MediaAtRule[];
 	}
 	interface IHashTable<T> {
 		[key: string]: T;

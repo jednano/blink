@@ -13,9 +13,12 @@ class Formatter {
 	}
 
 	private formatRules(rules: any[][], level: number) {
+		if (typeof rules === 'undefined') {
+			console.log('undefined');
+		}
 		return rules.map(rule => {
 			return this.formatRule(rule, level);
-		}).join(this.config.newline);
+		}).join('');
 	}
 
 	private formatRule(rule: any[][], level: number) {
