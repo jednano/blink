@@ -437,55 +437,17 @@ $ npm install --save-dev blink
 import blink = require('blink');
 ```
 
+Refer to the [blink module](https://github.com/blinkjs/blink/blob/master/blink.d.ts)
+for a list of available public methods. Of particular interest are the compile
+methods:
 
-#### compile(options: IConfigurationOptions, files: string[], callback: (exitCode: number) => void): void
+- compile([options][], sources, callback)
+	- sources can be any of string, [file][] array, [stream][] or [Rule][].
+- compileStream([options][], [stream][], callback)
+- compileContents([options][], [file][], callback)
 
-
-#### Compiler(public config?: Configuration)
-
-
-##### compile(files: string[], callback: (err: Error, results?: ICompiledResult[]) => void): void
-
-
-##### compileRules(rules: Rule[]): string
-
-
-#### ICompiledResult
-
-```ts
-interface ICompiledResult {
-	src: string;
-	dest: string;
-	contents: string;
-}
-```
-
-#### IConfigurationOptions
-
-```ts
-interface IConfigurationOptions {
-
-	config?: string;
-
-	// Output style
-	style?: string;
-	oneIndent?: string;
-	quote?: string;
-	newline?: string;
-
-	// BEM
-	block?: string;
-	element?: string;
-	modifier?: string;
-
-	// Cross-Browser Support
-	chrome?: number;
-	firefox?: number;
-	ie?: number;
-	opera?: number;
-
-}
-```
+All callbacks have the following function signature:
+- callback([err][], [config][], [file][])
 
 
 ## License
@@ -507,6 +469,12 @@ Released under the MIT license.
 [TypeScript]: http://www.typescriptlang.org/
 [other editors]: http://msopentech.com/blog/2012/10/01/sublime-text-vi-emacs-typescript-enabled/
 [Visual Studio]: http://www.visualstudio.com/
+[options]: https://github.com/blinkjs/blink/blob/master/lib/interfaces/IConfigurationOptions.ts
+[stream]: http://nodejs.org/api/stream.html#stream_class_stream_readable
+[err]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error
+[config]: https://github.com/blinkjs/blink/blob/master/lib/interfaces/IConfigurationOptions.ts
+[file]: https://github.com/blinkjs/blink/blob/master/lib/interfaces/IFile.ts
+[Rule]: https://github.com/blinkjs/blink/blob/master/lib/Rule.ts
 
 [Sass]: http://sass-lang.com/
 [Compass]: http://compass-style.org/
