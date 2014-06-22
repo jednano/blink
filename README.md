@@ -30,6 +30,7 @@
 - [API](https://github.com/blinkjs/blink/blob/master/blink.d.ts)
 - [gulp.js plugin](https://github.com/blinkjs/gulp-blink)
 - [Grunt plugin](https://github.com/blinkjs/grunt-blink)
+- [Express middleware](https://github.com/blinkjs/blink-middleware)
 - Feature Roadmap
 	- [Spriting](#spriting)
 
