@@ -31,8 +31,7 @@
 - [gulp.js plugin](https://github.com/blinkjs/gulp-blink)
 - [Grunt plugin](https://github.com/blinkjs/grunt-blink)
 - [Express middleware](https://github.com/blinkjs/blink-middleware)
-- Feature Roadmap
-	- [Spriting](#spriting)
+- [Spriting](#spriting)
 
 
 ### Runs on Node
@@ -453,10 +452,12 @@ All callbacks have the following function signature:
 
 ### Spriting
 
-On the feature roadmap is the ability to not only generate sprites, but to compute
-off the dimensions of the source images that build sprites. To this date, the only
-tool to my knowledge that has this feature is [Compass](http://compass-style.org/).
-See [Spriting with Compass](http://compass-style.org/help/tutorials/spriting/).
+As blink is built on Node.js, any spriting tools available for Node.js can be
+implemented quite easily. Some of these tools, like [Spritesmith][] allow you to
+not only generate sprites, but to compute off the dimensions of the source images
+that build the sprites. This makes your CSS highly maintainable. For example, when
+design gives you replacement images all you should have to do is drop them in the
+sprites folder without changing a single line of your blink source.
 
 
 ## License
@@ -484,6 +485,5 @@ Released under the MIT license.
 [config]: https://github.com/blinkjs/blink/blob/master/lib/interfaces/IConfigurationOptions.ts
 [file]: https://github.com/blinkjs/blink/blob/master/lib/interfaces/IFile.ts
 [Rule]: https://github.com/blinkjs/blink/blob/master/lib/Rule.ts
-
 [Sass]: http://sass-lang.com/
-[Compass]: http://compass-style.org/
+[Spritesmith]: https://github.com/Ensighten/spritesmith
