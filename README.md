@@ -450,6 +450,14 @@ All callbacks have the following function signature:
 - callback([err][], [config][], [file][])
 
 
+### Spriting
+
+On the feature roadmap is the ability to not only generate sprites, but to compute
+off the dimensions of the source images that build sprites. To this date, the only
+tool to my knowledge that has this feature is [Compass](http://compass-style.org/).
+See [Spriting with Compass](http://compass-style.org/help/tutorials/spriting/).
+
+
 ## License
 
 Released under the MIT license.
