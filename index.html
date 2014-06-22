@@ -29,6 +29,10 @@
       <section>
         <p><img src="https://github.com/blinkjs/blink/blob/master/artwork/blink_256_nobg.png?raw=true" width="256" height="256" alt="blink"></p>
 
+<blockquote>
+<p>Blink converts <a href="http://nodejs.org/">Node.js</a> modules into CSS and provides a CSS Authoring Framework, with BEM support.</p>
+</blockquote>
+
 <p><a href="http://travis-ci.org/blinkjs/blink"><img src="https://secure.travis-ci.org/blinkjs/blink.png?branch=master" alt="Build Status"></a>
 <a href="https://gemnasium.com/blinkjs/blink"><img src="https://gemnasium.com/blinkjs/blink.png" alt="Dependency Status"></a>
 <a href="http://badge.fury.io/js/blink"><img src="https://badge.fury.io/js/blink.png" alt="NPM version"></a>
@@ -45,21 +49,21 @@
 <a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a>Features</h2>
 
 <ul>
-<li>Runs on <a href="http://nodejs.org/">Node</a>
-</li>
-<li>OOCSS with <a href="http://csswizardry.com/2013/01/mindbemding-getting-your-head-round-bem-syntax/">BEM syntax</a>
-</li>
-<li>Extenders</li>
-<li>Overrides</li>
-<li>Rules</li>
-<li>API</li>
-<li>TypeScript source</li>
-</ul><h3>
-<a name="feature-roadmap" class="anchor" href="#feature-roadmap"><span class="octicon octicon-link"></span></a>Feature Roadmap</h3>
-
-<ul>
-<li>Responders</li>
-<li>Spriting</li>
+<li><a href="#runs-on-node">Runs on Node</a></li>
+<li><a href="#oocss-with-bem">OOCSS with BEM Syntax</a></li>
+<li><a href="#rules">Rules</a></li>
+<li><a href="#includes">Includes</a></li>
+<li><a href="#mixins">Mixins</a></li>
+<li><a href="#extenders">Extenders</a></li>
+<li><a href="#overrides">Overrides</a></li>
+<li><a href="#responders">Responders</a></li>
+<li><a href="#typescript-source">TypeScript Source</a></li>
+<li><a href="https://github.com/blinkjs/blink-cli">CLI</a></li>
+<li><a href="https://github.com/blinkjs/blink/blob/master/blink.d.ts">API</a></li>
+<li><a href="https://github.com/blinkjs/gulp-blink">gulp.js plugin</a></li>
+<li><a href="https://github.com/blinkjs/grunt-blink">Grunt plugin</a></li>
+<li><a href="https://github.com/blinkjs/blink-middleware">Express middleware</a></li>
+<li><a href="#spriting">Spriting</a></li>
 </ul><h3>
 <a name="runs-on-node" class="anchor" href="#runs-on-node"><span class="octicon octicon-link"></span></a>Runs on Node</h3>
 
@@ -118,6 +122,69 @@ which is defined in <a href="http://csswizardry.com/2013/01/mindbemding-getting-
     <span class="k">min-width</span><span class="o">:</span> <span class="m">120px</span><span class="p">;</span>
 <span class="p">}</span>
 </pre></div>
+
+<h3>
+<a name="rules" class="anchor" href="#rules"><span class="octicon octicon-link"></span></a>Rules</h3>
+
+<p>All BEM classes extend off of the standard Rule class. The Rule class allows you to
+specify a standard CSS rule and can be useful when styling page defaults.</p>
+
+<div class="highlight highlight-ts"><pre><span class="c1">///&lt;reference path="./node_modules/blink/blink.d.ts"/&gt;</span>
+<span class="kr">import</span> <span class="nx">blink</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'blink'</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">normalize</span> <span class="o">=</span> <span class="p">[</span>
+
+    <span class="k">new</span> <span class="nx">blink</span><span class="p">.</span><span class="nx">Rule</span><span class="p">(</span><span class="s1">'html'</span><span class="p">,</span> <span class="p">{</span>
+        <span class="nx">font</span><span class="o">:</span> <span class="p">{</span>
+            <span class="nx">family</span><span class="o">:</span> <span class="s1">'sans-serif'</span>
+        <span class="p">}</span>
+    <span class="p">}),</span>
+
+    <span class="k">new</span> <span class="nx">blink</span><span class="p">.</span><span class="nx">Rule</span><span class="p">(</span><span class="s1">'body'</span><span class="p">,</span> <span class="p">{</span>
+        <span class="nx">margin</span>: <span class="kt">0</span>
+    <span class="p">}),</span>
+
+    <span class="k">new</span> <span class="nx">blink</span><span class="p">.</span><span class="nx">Rule</span><span class="p">(</span><span class="s1">'a:active, a:hover'</span><span class="p">,</span> <span class="p">{</span>
+        <span class="nx">outline</span>: <span class="kt">0</span>
+    <span class="p">})</span>
+
+    <span class="c1">// ...</span>
+
+<span class="p">];</span>
+
+<span class="kr">export</span> <span class="o">=</span> <span class="nx">normalize</span><span class="p">;</span>
+</pre></div>
+
+<p>You are encouraged to use BEM blocks for all of your components. There's nothing
+stopping you from using basic rules, but you should avoid them if at all possible.</p>
+
+<h3>
+<a name="includes" class="anchor" href="#includes"><span class="octicon octicon-link"></span></a>Includes</h3>
+
+<p>Blink supports includes, but not in the way you might be used to. Includes are
+just functions that return an array of declarations. As such, you should lean
+against using them at all costs. Why? Say your include spits out 10 declarations.
+Every time you include that function you'll add another 10 lines of CSS to your
+file. Instead, use <a href="#extenders">extenders</a> and <a href="#overrides">overrides</a> when
+possible.</p>
+
+<p>You might be wondering why blink supports includes at all if you aren't supposed
+to use them. This is because blink uses includes in the background to make
+<a href="#extenders">extenders</a> work. As such, includes may be removed at a future date,
+if they can be worked out of the extender logic.</p>
+
+<p>Still, if you find yourself needing an include, refer to
+<a href="https://github.com/blinkjs/blink/blob/master/test/spec/lib/Rule.spec.ts#L80-L97">the Rule spec</a>
+for a working example.</p>
+
+<h3>
+<a name="mixins" class="anchor" href="#mixins"><span class="octicon octicon-link"></span></a>Mixins</h3>
+
+<p>If you're coming from <a href="http://sass-lang.com/">Sass</a>, you might be familiar with
+<a href="http://sass-lang.com/guide">mixins</a>. Really, Sass mixins are no different than
+functions in JavaScript; thus, blink supports them. All you have to do is create
+a function that returns an array of declarations. This is, in fact, how
+<a href="#extenders">extenders</a> and <a href="#overrides">overrides</a> work.</p>
 
 <h3>
 <a name="extenders" class="anchor" href="#extenders"><span class="octicon octicon-link"></span></a>Extenders</h3>
@@ -274,8 +341,8 @@ with the configuration.</p>
     <span class="k">return</span> <span class="p">[</span><span class="nx">arguments</span><span class="p">,</span> <span class="p">(</span><span class="nx">config</span>: <span class="kt">blink.Configuration</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
         <span class="k">return</span> <span class="nx">blink</span><span class="p">.</span><span class="nx">extenders</span><span class="p">.</span><span class="nx">experimental</span><span class="p">(</span><span class="s1">'box-sizing'</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="p">{</span>
             <span class="nx">official</span>: <span class="kt">true</span><span class="p">,</span>  <span class="c1">// Opera/IE 8+</span>
-              <span class="nx">webkit</span>: <span class="kt">true</span><span class="p">,</span>  <span class="c1">// Safari/Chrome, other WebKit</span>
-                 <span class="nx">moz</span>: <span class="kt">true</span>   <span class="c1">// Firefox, other Gecko</span>
+                <span class="nx">webkit</span>: <span class="kt">true</span><span class="p">,</span>  <span class="c1">// Safari/Chrome, other WebKit</span>
+                     <span class="nx">moz</span>: <span class="kt">true</span>   <span class="c1">// Firefox, other Gecko</span>
         <span class="p">})[</span><span class="mi">1</span><span class="p">](</span><span class="nx">config</span><span class="p">);</span>
     <span class="p">}];</span>
 <span class="p">}</span>
@@ -283,25 +350,6 @@ with the configuration.</p>
 
 <p>Notice that index 1 accessed the extender function. When calling an extender
 directly the arguments become useless, so we throw them away.</p>
-
-<h4>
-<a name="where-are-the-includes-and-mixins" class="anchor" href="#where-are-the-includes-and-mixins"><span class="octicon octicon-link"></span></a>Where are the includes and mixins?</h4>
-
-<p>You might be wondering if blink supports includes and mixins. The answer is yes
-and no. It is a blink philosophy that includes have traditionally been used in
-cases where extension was more appropriate. As such, the include paradigm has been
-included in the extenders themselves. All you have to do is extend everything
-and blink will determine whether your extension can be shared across rules or not.
-It's just one less thing for you to worry about and it results in automatically
-leaner CSS.</p>
-
-<p>As for mixins, they are really no different than functions, which are made
-available to you in normal JavaScript syntax.</p>
-
-<p>That said, you can, technically, include extenders in your rules. That is how
-blink works behind the scenes, so it does work, but it's undocumented,
-unsupported and encouraged against. If you come up with a valid use case, open
-an issue and it will be discussed.</p>
 
 <h3>
 <a name="overrides" class="anchor" href="#overrides"><span class="octicon octicon-link"></span></a>Overrides</h3>
@@ -328,39 +376,41 @@ called with <code>whatever</code> as the first and only argument. The returned s
 declarations will replace the original one.</p>
 
 <h3>
-<a name="rules" class="anchor" href="#rules"><span class="octicon octicon-link"></span></a>Rules</h3>
+<a name="responders" class="anchor" href="#responders"><span class="octicon octicon-link"></span></a>Responders</h3>
 
-<p>Outside of BEM blocks, you'll definitely need to write rules for page defaults.
-For this, a Rule class is made available to you:</p>
+<p>Responders currently only support
+<a href="https://github.com/blinkjs/blink/blob/master/lib/MediaAtRule.ts">MediaAtRules</a>,
+which allow you to create responsive websites. Here's an example of a basic
+responder:</p>
 
 <div class="highlight highlight-ts"><pre><span class="c1">///&lt;reference path="./node_modules/blink/blink.d.ts"/&gt;</span>
 <span class="kr">import</span> <span class="nx">blink</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'blink'</span><span class="p">);</span>
 
-<span class="kd">var</span> <span class="nx">normalize</span> <span class="o">=</span> <span class="p">[</span>
 
-    <span class="k">new</span> <span class="nx">blink</span><span class="p">.</span><span class="nx">Rule</span><span class="p">([</span><span class="s1">'html'</span><span class="p">],</span> <span class="p">{</span>
-        <span class="nx">font</span><span class="o">:</span> <span class="p">{</span>
-            <span class="nx">family</span><span class="o">:</span> <span class="s1">'sans-serif'</span>
-        <span class="p">}</span>
-    <span class="p">}),</span>
+<span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">blink</span><span class="p">.</span><span class="nx">Block</span><span class="p">(</span><span class="s1">'foo'</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">respond</span><span class="o">:</span> <span class="p">[</span>
+        <span class="k">new</span> <span class="nx">blink</span><span class="p">.</span><span class="nx">MediaAtRule</span><span class="p">(</span><span class="s1">'screen and (max-width: 320)'</span><span class="p">,</span> <span class="p">{</span>
+            <span class="nx">width</span>: <span class="kt">100</span>
+        <span class="p">})</span>
+    <span class="p">]</span>
+<span class="p">});</span>
 
-    <span class="k">new</span> <span class="nx">blink</span><span class="p">.</span><span class="nx">Rule</span><span class="p">([</span><span class="s1">'body'</span><span class="p">],</span> <span class="p">{</span>
-        <span class="nx">margin</span>: <span class="kt">0</span>
-    <span class="p">}),</span>
-
-    <span class="k">new</span> <span class="nx">blink</span><span class="p">.</span><span class="nx">Rule</span><span class="p">([</span><span class="s1">'a:active'</span><span class="p">,</span> <span class="s1">'a:hover'</span><span class="p">],</span> <span class="p">{</span>
-        <span class="nx">outline</span>: <span class="kt">0</span>
-    <span class="p">})</span>
-
-    <span class="c1">// ...</span>
-
-<span class="p">];</span>
-
-<span class="kr">export</span> <span class="o">=</span> <span class="nx">normalize</span><span class="p">;</span>
+<span class="kr">export</span> <span class="o">=</span> <span class="nx">foo</span><span class="p">;</span>
 </pre></div>
 
-<p>You are encouraged to use BEM blocks for all of your components. There's nothing
-stopping you from using basic rules, but you should avoid them if at all possible.</p>
+<p>This generates the following CSS:</p>
+
+<div class="highlight highlight-css"><pre><span class="k">@media</span> <span class="nt">screen</span> <span class="nt">and</span> <span class="o">(</span><span class="nt">max-width</span><span class="o">:</span> <span class="nt">320</span><span class="o">)</span> <span class="p">{</span>
+    <span class="nc">.foo</span> <span class="p">{</span>
+        <span class="k">width</span><span class="o">:</span> <span class="m">100px</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<p><a href="http://thesassway.com/intermediate/responsive-web-design-in-sass-using-media-queries-in-sass-32">Unlike Sass</a>,
+at the time of this writing, blink supports extenders inside of media queries.
+Blink also merges similar media queries for you. So feel free to go to town with
+some complicated responders!</p>
 
 <h3>
 <a name="node-api" class="anchor" href="#node-api"><span class="octicon octicon-link"></span></a>Node API</h3>
@@ -370,7 +420,7 @@ that in mind, that various tools would need access to the compiled results witho
 writing any files to the disk.</p>
 
 <h3>
-<a name="typescript-source" class="anchor" href="#typescript-source"><span class="octicon octicon-link"></span></a>TypeScript source</h3>
+<a name="typescript-source" class="anchor" href="#typescript-source"><span class="octicon octicon-link"></span></a>TypeScript Source</h3>
 
 <p>Since blink source code is written in <a href="http://www.typescriptlang.org/">TypeScript</a>, you don't need to constantly
 look-up documentation to gain insight as to how you can use the blink API.
@@ -400,54 +450,32 @@ doesn't matter as long as it ends up in JavaScript.</p>
 <span class="kr">import</span> <span class="nx">blink</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'blink'</span><span class="p">);</span>
 </pre></div>
 
-<h4>
-<a name="compileoptions-iconfigurationoptions-files-string-callback-exitcode-number--void-void" class="anchor" href="#compileoptions-iconfigurationoptions-files-string-callback-exitcode-number--void-void"><span class="octicon octicon-link"></span></a>compile(options: IConfigurationOptions, files: string[], callback: (exitCode: number) =&gt; void): void</h4>
+<p>Refer to the <a href="https://github.com/blinkjs/blink/blob/master/blink.d.ts">blink module</a>
+for a list of available public methods. Of particular interest are the compile
+methods:</p>
 
-<h4>
-<a name="compilerpublic-config-configuration" class="anchor" href="#compilerpublic-config-configuration"><span class="octicon octicon-link"></span></a>Compiler(public config?: Configuration)</h4>
+<ul>
+<li>compile(<a href="https://github.com/blinkjs/blink/blob/master/lib/interfaces/IConfigurationOptions.ts">options</a>, sources, callback)
 
-<h5>
-<a name="compilefiles-string-callback-err-error-results-icompiledresult--void-void" class="anchor" href="#compilefiles-string-callback-err-error-results-icompiledresult--void-void"><span class="octicon octicon-link"></span></a>compile(files: string[], callback: (err: Error, results?: ICompiledResult[]) =&gt; void): void</h5>
+<ul>
+<li>sources can be any of string, <a href="https://github.com/blinkjs/blink/blob/master/lib/interfaces/IFile.ts">file</a> array, <a href="http://nodejs.org/api/stream.html#stream_class_stream_readable">stream</a> or <a href="https://github.com/blinkjs/blink/blob/master/lib/Rule.ts">Rule</a>.</li>
+</ul>
+</li>
+<li>compileStream(<a href="https://github.com/blinkjs/blink/blob/master/lib/interfaces/IConfigurationOptions.ts">options</a>, <a href="http://nodejs.org/api/stream.html#stream_class_stream_readable">stream</a>, callback)</li>
+<li>compileContents(<a href="https://github.com/blinkjs/blink/blob/master/lib/interfaces/IConfigurationOptions.ts">options</a>, <a href="https://github.com/blinkjs/blink/blob/master/lib/interfaces/IFile.ts">file</a>, callback)</li>
+</ul><p>All callbacks have the following function signature:</p>
 
-<h5>
-<a name="compilerulesrules-rule-string" class="anchor" href="#compilerulesrules-rule-string"><span class="octicon octicon-link"></span></a>compileRules(rules: Rule[]): string</h5>
+<ul>
+<li>callback(<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error">err</a>, <a href="https://github.com/blinkjs/blink/blob/master/lib/interfaces/IConfigurationOptions.ts">config</a>, <a href="https://github.com/blinkjs/blink/blob/master/lib/interfaces/IFile.ts">file</a>)</li>
+</ul><h3>
+<a name="spriting" class="anchor" href="#spriting"><span class="octicon octicon-link"></span></a>Spriting</h3>
 
-<h4>
-<a name="icompiledresult" class="anchor" href="#icompiledresult"><span class="octicon octicon-link"></span></a>ICompiledResult</h4>
-
-<div class="highlight highlight-ts"><pre><span class="kr">interface</span> <span class="nx">ICompiledResult</span> <span class="p">{</span>
-    <span class="nx">src</span>: <span class="kt">string</span><span class="p">;</span>
-    <span class="nx">dest</span>: <span class="kt">string</span><span class="p">;</span>
-    <span class="nx">contents</span>: <span class="kt">string</span><span class="p">;</span>
-<span class="p">}</span>
-</pre></div>
-
-<h4>
-<a name="iconfigurationoptions" class="anchor" href="#iconfigurationoptions"><span class="octicon octicon-link"></span></a>IConfigurationOptions</h4>
-
-<div class="highlight highlight-ts"><pre><span class="kr">interface</span> <span class="nx">IConfigurationOptions</span> <span class="p">{</span>
-
-    <span class="nx">config?</span>: <span class="kt">string</span><span class="p">;</span>
-
-    <span class="c1">// Output style</span>
-    <span class="nx">style?</span>: <span class="kt">string</span><span class="p">;</span>
-    <span class="nx">oneIndent?</span>: <span class="kt">string</span><span class="p">;</span>
-    <span class="nx">quote?</span>: <span class="kt">string</span><span class="p">;</span>
-    <span class="nx">newline?</span>: <span class="kt">string</span><span class="p">;</span>
-
-    <span class="c1">// BEM</span>
-    <span class="nx">block?</span>: <span class="kt">string</span><span class="p">;</span>
-    <span class="nx">element?</span>: <span class="kt">string</span><span class="p">;</span>
-    <span class="nx">modifier?</span>: <span class="kt">string</span><span class="p">;</span>
-
-    <span class="c1">// Cross-Browser Support</span>
-    <span class="nx">chrome?</span>: <span class="kt">number</span><span class="p">;</span>
-    <span class="nx">firefox?</span>: <span class="kt">number</span><span class="p">;</span>
-    <span class="nx">ie?</span>: <span class="kt">number</span><span class="p">;</span>
-    <span class="nx">opera?</span>: <span class="kt">number</span><span class="p">;</span>
-
-<span class="p">}</span>
-</pre></div>
+<p>As blink is built on Node.js, any spriting tools available for Node.js can be
+implemented quite easily. Some of these tools, like <a href="https://github.com/Ensighten/spritesmith">Spritesmith</a> allow you to
+not only generate sprites, but to compute off the dimensions of the source images
+that build the sprites. This makes your CSS highly maintainable. For example, when
+design gives you replacement images all you should have to do is drop them in the
+sprites folder without changing a single line of your blink source.</p>
 
 <h2>
 <a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
