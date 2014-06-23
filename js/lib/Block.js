@@ -1,24 +1,52 @@
 var Rule = require('./Rule');
 
 var Block = (function () {
-    function Block(name, declarations) {
+    function Block(name, body) {
         this.name = name;
-        this.declarations = declarations;
-        this.elements = declarations.elements || [];
-        delete declarations.elements;
-        this.modifiers = declarations.modifiers || [];
-        delete declarations.modifiers;
+        this.body = body;
     }
-    Block.prototype.compile = function (config) {
+    Object.defineProperty(Block.prototype, "elements", {
+        get: function () {
+            return this.body.elements || [];
+        },
+        set: function (value) {
+            this.body.elements = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+
+
+    Object.defineProperty(Block.prototype, "modifiers", {
+        get: function () {
+            return this.body.modifiers || [];
+        },
+        set: function (value) {
+            this.body.modifiers = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+
+
+    Block.prototype.resolve = function (config) {
+        var elements = this.elements;
+        delete this.body.elements;
+        var modifiers = this.modifiers;
+        delete this.body.modifiers;
         var selector = config.block.replace('%s', this.name);
-        var rules = [new Rule([selector], this.declarations).compile(config)];
-        rules.push.apply(rules, this.elements.map(function (element) {
-            return element.compile(selector, config);
-        }));
-        rules.push.apply(rules, this.modifiers.map(function (modifier) {
-            return modifier.compile(selector, config);
-        }));
-        return rules.join(config.newline);
+        var resolved = new Rule(selector, this.body).resolve(config);
+        this.elements = elements;
+        this.modifiers = modifiers;
+
+        elements.forEach(function (element) {
+            [].push.apply(resolved, element.resolve(selector, config));
+        });
+        modifiers.forEach(function (modifier) {
+            [].push.apply(resolved, modifier.resolve(selector, config));
+        });
+
+        return resolved;
     };
     return Block;
 })();

@@ -1,19 +1,34 @@
 var Rule = require('./Rule');
 
 var Modifier = (function () {
-    function Modifier(name, declarations) {
+    function Modifier(name, body) {
         this.name = name;
-        this.declarations = declarations;
-        this.elements = declarations.elements || [];
-        delete declarations.elements;
+        this.body = body;
     }
-    Modifier.prototype.compile = function (selector, config) {
-        selector += config.modifier.replace('%s', this.name);
-        var rules = [new Rule([selector], this.declarations).compile(config)];
-        rules.push.apply(rules, this.elements.map(function (element) {
-            return element.compile(selector, config);
-        }));
-        return rules.join(config.newline);
+    Object.defineProperty(Modifier.prototype, "elements", {
+        get: function () {
+            return this.body.elements || [];
+        },
+        set: function (value) {
+            this.body.elements = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+
+
+    Modifier.prototype.resolve = function (base, config) {
+        var elements = this.elements;
+        delete this.body.elements;
+        var selector = base + config.modifier.replace('%s', this.name);
+        var resolved = new Rule(selector, this.body).resolve(config);
+        this.elements = elements;
+
+        this.elements.forEach(function (element) {
+            [].push.apply(resolved, element.resolve(selector, config));
+        });
+
+        return resolved;
     };
     return Modifier;
 })();

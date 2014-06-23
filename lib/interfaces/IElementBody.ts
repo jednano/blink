@@ -2,8 +2,8 @@
 import Modifier = require('../Modifier');
 
 
-interface IElementDeclarations extends IRuleBody {
+interface IElementBody extends IRuleBody {
 	modifiers?: Modifier[];
 }
 
-export = IElementDeclarations;
+export = IElementBody;

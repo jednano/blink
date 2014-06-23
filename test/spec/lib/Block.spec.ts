@@ -4,18 +4,17 @@ import blink = require('../../../lib/blink');
 
 
 var config = blink.config;
-var newline = config.newline;
 
 // ReSharper disable WrongExpressionStatement
 describe('Block', () => {
 
 	it('compiles a block', () => {
 		var block = new blink.Block('a', { b: 'c' });
-		expect(block.compile(config)).to.eq([
-			'.a {',
-			'  b: c;',
-			'}'
-		].join(newline) + newline);
+		expect(block.resolve(config)).to.deep.equal([
+			[['.a'], [
+				['b', 'c']
+			]]
+		]);
 	});
 
 	it('compiles a block with elements', () => {
@@ -30,19 +29,17 @@ describe('Block', () => {
 				})
 			]
 		});
-		expect(block.compile(config)).to.eq([
-			'.a {',
-			'  b: c;',
-			'}',
-			'',
-			'.a__d {',
-			'  e: f;',
-			'}',
-			'',
-			'.a__g {',
-			'  h: i;',
-			'}'
-		].join(newline) + newline);
+		expect(block.resolve(config)).to.deep.equal([
+			[['.a'], [
+				['b', 'c']
+			]],
+			[['.a__d'], [
+				['e', 'f']
+			]],
+			[['.a__g'], [
+				['h', 'i']
+			]]
+		]);
 	});
 
 	it('compiles a block with modifiers', () => {
@@ -57,19 +54,17 @@ describe('Block', () => {
 				})
 			]
 		});
-		expect(block.compile(config)).to.eq([
-			'.a {',
-			'  b: c;',
-			'}',
-			'',
-			'.a--d {',
-			'  e: f;',
-			'}',
-			'',
-			'.a--g {',
-			'  h: i;',
-			'}'
-		].join(newline) + newline);
+		expect(block.resolve(config)).to.deep.equal([
+			[['.a'], [
+				['b', 'c']
+			]],
+			[['.a--d'], [
+				['e', 'f']
+			]],
+			[['.a--g'], [
+				['h', 'i']
+			]]
+		]);
 	});
 
 	it('compiles a block with elements and modifiers', () => {
@@ -92,27 +87,23 @@ describe('Block', () => {
 				})
 			]
 		});
-		expect(block.compile(config)).to.eq([
-			'.a {',
-			'  b: c;',
-			'}',
-			'',
-			'.a__d {',
-			'  e: f;',
-			'}',
-			'',
-			'.a__g {',
-			'  h: i;',
-			'}',
-			'',
-			'.a--j {',
-			'  k: l;',
-			'}',
-			'',
-			'.a--m {',
-			'  n: o;',
-			'}'
-		].join(newline) + newline);
+		expect(block.resolve(config)).to.deep.equal([
+			[['.a'], [
+				['b', 'c']
+			]],
+			[['.a__d'], [
+				['e', 'f']
+			]],
+			[['.a__g'], [
+				['h', 'i']
+			]],
+			[['.a--j'], [
+				['k', 'l']
+			]],
+			[['.a--m'], [
+				['n', 'o']
+			]]
+		]);
 	});
 
 	it('compiles a block with an element that has a modifier', () => {
@@ -129,19 +120,17 @@ describe('Block', () => {
 				})
 			]
 		});
-		expect(block.compile(config)).to.eq([
-			'.a {',
-			'  b: c;',
-			'}',
-			'',
-			'.a__d {',
-			'  e: f;',
-			'}',
-			'',
-			'.a__d--g {',
-			'  h: i;',
-			'}'
-		].join(newline) + newline);
+		expect(block.resolve(config)).to.deep.equal([
+			[['.a'], [
+				['b', 'c']
+			]],
+			[['.a__d'], [
+				['e', 'f']
+			]],
+			[['.a__d--g'], [
+				['h', 'i']
+			]]
+		]);
 	});
 
 	it('compiles a block with a modifier that has an element', () => {
@@ -158,19 +147,17 @@ describe('Block', () => {
 				})
 			]
 		});
-		expect(block.compile(config)).to.eq([
-			'.a {',
-			'  b: c;',
-			'}',
-			'',
-			'.a--d {',
-			'  e: f;',
-			'}',
-			'',
-			'.a--d__g {',
-			'  h: i;',
-			'}'
-		].join(newline) + newline);
+		expect(block.resolve(config)).to.deep.equal([
+			[['.a'], [
+				['b', 'c']
+			]],
+			[['.a--d'], [
+				['e', 'f']
+			]],
+			[['.a--d__g'], [
+				['h', 'i']
+			]]
+		]);
 	});
 
 });

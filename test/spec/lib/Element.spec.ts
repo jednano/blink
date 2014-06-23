@@ -4,18 +4,17 @@ import blink = require('../../../lib/blink');
 
 
 var config = blink.config;
-var newline = blink.config.newline;
 
 // ReSharper disable WrongExpressionStatement
 describe('Element', () => {
 
 	it('compiles an element', () => {
 		var element = new blink.Element('b', { c: 'd' });
-		expect(element.compile('.a', config)).to.eq([
-			'.a__b {',
-			'  c: d;',
-			'}'
-		].join(newline) + newline);
+		expect(element.resolve('.a', config)).to.deep.equal([
+			[['.a__b'], [
+				['c', 'd']
+			]]
+		]);
 	});
 
 	it('compiles an element with modifiers', () => {
@@ -30,19 +29,17 @@ describe('Element', () => {
 				})
 			]
 		});
-		expect(element.compile('.a', config)).to.eq([
-			'.a__b {',
-			'  c: d;',
-			'}',
-			'',
-			'.a__b--e {',
-			'  f: g;',
-			'}',
-			'',
-			'.a__b--h {',
-			'  i: j;',
-			'}'
-		].join(newline) + newline);
+		expect(element.resolve('.a', config)).to.deep.equal([
+			[['.a__b'], [
+				['c', 'd']
+			]],
+			[['.a__b--e'], [
+				['f', 'g']
+			]],
+			[['.a__b--h'], [
+				['i', 'j']
+			]]
+		]);
 	});
 
 });

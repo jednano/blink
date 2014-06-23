@@ -52,7 +52,7 @@ class Rule {
 		return selectors.split(/ *, */);
 	}
 
-	public resolve(config: Configuration): any[][] {
+	public resolve(config: Configuration) {
 		this.config = config;
 		var clone = this.clone();
 		var body = clone.body;

@@ -1,25 +1,34 @@
-﻿import IElementDeclarations = require('./interfaces/IElementDeclarations');
-import Configuration = require('./Configuration');
+﻿import Configuration = require('./Configuration');
+import IElementBody = require('./interfaces/IElementBody');
 import Modifier = require('./Modifier');
 import Rule = require('./Rule');
 
 
 class Element {
 
-	public modifiers: Modifier[];
-
-	constructor(public name: string, private declarations: IElementDeclarations) {
-		this.modifiers = declarations.modifiers || [];
-		delete declarations.modifiers;
+	public get modifiers() {
+		return this.body.modifiers || [];
 	}
 
-	public compile(selector: string, config: Configuration) {
-		selector += config.element.replace('%s', this.name);
-		var rules = [new Rule([selector], this.declarations).compile(config)];
-		rules.push.apply(rules, this.modifiers.map(modifier => {
-			return modifier.compile(selector, config);
-		}));
-		return rules.join(config.newline);
+	public set modifiers(value: Modifier[]) {
+		this.body.modifiers = value;
+	}
+
+	constructor(public name: string, public body?: IElementBody) {
+	}
+
+	public resolve(base: string, config: Configuration) {
+		var modifiers = this.modifiers;
+		delete this.body.modifiers;
+		var selector = base + config.element.replace('%s', this.name);
+		var resolved = new Rule(selector, this.body).resolve(config);
+		this.modifiers = modifiers;
+
+		modifiers.forEach(modifier => {
+			[].push.apply(resolved, modifier.resolve(selector, config));
+		});
+
+		return resolved;
 	}
 }
 

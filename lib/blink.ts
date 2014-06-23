@@ -4,10 +4,10 @@ import fs = require('fs');
 import _Block = require('./Block');
 import _Compiler = require('./Compiler');
 import _Element = require('./Element');
-import _IBlockDeclarations = require('./interfaces/IBlockDeclarations');
+import _IBlockBody = require('./interfaces/IBlockBody');
 import _IConfigurationOptions = require('./interfaces/IConfigurationOptions');
-import _IElementDeclarations = require('./interfaces/IElementDeclarations');
-import _IModifierDeclarations = require('./interfaces/IModifierDeclarations');
+import _IElementBody = require('./interfaces/IElementBody');
+import _IModifierBody = require('./interfaces/IModifierBody');
 import _IRuleBody = require('./interfaces/IRuleBody');
 import _MediaAtRule = require('./MediaAtRule');
 import _Modifier = require('./Modifier');
@@ -59,9 +59,9 @@ module Blink {
 	export class Modifier    extends _Modifier {}
 
 	export interface IConfigurationOptions extends _IConfigurationOptions {}
-	export interface IBlockDeclarations    extends _IBlockDeclarations {}
-	export interface IElementDeclarations  extends _IElementDeclarations {}
-	export interface IModifierDeclarations extends _IModifierDeclarations {}
+	export interface IBlockBody            extends _IBlockBody {}
+	export interface IElementBody          extends _IElementBody {}
+	export interface IModifierBody         extends _IModifierBody {}
 	export interface IRuleBody             extends _IRuleBody {}
 
 }

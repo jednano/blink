@@ -1,32 +1,49 @@
-﻿import IBlockDeclarations = require('./interfaces/IBlockDeclarations');
-import Configuration = require('./Configuration');
+﻿import Configuration = require('./Configuration');
 import Element = require('./Element');
+import IBlockBody = require('./interfaces/IBlockBody');
 import Modifier = require('./Modifier');
 import Rule = require('./Rule');
 
 
 class Block {
 
-	public elements: Element[];
-	public modifiers: Modifier[];
-
-	constructor(public name: string, private declarations: IBlockDeclarations) {
-		this.elements = declarations.elements || [];
-		delete declarations.elements;
-		this.modifiers = declarations.modifiers || [];
-		delete declarations.modifiers;
+	public get elements() {
+		return this.body.elements || [];
 	}
 
-	public compile(config: Configuration) {
+	public set elements(value: Element[]) {
+		this.body.elements = value;
+	}
+
+	public get modifiers() {
+		return this.body.modifiers || [];
+	}
+
+	public set modifiers(value: Modifier[]) {
+		this.body.modifiers = value;
+	}
+
+	constructor(public name: string, public body?: IBlockBody) {
+	}
+
+	public resolve(config: Configuration) {
+		var elements = this.elements;
+		delete this.body.elements;
+		var modifiers = this.modifiers;
+		delete this.body.modifiers;
 		var selector = config.block.replace('%s', this.name);
-		var rules = [new Rule([selector], this.declarations).compile(config)];
-		rules.push.apply(rules, this.elements.map(element => {
-			return element.compile(selector, config);
-		}));
-		rules.push.apply(rules, this.modifiers.map(modifier => {
-			return modifier.compile(selector, config);
-		}));
-		return rules.join(config.newline);
+		var resolved = new Rule(selector, this.body).resolve(config);
+		this.elements = elements;
+		this.modifiers = modifiers;
+
+		elements.forEach(element => {
+			[].push.apply(resolved, element.resolve(selector, config));
+		});
+		modifiers.forEach(modifier => {
+			[].push.apply(resolved, modifier.resolve(selector, config));
+		});
+
+		return resolved;
 	}
 }
 

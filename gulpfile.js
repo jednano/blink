@@ -38,9 +38,11 @@ gulp.task('copy', ['clean'], function(done) {
 	});
 });
 
-gulp.task('ts', ['clean', 'ts']);
+gulp.task('build', ['ts']);
 
-gulp.task('ts', function() {
+gulp.task('ts', ['clean', 'typescript']);
+
+gulp.task('typescript', function() {
 	return gulp.src(paths.test.spec.ts)
 		.pipe(tsc({ target: 'es5' }))
 		.pipe(gulp.dest('js'));

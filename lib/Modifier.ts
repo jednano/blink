@@ -1,26 +1,36 @@
-﻿import IModifierDeclarations = require('./interfaces/IModifierDeclarations');
-import Configuration = require('./Configuration');
+﻿import Configuration = require('./Configuration');
 import Element = require('./Element');
+import IModifierBody = require('./interfaces/IModifierBody');
 import Rule = require('./Rule');
 
 
 class Modifier {
 
-	public elements: Element[];
-
-	constructor(public name: string, private declarations: IModifierDeclarations) {
-		this.elements = declarations.elements || [];
-		delete declarations.elements;
+	public get elements() {
+		return this.body.elements || [];
 	}
 
-	public compile(selector: string, config: Configuration) {
-		selector += config.modifier.replace('%s', this.name);
-		var rules = [new Rule([selector], this.declarations).compile(config)];
-		rules.push.apply(rules, this.elements.map(element => {
-			return element.compile(selector, config);
-		}));
-		return rules.join(config.newline);
+	public set elements(value: Element[]) {
+		this.body.elements = value;
 	}
+
+	constructor(public name: string, public body?: IModifierBody) {
+	}
+
+	public resolve(base: string, config: Configuration) {
+		var elements = this.elements;
+		delete this.body.elements;
+		var selector = base + config.modifier.replace('%s', this.name);
+		var resolved = new Rule(selector, this.body).resolve(config);
+		this.elements = elements;
+
+		this.elements.forEach(element => {
+			[].push.apply(resolved, element.resolve(selector, config));
+		});
+
+		return resolved;
+	}
+
 }
 
 export = Modifier;

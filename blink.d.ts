@@ -35,8 +35,10 @@ declare module "blink" {
 		public oPrefix: boolean;
 		public overrides: any;
 	}
-	function compile(options: IConfigurationOptions, sources: any[], callback?: (err: Error, config: Configuration, file: IFile) => void): void;
-	function compileStream(options: IConfigurationOptions, stream: any, callback?: (err: Error, config: Configuration, file: IFile) => void): void;
+	function compile(options: IConfigurationOptions, sources: any[],
+		callback?: (err: Error, config: Configuration, file: IFile) => void): void;
+	function compileStream(options: IConfigurationOptions, stream: any,
+		callback?: (err: Error, config: Configuration, file: IFile) => void): void;
 	function compileContents(options: IConfigurationOptions, file: {
 		src?: string;
 		contents: string;
@@ -57,7 +59,7 @@ declare module "blink" {
 		public selectors: any;
 		constructor(selectors: any, body?: IRuleBody);
 		private splitSelectors(selectors);
-		public resolve(config: Configuration): any[][];
+		public resolve(config: Configuration): any[];
 		private joinSelectors(left, right);
 		public clone(): Rule;
 		private resolveIncludes();
@@ -71,21 +73,24 @@ declare module "blink" {
 	}
 	class Block {
 		public name: string;
-		private declarations;
+		public body: IBlockBody;
 		public elements: Element[];
 		public modifiers: Modifier[];
-		constructor(name: string, declarations: IBlockDeclarations);
-		public compile(config: Configuration): string;
+		constructor(name: string, body?: IBlockBody);
+		public resolve(config: Configuration): any[];
 	}
 	class Compiler {
 		public config: Configuration;
 		constructor(config?: Configuration);
-		public compile(sources: any[], callback: (err: Error, file?: IFile) => void): void;
+		public compile(sources: any[],
+			callback: (err: Error, file?: IFile) => void): void;
 		private tryCompileRule(rule, callback);
 		private compileFile(file, callback);
-		public compileStream(stream: NodeJS.ReadableStream, callback: (err: Error, file?: IFile) => void): void;
+		public compileStream(stream: NodeJS.ReadableStream,
+			callback: (err: Error, file?: IFile) => void): void;
 		private readStream(stream, callback);
-		public tryCompileContents(file: IFile, callback: (err: Error, file?: IFile) => void): void;
+		public tryCompileContents(file: IFile,
+			callback: (err: Error, file?: IFile) => void): void;
 		private renameExtToCss(file);
 		private compileModule(contents, folder);
 		public compileRules(rules: Rule[]): string;
@@ -100,10 +105,10 @@ declare module "blink" {
 	}
 	class Element {
 		public name: string;
-		private declarations;
+		public body: IElementBody;
 		public modifiers: Modifier[];
-		constructor(name: string, declarations: IElementDeclarations);
-		public compile(selector: string, config: Configuration): string;
+		constructor(name: string, body?: IElementBody);
+		public resolve(base: string, config: Configuration): any[];
 	}
 	class MediaAtRule extends Rule {
 		public condition: string;
@@ -112,10 +117,10 @@ declare module "blink" {
 	}
 	class Modifier {
 		public name: string;
-		private declarations;
+		public body: IModifierBody;
 		public elements: Element[];
-		constructor(name: string, declarations: IModifierDeclarations);
-		public compile(selector: string, config: Configuration): string;
+		constructor(name: string, body?: IModifierBody);
+		public resolve(base: string, config: Configuration): any[];
 	}
 	interface IConfigurationOptions {
 		config?: string;
@@ -140,14 +145,14 @@ declare module "blink" {
 		msPrefix?: boolean;
 		oPrefix?: boolean;
 	}
-	interface IBlockDeclarations extends IRuleBody {
+	interface IBlockBody extends IRuleBody {
 		elements?: Element[];
 		modifiers?: Modifier[];
 	}
-	interface IElementDeclarations extends IRuleBody {
+	interface IElementBody extends IRuleBody {
 		modifiers?: Modifier[];
 	}
-	interface IModifierDeclarations extends IRuleBody {
+	interface IModifierBody extends IRuleBody {
 		elements?: Element[];
 	}
 	interface IRuleBody extends IHashTable<any> {

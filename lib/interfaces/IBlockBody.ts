@@ -3,9 +3,9 @@ import IRuleBody = require('./IRuleBody');
 import Modifier = require('../Modifier');
 
 
-interface IBlockDeclarations extends IRuleBody {
+interface IBlockBody extends IRuleBody {
 	elements?: Element[];
 	modifiers?: Modifier[];
 }
 
-export = IBlockDeclarations;
+export = IBlockBody;

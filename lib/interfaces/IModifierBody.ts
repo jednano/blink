@@ -2,8 +2,8 @@
 import IRuleBody = require('./IRuleBody');
 
 
-interface IModifierDeclarations extends IRuleBody {
+interface IModifierBody extends IRuleBody {
 	elements?: Element[];
 }
 
-export = IModifierDeclarations;
+export = IModifierBody;
