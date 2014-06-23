@@ -106,12 +106,15 @@ class Compiler {
 		callback: (err: Error, file?: IFile) => void) {
 
 		try {
+			var compiled = this.compileModule(
+				stripBOM(file.contents),
+				path.dirname(file.src)
+			);
 			callback(null, {
 				src: file.src,
 				dest: this.renameExtToCss(file),
-				contents: this.compileRules([
-					this.compileModule(stripBOM(file.contents), path.dirname(file.src))
-				])
+				contents: this.compileRules(compiled instanceof Array ?
+					compiled : [compiled])
 			});
 		} catch (err) {
 			callback(err);
