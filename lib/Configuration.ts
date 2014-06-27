@@ -31,7 +31,31 @@ var quotes = {
 class Configuration implements IConfigurationOptions {
 
 	constructor(options?: IConfigurationOptions) {
-		this.set(extend(require('../defaults.json'), options || {}));
+		this.set(extend(
+			this.extendPlugins(options),
+			require('../defaults.json'),
+			options || {}
+		));
+	}
+
+	private extendPlugins(options?: IConfigurationOptions) {
+		if (!options) {
+			return {};
+		}
+		var opts: any = {};
+		(options.plugins || []).forEach(plugin => {
+			try {
+				var mod = require(plugin);
+			} catch (err) {
+				throw new Error('Invalid plugin. Node module not found: ' + plugin);
+			}
+			if (!mod.hasOwnProperty('config')) {
+				throw new Error('Plugin "' + plugin + '" ' +
+					'has no configuration object to extend.');
+			}
+			extend(opts, mod.config);
+		});
+		return opts;
 	}
 
 	public clone() {

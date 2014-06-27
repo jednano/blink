@@ -4,6 +4,7 @@ declare module "blink" {
 	var config: Configuration;
 	class Configuration implements IConfigurationOptions {
 		constructor(options?: IConfigurationOptions);
+		private extendPlugins(options?: IConfigurationOptions): any;
 		public clone(): Configuration;
 		public set(options: IConfigurationOptions): Configuration;
 		private loadConfig(filename);
@@ -124,6 +125,7 @@ declare module "blink" {
 	}
 	interface IConfigurationOptions {
 		config?: string;
+		plugins?: string[];
 		quiet?: boolean;
 		trace?: boolean;
 		force?: boolean;

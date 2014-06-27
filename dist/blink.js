@@ -23,7 +23,9 @@ module.exports={
   "khtmlPrefix": false,
   "mozPrefix": true,
   "msPrefix": true,
-  "oPrefix": true
+  "oPrefix": true,
+
+  "plugins": []
 }
 
 },{}],2:[function(require,module,exports){
@@ -361,8 +363,27 @@ var Configuration = (function () {
     function Configuration(options) {
         this.raw = {};
         this.overrides = {};
-        this.set(extend(require('../defaults.json'), options || {}));
+        this.set(extend(this.extendPlugins(options), require('../defaults.json'), options || {}));
     }
+    Configuration.prototype.extendPlugins = function (options) {
+        if (!options) {
+            return {};
+        }
+        var opts = {};
+        (options.plugins || []).forEach(function (plugin) {
+            try  {
+                var mod = require(plugin);
+            } catch (err) {
+                throw new Error('Invalid plugin. Node module not found: ' + plugin);
+            }
+            if (!mod.hasOwnProperty('config')) {
+                throw new Error('Plugin "' + plugin + '" ' + 'has no configuration object to extend.');
+            }
+            extend(opts, mod.config);
+        });
+        return opts;
+    };
+
     Configuration.prototype.clone = function () {
         var clone = new Configuration(this.raw);
         clone.overrides = this.overrides;

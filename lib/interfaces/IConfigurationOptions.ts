@@ -9,6 +9,11 @@
 	 */
 	config?: string;
 
+	/**
+	 * Extend configuration with these plugins' config objects.
+	 */
+	plugins?: string[];
+
 
 	// ==============================================================================
 	// Modes
