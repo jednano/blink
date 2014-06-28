@@ -1,5 +1,5 @@
 ﻿import Configuration = require('../Configuration');
-import experimental = require('./experimental');
+import experimental = require('../extenders/experimental');
 
 
 // http://css-tricks.com/box-sizing/

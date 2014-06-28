@@ -22,7 +22,5 @@
   "khtmlPrefix": false,
   "mozPrefix": true,
   "msPrefix": true,
-  "oPrefix": true,
-
-  "plugins": []
+  "oPrefix": true
 }

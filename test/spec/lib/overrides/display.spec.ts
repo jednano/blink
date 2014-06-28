@@ -1,7 +1,7 @@
 ﻿import sinonChai = require('../../../sinon-chai');
 var expect = sinonChai.expect;
 import blink = require('../../../../lib/blink');
-import display = require('../../../../lib/extenders/display');
+import display = require('../../../../lib/overrides/display');
 import inlineBlock = require('../../../../lib/extenders/inlineBlock');
 
 

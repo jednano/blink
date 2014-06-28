@@ -71,7 +71,7 @@ describe('Compiler', () => {
 	});
 
 	it('compiles overrides', () => {
-		config.overrides.cap = (value: string) => {
+		(<any>config.overrides).cap = (value: string) => {
 			return [arguments, () => {
 				return [['cap', value.toUpperCase()]];
 			}];
@@ -107,7 +107,7 @@ describe('Compiler', () => {
 			'  garpley: GARPLEY;',
 			'}'
 		].join(newline) + newline);
-		delete config.overrides.cap;
+		delete (<any>config.overrides).cap;
 	});
 
 	describe('responders', () => {

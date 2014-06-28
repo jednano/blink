@@ -2,9 +2,14 @@
 var stripBom = require('strip-bom');
 import fs = require('fs');
 import os = require('os');
+import path = require('path');
 var extend = require('node.extend');
 
+import _extenders = require('./extenders/all');
+import _overrides = require('./overrides/all');
 import IConfigurationOptions = require('./interfaces/IConfigurationOptions');
+import IExtenders = require('./interfaces/IExtenders');
+import IOverrides = require('./interfaces/IOverrides');
 import s = require('./helpers/string');
 
 
@@ -32,30 +37,40 @@ class Configuration implements IConfigurationOptions {
 
 	constructor(options?: IConfigurationOptions) {
 		this.set(extend(
-			this.extendPlugins(options),
 			require('../defaults.json'),
 			options || {}
 		));
+		return this.loadPlugins(options);
 	}
 
-	private extendPlugins(options?: IConfigurationOptions) {
+	private loadPlugins(options?: IConfigurationOptions) {
 		if (!options) {
-			return {};
+			return this;
 		}
-		var opts: any = {};
-		(options.plugins || []).forEach(plugin => {
+		var result = this;
+		(options.plugins || []).forEach(pluginName => {
 			try {
-				var mod = require(plugin);
+				var plugin = require(pluginName);
 			} catch (err) {
-				throw new Error('Invalid plugin. Node module not found: ' + plugin);
+				throw new Error('Invalid plugin. Node module not found: ' + pluginName);
 			}
-			if (!mod.hasOwnProperty('config')) {
-				throw new Error('Plugin "' + plugin + '" ' +
-					'has no configuration object to extend.');
-			}
-			extend(opts, mod.config);
+			result = plugin(this);
 		});
-		return opts;
+		return result;
+	}
+
+	public registerFunctions(configProperty: string, folder: string) {
+		var overrides: any = {};
+		fs.readdir(folder, (err, files) => {
+			if (err) {
+				throw err;
+			}
+			files.forEach(file => {
+				var property = s.dasherize(path.basename(file, '.js'));
+				overrides[property] = require(file);
+			});
+		});
+		return overrides;
 	}
 
 	public clone() {
@@ -343,7 +358,13 @@ class Configuration implements IConfigurationOptions {
 		this.raw.oPrefix = value;
 	}
 
-	public overrides: any = {};
+	public get extenders() {
+		return _extenders;
+	}
+
+	public get overrides() {
+		return _overrides;
+	}
 
 }
 

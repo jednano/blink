@@ -1,4 +1,4 @@
-var experimental = require('./experimental');
+var experimental = require('../extenders/experimental');
 
 // http://css-tricks.com/box-sizing/
 // ReSharper disable once UnusedLocals

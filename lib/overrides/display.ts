@@ -1,5 +1,5 @@
 ﻿import Configuration = require('../Configuration');
-import inlineBlock = require('./inlineBlock');
+import inlineBlock = require('../extenders/inlineBlock');
 
 
 // ReSharper disable once UnusedLocals

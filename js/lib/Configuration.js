@@ -2,7 +2,11 @@
 var stripBom = require('strip-bom');
 var fs = require('fs');
 var os = require('os');
+var path = require('path');
 var extend = require('node.extend');
+
+var _extenders = require('./extenders/all');
+var _overrides = require('./overrides/all');
 
 var s = require('./helpers/string');
 
@@ -29,26 +33,38 @@ var quotes = {
 var Configuration = (function () {
     function Configuration(options) {
         this.raw = {};
-        this.overrides = {};
-        this.set(extend(this.extendPlugins(options), require('../defaults.json'), options || {}));
+        this.set(extend(require('../defaults.json'), options || {}));
+        return this.loadPlugins(options);
     }
-    Configuration.prototype.extendPlugins = function (options) {
+    Configuration.prototype.loadPlugins = function (options) {
+        var _this = this;
         if (!options) {
-            return {};
+            return this;
         }
-        var opts = {};
-        (options.plugins || []).forEach(function (plugin) {
+        var result = this;
+        (options.plugins || []).forEach(function (pluginName) {
             try  {
-                var mod = require(plugin);
+                var plugin = require(pluginName);
             } catch (err) {
-                throw new Error('Invalid plugin. Node module not found: ' + plugin);
+                throw new Error('Invalid plugin. Node module not found: ' + pluginName);
             }
-            if (!mod.hasOwnProperty('config')) {
-                throw new Error('Plugin "' + plugin + '" ' + 'has no configuration object to extend.');
-            }
-            extend(opts, mod.config);
+            result = plugin(_this);
         });
-        return opts;
+        return result;
+    };
+
+    Configuration.prototype.registerFunctions = function (configProperty, folder) {
+        var overrides = {};
+        fs.readdir(folder, function (err, files) {
+            if (err) {
+                throw err;
+            }
+            files.forEach(function (file) {
+                var property = s.dasherize(path.basename(file, '.js'));
+                overrides[property] = require(file);
+            });
+        });
+        return overrides;
     };
 
     Configuration.prototype.clone = function () {
@@ -429,6 +445,22 @@ var Configuration = (function () {
         configurable: true
     });
 
+
+    Object.defineProperty(Configuration.prototype, "extenders", {
+        get: function () {
+            return _extenders;
+        },
+        enumerable: true,
+        configurable: true
+    });
+
+    Object.defineProperty(Configuration.prototype, "overrides", {
+        get: function () {
+            return _overrides;
+        },
+        enumerable: true,
+        configurable: true
+    });
     return Configuration;
 })();
 

@@ -10,7 +10,7 @@
 	config?: string;
 
 	/**
-	 * Extend configuration with these plugins' config objects.
+	 * Extend configuration with these plugins.
 	 */
 	plugins?: string[];
 

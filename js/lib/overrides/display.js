@@ -1,4 +1,4 @@
-var inlineBlock = require('./inlineBlock');
+var inlineBlock = require('../extenders/inlineBlock');
 
 // ReSharper disable once UnusedLocals
 function display(value) {
