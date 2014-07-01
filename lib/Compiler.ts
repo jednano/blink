@@ -45,6 +45,9 @@ class Compiler {
 				});
 				return;
 			}
+			if (source.contents) {
+				this.tryCompileContents(source, callback);
+			}
 			callback(new Error('Unsupported source input'), {
 				src: source
 			});

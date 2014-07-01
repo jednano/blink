@@ -123,6 +123,9 @@ var Compiler = (function () {
                 });
                 return;
             }
+            if (source.contents) {
+                _this.tryCompileContents(source, callback);
+            }
             callback(new Error('Unsupported source input'), {
                 src: source
             });
