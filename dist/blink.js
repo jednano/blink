@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+!function(e){if("object"==typeof exports)module.exports=e();else if("function"==typeof define&&define.amd)define(e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.blink=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 module.exports={
   "quiet": false,
   "trace": false,
@@ -26,8 +26,8 @@ module.exports={
   "oPrefix": true
 }
 
-},{}],2:[function(require,module,exports){
-var Rule = require('./Rule');
+},{}],2:[function(_dereq_,module,exports){
+var Rule = _dereq_('./Rule');
 
 var Block = (function () {
     function Block(name, body) {
@@ -82,18 +82,18 @@ var Block = (function () {
 
 module.exports = Block;
 
-},{"./Rule":10}],3:[function(require,module,exports){
-var fs = require('fs');
-var mod = require('module');
-var path = require('path');
-var _stream = require('stream');
-var stripBOM = require('strip-bom');
+},{"./Rule":10}],3:[function(_dereq_,module,exports){
+var fs = _dereq_('fs');
+var mod = _dereq_('module');
+var path = _dereq_('path');
+var _stream = _dereq_('stream');
+var stripBOM = _dereq_('strip-bom');
 
-var Configuration = require('./Configuration');
-var ExtenderRegistry = require('./ExtenderRegistry');
-var Formatter = require('./Formatter');
+var Configuration = _dereq_('./Configuration');
+var ExtenderRegistry = _dereq_('./ExtenderRegistry');
+var Formatter = _dereq_('./Formatter');
 
-var Rule = require('./Rule');
+var Rule = _dereq_('./Rule');
 
 var Compiler = (function () {
     function Compiler(config) {
@@ -328,18 +328,18 @@ var Compiler = (function () {
 
 module.exports = Compiler;
 
-},{"./Configuration":4,"./ExtenderRegistry":6,"./Formatter":7,"./Rule":10,"fs":19,"module":19,"path":26,"stream":29,"strip-bom":41}],4:[function(require,module,exports){
+},{"./Configuration":4,"./ExtenderRegistry":6,"./Formatter":7,"./Rule":10,"fs":19,"module":19,"path":26,"stream":29,"strip-bom":41}],4:[function(_dereq_,module,exports){
 ///<reference path="../bower_components/dt-node/node.d.ts"/>
-var stripBom = require('strip-bom');
-var fs = require('fs');
-var os = require('os');
-var path = require('path');
-var extend = require('node.extend');
+var stripBom = _dereq_('strip-bom');
+var fs = _dereq_('fs');
+var os = _dereq_('os');
+var path = _dereq_('path');
+var extend = _dereq_('node.extend');
 
-var _extenders = require('./extenders/all');
-var _overrides = require('./overrides/all');
+var _extenders = _dereq_('./extenders/all');
+var _overrides = _dereq_('./overrides/all');
 
-var s = require('./helpers/string');
+var s = _dereq_('./helpers/string');
 
 var ONE_INDENT = /(\d+)([st])/;
 
@@ -364,7 +364,7 @@ var quotes = {
 var Configuration = (function () {
     function Configuration(options) {
         this.raw = {};
-        this.set(extend(require('../defaults.json'), options || {}));
+        this.set(extend(_dereq_('../defaults.json'), options || {}));
         return this.loadPlugins(options);
     }
     Configuration.prototype.loadPlugins = function (options) {
@@ -375,7 +375,7 @@ var Configuration = (function () {
         var result = this;
         (options.plugins || []).forEach(function (pluginName) {
             try  {
-                var plugin = require(pluginName);
+                var plugin = _dereq_(pluginName);
             } catch (err) {
                 throw new Error('Invalid plugin. Node module not found: ' + pluginName);
             }
@@ -392,7 +392,7 @@ var Configuration = (function () {
             }
             files.forEach(function (file) {
                 var property = s.dasherize(path.basename(file, '.js'));
-                overrides[property] = require(file);
+                overrides[property] = _dereq_(file);
             });
         });
         return overrides;
@@ -797,8 +797,8 @@ var Configuration = (function () {
 
 module.exports = Configuration;
 
-},{"../defaults.json":1,"./extenders/all":11,"./helpers/string":15,"./overrides/all":16,"fs":19,"node.extend":38,"os":25,"path":26,"strip-bom":41}],5:[function(require,module,exports){
-var Rule = require('./Rule');
+},{"../defaults.json":1,"./extenders/all":11,"./helpers/string":15,"./overrides/all":16,"fs":19,"node.extend":38,"os":25,"path":26,"strip-bom":41}],5:[function(_dereq_,module,exports){
+var Rule = _dereq_('./Rule');
 
 var Element = (function () {
     function Element(name, body) {
@@ -835,7 +835,7 @@ var Element = (function () {
 
 module.exports = Element;
 
-},{"./Rule":10}],6:[function(require,module,exports){
+},{"./Rule":10}],6:[function(_dereq_,module,exports){
 var ExtenderRegistry = (function () {
     function ExtenderRegistry() {
         this.extenders = {};
@@ -875,8 +875,8 @@ var ExtenderRegistry = (function () {
 
 module.exports = ExtenderRegistry;
 
-},{}],7:[function(require,module,exports){
-var s = require('./helpers/string');
+},{}],7:[function(_dereq_,module,exports){
+var s = _dereq_('./helpers/string');
 
 var Formatter = (function () {
     function Formatter() {
@@ -958,14 +958,14 @@ var Formatter = (function () {
 
 module.exports = Formatter;
 
-},{"./helpers/string":15}],8:[function(require,module,exports){
+},{"./helpers/string":15}],8:[function(_dereq_,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-var Rule = require('./Rule');
+var Rule = _dereq_('./Rule');
 
 var MediaAtRule = (function (_super) {
     __extends(MediaAtRule, _super);
@@ -980,8 +980,8 @@ var MediaAtRule = (function (_super) {
 
 module.exports = MediaAtRule;
 
-},{"./Rule":10}],9:[function(require,module,exports){
-var Rule = require('./Rule');
+},{"./Rule":10}],9:[function(_dereq_,module,exports){
+var Rule = _dereq_('./Rule');
 
 var Modifier = (function () {
     function Modifier(name, body) {
@@ -1018,12 +1018,12 @@ var Modifier = (function () {
 
 module.exports = Modifier;
 
-},{"./Rule":10}],10:[function(require,module,exports){
-var extend = require('node.extend');
+},{"./Rule":10}],10:[function(_dereq_,module,exports){
+var extend = _dereq_('node.extend');
 
-var Formatter = require('./Formatter');
+var Formatter = _dereq_('./Formatter');
 
-var s = require('./helpers/string');
+var s = _dereq_('./helpers/string');
 
 var Rule = (function () {
     function Rule(selectors, body) {
@@ -1214,9 +1214,9 @@ var Rule = (function () {
 
 module.exports = Rule;
 
-},{"./Formatter":7,"./helpers/string":15,"node.extend":38}],11:[function(require,module,exports){
-var experimental = require('./experimental');
-var inlineBlock = require('./inlineBlock');
+},{"./Formatter":7,"./helpers/string":15,"node.extend":38}],11:[function(_dereq_,module,exports){
+var experimental = _dereq_('./experimental');
+var inlineBlock = _dereq_('./inlineBlock');
 
 // ReSharper disable once UnusedLocals
 var extenders = {
@@ -1226,7 +1226,7 @@ var extenders = {
 
 module.exports = extenders;
 
-},{"./experimental":12,"./inlineBlock":13}],12:[function(require,module,exports){
+},{"./experimental":12,"./inlineBlock":13}],12:[function(_dereq_,module,exports){
 // ReSharper disable once UnusedLocals
 function experimental(property, value, options) {
     options = options || {};
@@ -1248,7 +1248,7 @@ function experimental(property, value, options) {
 
 module.exports = experimental;
 
-},{}],13:[function(require,module,exports){
+},{}],13:[function(_dereq_,module,exports){
 // ReSharper disable once UnusedLocals
 function inlineBlock(options) {
     options = options || {};
@@ -1279,21 +1279,21 @@ function inlineBlock(options) {
 
 module.exports = inlineBlock;
 
-},{}],14:[function(require,module,exports){
+},{}],14:[function(_dereq_,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-var _Block = require('./Block');
-var _Compiler = require('./Compiler');
-var _Element = require('./Element');
+var _Block = _dereq_('./Block');
+var _Compiler = _dereq_('./Compiler');
+var _Element = _dereq_('./Element');
 
-var _MediaAtRule = require('./MediaAtRule');
-var _Modifier = require('./Modifier');
-var _Rule = require('./Rule');
-var Configuration = require('./Configuration');
+var _MediaAtRule = _dereq_('./MediaAtRule');
+var _Modifier = _dereq_('./Modifier');
+var _Rule = _dereq_('./Rule');
+var Configuration = _dereq_('./Configuration');
 
 var Blink;
 (function (Blink) {
@@ -1378,7 +1378,7 @@ var Blink;
 
 module.exports = Blink;
 
-},{"./Block":2,"./Compiler":3,"./Configuration":4,"./Element":5,"./MediaAtRule":8,"./Modifier":9,"./Rule":10}],15:[function(require,module,exports){
+},{"./Block":2,"./Compiler":3,"./Configuration":4,"./Element":5,"./MediaAtRule":8,"./Modifier":9,"./Rule":10}],15:[function(_dereq_,module,exports){
 // ReSharper disable InconsistentNaming
 var STRING_DASHERIZE = /[ _]/g;
 var STRING_DASHERIZE_CACHE = {};
@@ -1414,9 +1414,9 @@ function decamelize(s) {
 }
 exports.decamelize = decamelize;
 
-},{}],16:[function(require,module,exports){
-var boxSizing = require('./boxSizing');
-var display = require('./display');
+},{}],16:[function(_dereq_,module,exports){
+var boxSizing = _dereq_('./boxSizing');
+var display = _dereq_('./display');
 
 // ReSharper disable once UnusedLocals
 var overrides = {
@@ -1426,8 +1426,8 @@ var overrides = {
 
 module.exports = overrides;
 
-},{"./boxSizing":17,"./display":18}],17:[function(require,module,exports){
-var experimental = require('../extenders/experimental');
+},{"./boxSizing":17,"./display":18}],17:[function(_dereq_,module,exports){
+var experimental = _dereq_('../extenders/experimental');
 
 // http://css-tricks.com/box-sizing/
 // ReSharper disable once UnusedLocals
@@ -1444,8 +1444,8 @@ function boxSizing(value) {
 
 module.exports = boxSizing;
 
-},{"../extenders/experimental":12}],18:[function(require,module,exports){
-var inlineBlock = require('../extenders/inlineBlock');
+},{"../extenders/experimental":12}],18:[function(_dereq_,module,exports){
+var inlineBlock = _dereq_('../extenders/inlineBlock');
 
 // ReSharper disable once UnusedLocals
 function display(value) {
@@ -1462,9 +1462,9 @@ function display(value) {
 
 module.exports = display;
 
-},{"../extenders/inlineBlock":13}],19:[function(require,module,exports){
+},{"../extenders/inlineBlock":13}],19:[function(_dereq_,module,exports){
 
-},{}],20:[function(require,module,exports){
+},{}],20:[function(_dereq_,module,exports){
 /*!
  * The buffer module from node.js, for the browser.
  *
@@ -1472,8 +1472,8 @@ module.exports = display;
  * @license  MIT
  */
 
-var base64 = require('base64-js')
-var ieee754 = require('ieee754')
+var base64 = _dereq_('base64-js')
+var ieee754 = _dereq_('ieee754')
 
 exports.Buffer = Buffer
 exports.SlowBuffer = Buffer
@@ -2575,7 +2575,7 @@ function assert (test, message) {
   if (!test) throw new Error(message || 'Failed assertion')
 }
 
-},{"base64-js":21,"ieee754":22}],21:[function(require,module,exports){
+},{"base64-js":21,"ieee754":22}],21:[function(_dereq_,module,exports){
 var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 ;(function (exports) {
@@ -2697,7 +2697,7 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 	exports.fromByteArray = uint8ToBase64
 }(typeof exports === 'undefined' ? (this.base64js = {}) : exports))
 
-},{}],22:[function(require,module,exports){
+},{}],22:[function(_dereq_,module,exports){
 exports.read = function(buffer, offset, isLE, mLen, nBytes) {
   var e, m,
       eLen = nBytes * 8 - mLen - 1,
@@ -2783,7 +2783,7 @@ exports.write = function(buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128;
 };
 
-},{}],23:[function(require,module,exports){
+},{}],23:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -3088,7 +3088,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],24:[function(require,module,exports){
+},{}],24:[function(_dereq_,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -3113,7 +3113,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],25:[function(require,module,exports){
+},{}],25:[function(_dereq_,module,exports){
 exports.endianness = function () { return 'LE' };
 
 exports.hostname = function () {
@@ -3160,7 +3160,7 @@ exports.tmpdir = exports.tmpDir = function () {
 
 exports.EOL = '\n';
 
-},{}],26:[function(require,module,exports){
+},{}],26:[function(_dereq_,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -3387,8 +3387,8 @@ var substr = 'ab'.substr(-1) === 'b'
     }
 ;
 
-}).call(this,require("ngpmcQ"))
-},{"ngpmcQ":27}],27:[function(require,module,exports){
+}).call(this,_dereq_("ngpmcQ"))
+},{"ngpmcQ":27}],27:[function(_dereq_,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -3453,7 +3453,7 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],28:[function(require,module,exports){
+},{}],28:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -3481,10 +3481,10 @@ process.chdir = function (dir) {
 // Writable.
 
 module.exports = Duplex;
-var inherits = require('inherits');
-var setImmediate = require('process/browser.js').nextTick;
-var Readable = require('./readable.js');
-var Writable = require('./writable.js');
+var inherits = _dereq_('inherits');
+var setImmediate = _dereq_('process/browser.js').nextTick;
+var Readable = _dereq_('./readable.js');
+var Writable = _dereq_('./writable.js');
 
 inherits(Duplex, Readable);
 
@@ -3527,7 +3527,7 @@ function onend() {
   });
 }
 
-},{"./readable.js":32,"./writable.js":34,"inherits":24,"process/browser.js":30}],29:[function(require,module,exports){
+},{"./readable.js":32,"./writable.js":34,"inherits":24,"process/browser.js":30}],29:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -3551,15 +3551,15 @@ function onend() {
 
 module.exports = Stream;
 
-var EE = require('events').EventEmitter;
-var inherits = require('inherits');
+var EE = _dereq_('events').EventEmitter;
+var inherits = _dereq_('inherits');
 
 inherits(Stream, EE);
-Stream.Readable = require('./readable.js');
-Stream.Writable = require('./writable.js');
-Stream.Duplex = require('./duplex.js');
-Stream.Transform = require('./transform.js');
-Stream.PassThrough = require('./passthrough.js');
+Stream.Readable = _dereq_('./readable.js');
+Stream.Writable = _dereq_('./writable.js');
+Stream.Duplex = _dereq_('./duplex.js');
+Stream.Transform = _dereq_('./transform.js');
+Stream.PassThrough = _dereq_('./passthrough.js');
 
 // Backwards-compat with node 0.4.x
 Stream.Stream = Stream;
@@ -3656,7 +3656,7 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"./duplex.js":28,"./passthrough.js":31,"./readable.js":32,"./transform.js":33,"./writable.js":34,"events":23,"inherits":24}],30:[function(require,module,exports){
+},{"./duplex.js":28,"./passthrough.js":31,"./readable.js":32,"./transform.js":33,"./writable.js":34,"events":23,"inherits":24}],30:[function(_dereq_,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -3711,7 +3711,7 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],31:[function(require,module,exports){
+},{}],31:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -3739,8 +3739,8 @@ process.chdir = function (dir) {
 
 module.exports = PassThrough;
 
-var Transform = require('./transform.js');
-var inherits = require('inherits');
+var Transform = _dereq_('./transform.js');
+var inherits = _dereq_('inherits');
 inherits(PassThrough, Transform);
 
 function PassThrough(options) {
@@ -3754,7 +3754,7 @@ PassThrough.prototype._transform = function(chunk, encoding, cb) {
   cb(null, chunk);
 };
 
-},{"./transform.js":33,"inherits":24}],32:[function(require,module,exports){
+},{"./transform.js":33,"inherits":24}],32:[function(_dereq_,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -3780,13 +3780,13 @@ PassThrough.prototype._transform = function(chunk, encoding, cb) {
 module.exports = Readable;
 Readable.ReadableState = ReadableState;
 
-var EE = require('events').EventEmitter;
-var Stream = require('./index.js');
-var Buffer = require('buffer').Buffer;
-var setImmediate = require('process/browser.js').nextTick;
+var EE = _dereq_('events').EventEmitter;
+var Stream = _dereq_('./index.js');
+var Buffer = _dereq_('buffer').Buffer;
+var setImmediate = _dereq_('process/browser.js').nextTick;
 var StringDecoder;
 
-var inherits = require('inherits');
+var inherits = _dereq_('inherits');
 inherits(Readable, Stream);
 
 function ReadableState(options, stream) {
@@ -3851,7 +3851,7 @@ function ReadableState(options, stream) {
   this.encoding = null;
   if (options.encoding) {
     if (!StringDecoder)
-      StringDecoder = require('string_decoder').StringDecoder;
+      StringDecoder = _dereq_('string_decoder').StringDecoder;
     this.decoder = new StringDecoder(options.encoding);
     this.encoding = options.encoding;
   }
@@ -3952,7 +3952,7 @@ function needMoreData(state) {
 // backwards compatibility.
 Readable.prototype.setEncoding = function(enc) {
   if (!StringDecoder)
-    StringDecoder = require('string_decoder').StringDecoder;
+    StringDecoder = _dereq_('string_decoder').StringDecoder;
   this._readableState.decoder = new StringDecoder(enc);
   this._readableState.encoding = enc;
 };
@@ -4690,8 +4690,8 @@ function indexOf (xs, x) {
   return -1;
 }
 
-}).call(this,require("ngpmcQ"))
-},{"./index.js":29,"buffer":20,"events":23,"inherits":24,"ngpmcQ":27,"process/browser.js":30,"string_decoder":35}],33:[function(require,module,exports){
+}).call(this,_dereq_("ngpmcQ"))
+},{"./index.js":29,"buffer":20,"events":23,"inherits":24,"ngpmcQ":27,"process/browser.js":30,"string_decoder":35}],33:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -4757,8 +4757,8 @@ function indexOf (xs, x) {
 
 module.exports = Transform;
 
-var Duplex = require('./duplex.js');
-var inherits = require('inherits');
+var Duplex = _dereq_('./duplex.js');
+var inherits = _dereq_('inherits');
 inherits(Transform, Duplex);
 
 
@@ -4897,7 +4897,7 @@ function done(stream, er) {
   return stream.push(null);
 }
 
-},{"./duplex.js":28,"inherits":24}],34:[function(require,module,exports){
+},{"./duplex.js":28,"inherits":24}],34:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -4939,10 +4939,10 @@ var isArrayBuffer = typeof ArrayBuffer !== 'undefined'
   }
 ;
 
-var inherits = require('inherits');
-var Stream = require('./index.js');
-var setImmediate = require('process/browser.js').nextTick;
-var Buffer = require('buffer').Buffer;
+var inherits = _dereq_('inherits');
+var Stream = _dereq_('./index.js');
+var setImmediate = _dereq_('process/browser.js').nextTick;
+var Buffer = _dereq_('buffer').Buffer;
 
 inherits(Writable, Stream);
 
@@ -5285,7 +5285,7 @@ function endWritable(stream, state, cb) {
   state.ended = true;
 }
 
-},{"./index.js":29,"buffer":20,"inherits":24,"process/browser.js":30}],35:[function(require,module,exports){
+},{"./index.js":29,"buffer":20,"inherits":24,"process/browser.js":30}],35:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -5307,7 +5307,7 @@ function endWritable(stream, state, cb) {
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 // USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-var Buffer = require('buffer').Buffer;
+var Buffer = _dereq_('buffer').Buffer;
 
 function assertEncoding(encoding) {
   if (encoding && !Buffer.isEncoding(encoding)) {
@@ -5478,14 +5478,14 @@ function base64DetectIncompleteChar(buffer) {
   return incomplete;
 }
 
-},{"buffer":20}],36:[function(require,module,exports){
+},{"buffer":20}],36:[function(_dereq_,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],37:[function(require,module,exports){
+},{}],37:[function(_dereq_,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -6012,7 +6012,7 @@ function isPrimitive(arg) {
 }
 exports.isPrimitive = isPrimitive;
 
-exports.isBuffer = require('./support/isBuffer');
+exports.isBuffer = _dereq_('./support/isBuffer');
 
 function objectToString(o) {
   return Object.prototype.toString.call(o);
@@ -6056,7 +6056,7 @@ exports.log = function() {
  *     prototype.
  * @param {function} superCtor Constructor function to inherit prototype from.
  */
-exports.inherits = require('inherits');
+exports.inherits = _dereq_('inherits');
 
 exports._extend = function(origin, add) {
   // Don't do anything if add isn't an object
@@ -6074,12 +6074,12 @@ function hasOwnProperty(obj, prop) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
-}).call(this,require("ngpmcQ"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":36,"inherits":24,"ngpmcQ":27}],38:[function(require,module,exports){
-module.exports = require('./lib/extend');
+}).call(this,_dereq_("ngpmcQ"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./support/isBuffer":36,"inherits":24,"ngpmcQ":27}],38:[function(_dereq_,module,exports){
+module.exports = _dereq_('./lib/extend');
 
 
-},{"./lib/extend":39}],39:[function(require,module,exports){
+},{"./lib/extend":39}],39:[function(_dereq_,module,exports){
 /*!
  * node.extend
  * Copyright 2011, John Resig
@@ -6089,7 +6089,7 @@ module.exports = require('./lib/extend');
  * @fileoverview
  * Port of jQuery.extend that actually works on node.js
  */
-var is = require('is');
+var is = _dereq_('is');
 
 function extend() {
   var target = arguments[0] || {};
@@ -6163,7 +6163,7 @@ extend.version = '1.0.8';
 module.exports = extend;
 
 
-},{"is":40}],40:[function(require,module,exports){
+},{"is":40}],40:[function(_dereq_,module,exports){
 
 /**!
  * is
@@ -6877,10 +6877,10 @@ is.string = function (value) {
 };
 
 
-},{}],41:[function(require,module,exports){
+},{}],41:[function(_dereq_,module,exports){
 (function (Buffer){
 'use strict';
-var isUtf8 = require('is-utf8');
+var isUtf8 = _dereq_('is-utf8');
 
 var stripBom = module.exports = function (arg) {
 	if (typeof arg === 'string') {
@@ -6896,7 +6896,7 @@ var stripBom = module.exports = function (arg) {
 };
 
 stripBom.stream = function () {
-	var firstChunk = require('first-chunk-stream');
+	var firstChunk = _dereq_('first-chunk-stream');
 
 	return firstChunk({minSize: 3}, function (chunk, enc, cb) {
 		this.push(stripBom(chunk));
@@ -6904,12 +6904,12 @@ stripBom.stream = function () {
 	});
 };
 
-}).call(this,require("buffer").Buffer)
-},{"buffer":20,"first-chunk-stream":42,"is-utf8":43}],42:[function(require,module,exports){
+}).call(this,_dereq_("buffer").Buffer)
+},{"buffer":20,"first-chunk-stream":42,"is-utf8":43}],42:[function(_dereq_,module,exports){
 (function (Buffer){
 'use strict';
-var util = require('util');
-var Transform = require('stream').Transform;
+var util = _dereq_('util');
+var Transform = _dereq_('stream').Transform;
 
 function ctor(options, transform) {
 	util.inherits(FirstChunk, Transform);
@@ -7001,8 +7001,8 @@ module.exports = function () {
 
 module.exports.ctor = ctor;
 
-}).call(this,require("buffer").Buffer)
-},{"buffer":20,"stream":29,"util":37}],43:[function(require,module,exports){
+}).call(this,_dereq_("buffer").Buffer)
+},{"buffer":20,"stream":29,"util":37}],43:[function(_dereq_,module,exports){
 
 exports = module.exports = function(bytes)
 {
@@ -7081,3 +7081,5 @@ exports = module.exports = function(bytes)
 }
 
 },{}]},{},[14])
+(14)
+});

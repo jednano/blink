@@ -75,7 +75,9 @@ gulp.task('watch', ['test'], function() {
 
 gulp.task('browserify', ['copy', 'ts'], function() {
 	return gulp.src('js/lib/blink.js')
-		.pipe(browserify())
+		.pipe(browserify({
+			standalone: 'blink'
+		}))
 		.pipe(gulp.dest('dist'));
 });
 
