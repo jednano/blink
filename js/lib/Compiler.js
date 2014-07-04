@@ -9,6 +9,7 @@ var ExtenderRegistry = require('./ExtenderRegistry');
 var Formatter = require('./Formatter');
 
 var Rule = require('./Rule');
+var s = require('./helpers/string');
 
 var Compiler = (function () {
     function Compiler(config) {
@@ -149,10 +150,6 @@ var Compiler = (function () {
         return resolved;
     };
 
-    Compiler.prototype.compileExtenders = function (rules) {
-        return this.resolveExtenders(rules);
-    };
-
     Compiler.prototype.format = function (rules) {
         return new Formatter().format(this.config, rules);
     };
@@ -182,7 +179,7 @@ var Compiler = (function () {
             var overrides = _this.config.overrides;
             var body = rule.body;
             Object.keys(body).forEach(function (property) {
-                var override = overrides[property];
+                var override = overrides[s.camelize(property)];
                 if (override) {
                     override = override(body[property]);
                     extenders.add(override[1], override[0], rule.selectors);

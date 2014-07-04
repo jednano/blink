@@ -1,31 +1,37 @@
 ﻿import sinonChai = require('../../../sinon-chai');
 var expect = sinonChai.expect;
 import blink = require('../../../../lib/blink');
-import inlineBlock = require('../../../../lib/extenders/inlineBlock');
 
 
-var config = blink.config;
-var compiler = new blink.Compiler(config);
+var compiler = new blink.Compiler(blink.config);
 
 // ReSharper disable WrongExpressionStatement
-describe('display override', () => {
+describe('font override', () => {
 
-	it('calls inlineBlock extender when value is inline-block', () => {
+	it('accepts a string as the value', () => {
 		var rule = new blink.Rule('foo', {
-			display: 'inline-block'
-		});
-		expect(compiler.resolveRules([rule])).to.deep.equal([
-			[['foo'], inlineBlock()[1](config)]
-		]);
-	});
-
-	it('returns display: none when none is the value', () => {
-		var rule = new blink.Rule('foo', {
-			display: 'none'
+			font: 'bar'
 		});
 		expect(compiler.resolveRules([rule])).to.deep.equal([
 			[['foo'], [
-				['display', 'none']
+				['font', 'bar']
+			]]
+		]);
+	});
+
+	it('generates shorthand syntax for all font properties', () => {
+		var rule = new blink.Rule('foo', {
+			font: {
+				style: 'bar',
+				variant: 'baz',
+				weight: 'qux',
+				size: 'quux',
+				lineHeight: 'corge'
+			}
+		});
+		expect(compiler.resolveRules([rule])).to.deep.equal([
+			[['foo'], [
+				['font', 'bar baz qux quux/corge']
 			]]
 		]);
 	});

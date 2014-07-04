@@ -1,4 +1,5 @@
 // ReSharper disable InconsistentNaming
+var STRING_CAMELIZE = (/(\-|_|\.|\s)+(.)?/g);
 var STRING_DASHERIZE = /[ _]/g;
 var STRING_DASHERIZE_CACHE = {};
 var STRING_DECAMELIZE = /([a-z\d])([A-Z])/g;
@@ -9,6 +10,18 @@ function repeat(s, n) {
 }
 exports.repeat = repeat;
 ;
+
+/**
+Returns the LowerCamelCase form of a string.
+*/
+function camelize(s) {
+    return s.replace(STRING_CAMELIZE, function (match, separator, chr) {
+        return chr ? chr.toUpperCase() : '';
+    }).replace(/^([A-Z])/, function (match) {
+        return match.toLowerCase();
+    });
+}
+exports.camelize = camelize;
 
 /**
 Replaces underscores, spaces, or camelCase with dashes.

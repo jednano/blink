@@ -140,11 +140,11 @@ class Compiler {
 		return m.exports;
 	}
 
-	compileRules(rules: Rule[]) {
+	public compileRules(rules: Rule[]) {
 		return new Formatter().format(this.config, this.resolveRules(rules));
 	}
 
-	private resolveRules(rules: Rule[]) {
+	public resolveRules(rules: Rule[]) {
 		var resolved = [];
 
 		this.resolveExtenders(rules).forEach(extended => {
@@ -162,10 +162,6 @@ class Compiler {
 		}
 
 		return resolved;
-	}
-
-	private compileExtenders(rules: Rule[]) {
-		return this.resolveExtenders(rules);
 	}
 
 	private format(rules: any[][]) {
@@ -195,7 +191,7 @@ class Compiler {
 			var overrides = this.config.overrides;
 			var body = rule.body;
 			Object.keys(body).forEach(property => {
-				var override = overrides[property];
+				var override = overrides[s.camelize(property)];
 				if (override) {
 					override = override(body[property]);
 					extenders.add(override[1], override[0], rule.selectors);

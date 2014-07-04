@@ -95,8 +95,7 @@ declare module "blink" {
 		private renameExtToCss(file);
 		private compileModule(contents, folder);
 		public compileRules(rules: Rule[]): string;
-		private resolveRules(rules);
-		private compileExtenders(rules);
+		public resolveRules(rules);
 		private format(rules);
 		private resolveExtenders(rules);
 		private registerExtenders(extenders, rules);

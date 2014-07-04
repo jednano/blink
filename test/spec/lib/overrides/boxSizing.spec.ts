@@ -5,16 +5,17 @@ import boxSizing = require('../../../../lib/overrides/boxSizing');
 
 
 var config = blink.config;
+var compiler = new blink.Compiler(config);
 
 // ReSharper disable WrongExpressionStatement
 describe('boxSizing extender', () => {
 
 	it('generates -moz and -webkit vendor prefixes for specified value', () => {
-		var decs = boxSizing('border-box')[1](config);
-		expect(decs).to.deep.equal([
-			['-webkit-box-sizing', 'border-box'],
-			   ['-moz-box-sizing', 'border-box'],
-			        ['box-sizing', 'border-box']
+		var rule = new blink.Rule('foo', {
+			boxSizing: 'border-box'
+		});
+		expect(compiler.resolveRules([rule])).to.deep.equal([
+			[['foo'], boxSizing('border-box')[1](config)]
 		]);
 	});
 
