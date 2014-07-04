@@ -10,6 +10,7 @@ import ExtenderRegistry = require('./ExtenderRegistry');
 import Formatter = require('./Formatter');
 import IConfigurationOptions = require('./interfaces/IConfigurationOptions');
 import IFile = require('./interfaces/IFile');
+import IFiles = require('./interfaces/IFiles');
 import IHashTable = require('./interfaces/IHashTable');
 import MediaAtRule = require('./MediaAtRule');
 import Rule = require('./Rule');
@@ -22,35 +23,24 @@ class Compiler {
 		this.config = config || new Configuration();
 	}
 
-	public compile(sources: any[], callback: (err: Error, file?: IFile) => void) {
+	public compile(files: IFiles, callback: (err: Error, file?: IFile) => void) {
 
-		(sources || []).forEach(source => {
-			if (typeof source === 'string') {
-				this.compileFile({ src: source, dest: path.dirname(source) }, callback);
-				return;
-			}
-			if (source.src && source.src instanceof Array) {
-				source.src.forEach(src => {
-					this.compileFile({ src: src, dest: source.dest }, callback);
-				});
-				return;
-			}
-			if (source instanceof _stream.Readable) {
-				this.compileStream(source, callback);
-				return;
-			}
-			if (source instanceof Rule) {
-				this.tryCompileRule(source, (err, contents) => {
-					callback(err, { contents: contents });
-				});
-				return;
-			}
-			if (source.contents) {
-				this.tryCompileContents(source, callback);
-			}
-			callback(new Error('Unsupported source input'), {
-				src: source
-			});
+		if (!files) {
+			return;
+		}
+
+		if (!files.src) {
+			callback(new Error('Missing `src` property'));
+			return;
+		}
+
+		if (!files.dest) {
+			callback(new Error('Missing `dest` property'));
+			return;
+		}
+
+		files.src.forEach(src => {
+			this.compileFile({ src: src, dest: files.dest }, callback);
 		});
 	}
 
@@ -63,7 +53,7 @@ class Compiler {
 		}
 	}
 
-	private compileFile(file: IFile, callback: Function) {
+	private compileFile(file: IFile, callback: (err: Error, file?: IFile) => void) {
 		var stream = fs.createReadStream(path.resolve(file.src));
 		this.compileStream(stream, (err, compiled) => {
 			if (!err) {

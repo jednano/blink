@@ -4,6 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
+///<reference path="../bower_components/dt-node/node.d.ts" />
 var _Block = require('./Block');
 var _Compiler = require('./Compiler');
 var _Element = require('./Element');
@@ -17,32 +18,14 @@ var Blink;
 (function (Blink) {
     Blink.config = new Configuration();
 
-    function compile(options, sources, callback) {
+    function compile(options, files, callback) {
         var tempConfig = Blink.config.clone().set(options);
         var compiler = new Compiler(tempConfig);
-        compiler.compile(sources, function (err, file) {
+        compiler.compile(files, function (err, file) {
             callback(err, tempConfig, file);
         });
     }
     Blink.compile = compile;
-
-    function compileStream(options, stream, callback) {
-        var tempConfig = Blink.config.clone().set(options);
-        var compiler = new Compiler(tempConfig);
-        compiler.compileStream(stream, function (err, file) {
-            callback(err, tempConfig, file);
-        });
-    }
-    Blink.compileStream = compileStream;
-
-    function compileContents(options, file, callback) {
-        var tempConfig = Blink.config.clone().set(options);
-        var compiler = new Compiler(tempConfig);
-        compiler.tryCompileContents(file, function (err, compiled) {
-            callback(err, tempConfig, compiled);
-        });
-    }
-    Blink.compileContents = compileContents;
 
     var Compiler = (function (_super) {
         __extends(Compiler, _super);

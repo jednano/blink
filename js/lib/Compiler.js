@@ -1,7 +1,7 @@
 var fs = require('fs');
 var mod = require('module');
 var path = require('path');
-var _stream = require('stream');
+
 var stripBOM = require('strip-bom');
 
 var Configuration = require('./Configuration');
@@ -16,35 +16,24 @@ var Compiler = (function () {
         this.config = config;
         this.config = config || new Configuration();
     }
-    Compiler.prototype.compile = function (sources, callback) {
+    Compiler.prototype.compile = function (files, callback) {
         var _this = this;
-        (sources || []).forEach(function (source) {
-            if (typeof source === 'string') {
-                _this.compileFile({ src: source, dest: path.dirname(source) }, callback);
-                return;
-            }
-            if (source.src && source.src instanceof Array) {
-                source.src.forEach(function (src) {
-                    _this.compileFile({ src: src, dest: source.dest }, callback);
-                });
-                return;
-            }
-            if (source instanceof _stream.Readable) {
-                _this.compileStream(source, callback);
-                return;
-            }
-            if (source instanceof Rule) {
-                _this.tryCompileRule(source, function (err, contents) {
-                    callback(err, { contents: contents });
-                });
-                return;
-            }
-            if (source.contents) {
-                _this.tryCompileContents(source, callback);
-            }
-            callback(new Error('Unsupported source input'), {
-                src: source
-            });
+        if (!files) {
+            return;
+        }
+
+        if (!files.src) {
+            callback(new Error('Missing `src` property'));
+            return;
+        }
+
+        if (!files.dest) {
+            callback(new Error('Missing `dest` property'));
+            return;
+        }
+
+        files.src.forEach(function (src) {
+            _this.compileFile({ src: src, dest: files.dest }, callback);
         });
     };
 

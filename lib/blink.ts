@@ -1,6 +1,4 @@
 ﻿///<reference path="../bower_components/dt-node/node.d.ts" />
-import fs = require('fs');
-
 import _Block = require('./Block');
 import _Compiler = require('./Compiler');
 import _Element = require('./Element');
@@ -14,40 +12,20 @@ import _Modifier = require('./Modifier');
 import _Rule = require('./Rule');
 import Configuration = require('./Configuration');
 import IFile = require('./interfaces/IFile');
+import IFiles = require('./interfaces/IFiles');
 
 
 module Blink {
 
 	export var config = new Configuration();
 
-	export function compile(options: IConfigurationOptions, sources: any[],
-		callback?: (err: Error, config: Configuration, file: IFile) => void) {
+	export function compile(options: IConfigurationOptions, files: IFiles,
+		callback: (err: Error, config: Configuration, file: IFile) => void) {
 
 		var tempConfig = config.clone().set(options);
 		var compiler = new Compiler(tempConfig);
-		compiler.compile(sources, (err, file) => {
+		compiler.compile(files, (err, file) => {
 			callback(err, tempConfig, file);
-		});
-	}
-
-	export function compileStream(options: IConfigurationOptions, stream: any,
-		callback?: (err: Error, config: Configuration, file: IFile) => void) {
-
-		var tempConfig = config.clone().set(options);
-		var compiler = new Compiler(tempConfig);
-		compiler.compileStream(stream, (err, file) => {
-			callback(err, tempConfig, file);
-		});
-	}
-
-	export function compileContents(options: IConfigurationOptions,
-		file: { src?: string; contents: string; },
-		callback?: (err: Error, config: Configuration, file: IFile) => void) {
-
-		var tempConfig = config.clone().set(options);
-		var compiler = new Compiler(tempConfig);
-		compiler.tryCompileContents(file, (err, compiled) => {
-			callback(err, tempConfig, compiled);
 		});
 	}
 

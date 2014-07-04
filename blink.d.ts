@@ -36,18 +36,16 @@ declare module "blink" {
 		public oPrefix: boolean;
 		public overrides: any;
 	}
-	function compile(options: IConfigurationOptions, sources: any[],
-		callback?: (err: Error, config: Configuration, file: IFile) => void): void;
-	function compileStream(options: IConfigurationOptions, stream: any,
-		callback?: (err: Error, config: Configuration, file: IFile) => void): void;
-	function compileContents(options: IConfigurationOptions, file: {
-		src?: string;
-		contents: string;
-	}, callback?: (err: Error, config: Configuration, file: IFile) => void): void;
+	function compile(options: IConfigurationOptions, files: IFiles,
+		callback: (err: Error, config: Configuration, file: IFile) => void): void;
 	interface IFile {
 		src?: string;
 		dest?: string;
 		contents?: string;
+	}
+	interface IFiles {
+		src: string[];
+		dest: string;
 	}
 	class Rule {
 		public body: IRuleBody;
@@ -83,7 +81,7 @@ declare module "blink" {
 	class Compiler {
 		public config: Configuration;
 		constructor(config?: Configuration);
-		public compile(sources: any[],
+		public compile(files: IFiles,
 			callback: (err: Error, file?: IFile) => void): void;
 		private tryCompileRule(rule, callback);
 		private compileFile(file, callback);
@@ -95,7 +93,7 @@ declare module "blink" {
 		private renameExtToCss(file);
 		private compileModule(contents, folder);
 		public compileRules(rules: Rule[]): string;
-		public resolveRules(rules);
+		public resolveRules(rules: Rule[]): any[];
 		private format(rules);
 		private resolveExtenders(rules);
 		private registerExtenders(extenders, rules);

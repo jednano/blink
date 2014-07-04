@@ -86,7 +86,7 @@ module.exports = Block;
 var fs = _dereq_('fs');
 var mod = _dereq_('module');
 var path = _dereq_('path');
-var _stream = _dereq_('stream');
+
 var stripBOM = _dereq_('strip-bom');
 
 var Configuration = _dereq_('./Configuration');
@@ -101,35 +101,24 @@ var Compiler = (function () {
         this.config = config;
         this.config = config || new Configuration();
     }
-    Compiler.prototype.compile = function (sources, callback) {
+    Compiler.prototype.compile = function (files, callback) {
         var _this = this;
-        (sources || []).forEach(function (source) {
-            if (typeof source === 'string') {
-                _this.compileFile({ src: source, dest: path.dirname(source) }, callback);
-                return;
-            }
-            if (source.src && source.src instanceof Array) {
-                source.src.forEach(function (src) {
-                    _this.compileFile({ src: src, dest: source.dest }, callback);
-                });
-                return;
-            }
-            if (source instanceof _stream.Readable) {
-                _this.compileStream(source, callback);
-                return;
-            }
-            if (source instanceof Rule) {
-                _this.tryCompileRule(source, function (err, contents) {
-                    callback(err, { contents: contents });
-                });
-                return;
-            }
-            if (source.contents) {
-                _this.tryCompileContents(source, callback);
-            }
-            callback(new Error('Unsupported source input'), {
-                src: source
-            });
+        if (!files) {
+            return;
+        }
+
+        if (!files.src) {
+            callback(new Error('Missing `src` property'));
+            return;
+        }
+
+        if (!files.dest) {
+            callback(new Error('Missing `dest` property'));
+            return;
+        }
+
+        files.src.forEach(function (src) {
+            _this.compileFile({ src: src, dest: files.dest }, callback);
         });
     };
 
@@ -328,7 +317,7 @@ var Compiler = (function () {
 
 module.exports = Compiler;
 
-},{"./Configuration":4,"./ExtenderRegistry":6,"./Formatter":7,"./Rule":10,"./helpers/string":16,"fs":21,"module":21,"path":28,"stream":31,"strip-bom":43}],4:[function(_dereq_,module,exports){
+},{"./Configuration":4,"./ExtenderRegistry":6,"./Formatter":7,"./Rule":10,"./helpers/string":16,"fs":21,"module":21,"path":28,"strip-bom":43}],4:[function(_dereq_,module,exports){
 ///<reference path="../bower_components/dt-node/node.d.ts"/>
 var stripBom = _dereq_('strip-bom');
 var fs = _dereq_('fs');
@@ -1328,6 +1317,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
+///<reference path="../bower_components/dt-node/node.d.ts" />
 var _Block = _dereq_('./Block');
 var _Compiler = _dereq_('./Compiler');
 var _Element = _dereq_('./Element');
@@ -1341,32 +1331,14 @@ var Blink;
 (function (Blink) {
     Blink.config = new Configuration();
 
-    function compile(options, sources, callback) {
+    function compile(options, files, callback) {
         var tempConfig = Blink.config.clone().set(options);
         var compiler = new Compiler(tempConfig);
-        compiler.compile(sources, function (err, file) {
+        compiler.compile(files, function (err, file) {
             callback(err, tempConfig, file);
         });
     }
     Blink.compile = compile;
-
-    function compileStream(options, stream, callback) {
-        var tempConfig = Blink.config.clone().set(options);
-        var compiler = new Compiler(tempConfig);
-        compiler.compileStream(stream, function (err, file) {
-            callback(err, tempConfig, file);
-        });
-    }
-    Blink.compileStream = compileStream;
-
-    function compileContents(options, file, callback) {
-        var tempConfig = Blink.config.clone().set(options);
-        var compiler = new Compiler(tempConfig);
-        compiler.tryCompileContents(file, function (err, compiled) {
-            callback(err, tempConfig, compiled);
-        });
-    }
-    Blink.compileContents = compileContents;
 
     var Compiler = (function (_super) {
         __extends(Compiler, _super);
