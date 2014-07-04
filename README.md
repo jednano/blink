@@ -183,14 +183,16 @@ export function fill(): any[] {
 Let's create two blocks named `.foo` and `bar` that both extend fill.
 
 ```ts
-console.log(blink.compileRules([
+var rules = [
 	new blink.Block('foo', {
 		extend: [ fill ]
 	}),
 	new blink.Block('bar', {
 		extend: [ fill ]
 	})
-]));
+];
+
+export = rules;
 ```
 
 These two blocks share the same extender, so there's no reason to generate the
