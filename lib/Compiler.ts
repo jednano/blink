@@ -40,7 +40,11 @@ class Compiler {
 		}
 
 		files.src.forEach(src => {
-			this.compileFile({ src: src, dest: files.dest }, callback);
+			this.compileFile({ src: src, dest: files.dest }, (err, file) => {
+				file.dest = path.join(files.dest,
+					path.basename(src, path.extname(src)) + '.css');
+				callback(err, file);
+			});
 		});
 	}
 
@@ -55,14 +59,7 @@ class Compiler {
 
 	private compileFile(file: IFile, callback: (err: Error, file?: IFile) => void) {
 		var stream = fs.createReadStream(path.resolve(file.src));
-		this.compileStream(stream, (err, compiled) => {
-			if (!err) {
-				callback(err, compiled);
-				return;
-			}
-			file.dest = this.renameExtToCss(file);
-			callback(err, file);
-		});
+		this.compileStream(stream, callback);
 	}
 
 	public compileStream(stream: NodeJS.ReadableStream,
@@ -115,10 +112,9 @@ class Compiler {
 	}
 
 	private renameExtToCss(file: IFile) {
-		if (!file.dest && file.src) {
-			var ext = new RegExp('\\.' + path.extname(file.src).substr(1) + '$');
+		if (typeof file.dest === 'undefined' && file.src) {
 			return path.join(path.dirname(file.src),
-				path.basename(file.src).replace(ext, '.css'));
+				path.basename(file.src, path.extname(file.src)) + '.css');
 		}
 		return file.dest;
 	}

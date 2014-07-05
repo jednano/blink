@@ -33,7 +33,10 @@ var Compiler = (function () {
         }
 
         files.src.forEach(function (src) {
-            _this.compileFile({ src: src, dest: files.dest }, callback);
+            _this.compileFile({ src: src, dest: files.dest }, function (err, file) {
+                file.dest = path.join(files.dest, path.basename(src, path.extname(src)) + '.css');
+                callback(err, file);
+            });
         });
     };
 
@@ -46,16 +49,8 @@ var Compiler = (function () {
     };
 
     Compiler.prototype.compileFile = function (file, callback) {
-        var _this = this;
         var stream = fs.createReadStream(path.resolve(file.src));
-        this.compileStream(stream, function (err, compiled) {
-            if (!err) {
-                callback(err, compiled);
-                return;
-            }
-            file.dest = _this.renameExtToCss(file);
-            callback(err, file);
-        });
+        this.compileStream(stream, callback);
     };
 
     Compiler.prototype.compileStream = function (stream, callback) {
@@ -100,9 +95,8 @@ var Compiler = (function () {
     };
 
     Compiler.prototype.renameExtToCss = function (file) {
-        if (!file.dest && file.src) {
-            var ext = new RegExp('\\.' + path.extname(file.src).substr(1) + '$');
-            return path.join(path.dirname(file.src), path.basename(file.src).replace(ext, '.css'));
+        if (typeof file.dest === 'undefined' && file.src) {
+            return path.join(path.dirname(file.src), path.basename(file.src, path.extname(file.src)) + '.css');
         }
         return file.dest;
     };
