@@ -163,4 +163,31 @@ describe('Rule', () => {
 		]);
 	});
 
+	it('resolves declaration-value functions', () => {
+		var rule = new Rule('foo', {
+			bar: () => {
+				return 'baz';
+			}
+		});
+		expect(rule.resolve(config)).to.deep.equal([
+			[['foo'], [
+				['bar', 'baz']
+			]]
+		]);
+	});
+
+	it('provides declaration-value functions the configuration object', () => {
+		(<any>config).bar = 'baz';
+		var rule = new Rule('foo', {
+			bar: (config: any) => {
+				return config.bar;
+			}
+		});
+		expect(rule.resolve(config)).to.deep.equal([
+			[['foo'], [
+				['bar', 'baz']
+			]]
+		]);
+	});
+
 });

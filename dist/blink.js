@@ -1159,6 +1159,7 @@ var Rule = (function () {
         switch (typeof value) {
             case 'string':
             case 'number':
+            case 'function':
                 return true;
         }
         return false;
@@ -1188,6 +1189,8 @@ var Rule = (function () {
                 return value;
             case 'number':
                 return value ? value + 'px' : value;
+            case 'function':
+                return this.compilePrimitive(value(this.config));
             default:
                 throw new Error('Unexpected type: ' + typeof value);
         }
