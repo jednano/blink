@@ -36,11 +36,12 @@ var quotes = {
 class Configuration implements IConfigurationOptions {
 
 	constructor(options?: IConfigurationOptions) {
-		this.set(extend(
-			require('../defaults.json'),
-			options || {}
-		));
-		return this.loadPlugins(options);
+		this.set(require('../defaults.json'));
+		var extended = this.loadPlugins(options);
+		var clonedOptions = extend({}, options || {});
+		delete clonedOptions.plugins;
+		extended.set(clonedOptions);
+		return extended;
 	}
 
 	private loadPlugins(options?: IConfigurationOptions) {

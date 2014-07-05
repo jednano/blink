@@ -33,8 +33,12 @@ var quotes = {
 var Configuration = (function () {
     function Configuration(options) {
         this.raw = {};
-        this.set(extend(require('../defaults.json'), options || {}));
-        return this.loadPlugins(options);
+        this.set(require('../defaults.json'));
+        var extended = this.loadPlugins(options);
+        var clonedOptions = extend({}, options || {});
+        delete clonedOptions.plugins;
+        extended.set(clonedOptions);
+        return extended;
     }
     Configuration.prototype.loadPlugins = function (options) {
         var _this = this;
