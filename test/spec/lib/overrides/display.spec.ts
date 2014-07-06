@@ -15,7 +15,7 @@ describe('display override', () => {
 			display: 'inline-block'
 		});
 		expect(compiler.resolveRules([rule])).to.deep.equal([
-			[['foo'], inlineBlock()[1](config)]
+			[['foo'], inlineBlock()(config)]
 		]);
 	});
 

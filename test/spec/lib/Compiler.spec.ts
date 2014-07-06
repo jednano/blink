@@ -1,10 +1,19 @@
-﻿import sinonChai = require('../../sinon-chai');
-var expect = sinonChai.expect;
-import blink = require('../../../lib/blink');
-
+﻿import blink = require('../../../lib/blink');
+import sinonChai = require('../../sinon-chai');
 
 var config = blink.config;
+var expect = sinonChai.expect;
 var newline = config.newline;
+
+function cap(val: string) {
+	var fn = <blink.IExtender>(() => {
+		return [
+			['cap', val.toUpperCase()]
+		];
+	});
+	fn.args = arguments;
+	return fn;
+};
 
 // ReSharper disable WrongExpressionStatement
 describe('Compiler', () => {
@@ -15,15 +24,13 @@ describe('Compiler', () => {
 	});
 
 	it('compiles extenders', () => {
-		// ReSharper disable once JsFunctionCanBeConvertedToLambda
-		function extender() {
-			return [arguments, () => {
-				return [
-					['baz', 'BAZ'],
-					['qux', 'QUX']
-				];
-			}];
-		};
+		var extender = <blink.IExtender>(() => {
+			return [
+				['baz', 'BAZ'],
+				['qux', 'QUX']
+			];
+		});
+		extender.args = arguments;
 		var rules = [
 			new blink.Rule(['.foo'], {
 				extend: [ extender ]
@@ -41,41 +48,29 @@ describe('Compiler', () => {
 	});
 
 	it('compiles extenders with parameters', () => {
-		// ReSharper disable once JsFunctionCanBeConvertedToLambda
-		function extender(qux: string) {
-			return [arguments, () => {
-				return [
-					['qux', qux]
-				];
-			}];
-		};
 		var rules = [
 			new blink.Rule(['.foo'], {
-				extend: [ extender('quux') ]
+				extend: [ cap('quux') ]
 			}),
 			new blink.Rule(['.bar'], {
-				extend: [ extender('corge') ]
+				extend: [ cap('corge') ]
 			}),
 			new blink.Rule(['.baz'], {
-				extend: [ extender('quux') ]
+				extend: [ cap('quux') ]
 			})
 		];
 		expect(compiler.compileRules(rules)).to.eq([
 			'.foo, .baz {',
-			'  qux: quux;',
+			'  cap: QUUX;',
 			'}',
 			'.bar {',
-			'  qux: corge;',
+			'  cap: CORGE;',
 			'}'
 		].join(newline) + newline);
 	});
 
 	it('compiles overrides', () => {
-		(<any>config.overrides).cap = (value: string) => {
-			return [arguments, () => {
-				return [['cap', value.toUpperCase()]];
-			}];
-		};
+		(<any>config.overrides).cap = cap;
 		var rules = [
 			new blink.Rule(['.foo'], {
 				cap: 'qux',
@@ -165,26 +160,18 @@ describe('Compiler', () => {
 		});
 
 		it('properly extends inside of a responder', () => {
-			// ReSharper disable once JsFunctionCanBeConvertedToLambda
-			function extender(qux: string) {
-				return [arguments, () => {
-					return [
-						['qux', qux]
-					];
-				}];
-			};
 			var rules = [
 				new blink.Rule('.foo', {
 					respond: [
 						new blink.MediaAtRule('baz', {
-							extend: [extender('QUX')]
+							extend: [cap('qux')]
 						})
 					]
 				}),
 				new blink.Rule('.bar', {
 					respond: [
 						new blink.MediaAtRule('baz', {
-							extend: [extender('QUX')]
+							extend: [cap('qux')]
 						})
 					]
 				})
@@ -192,7 +179,7 @@ describe('Compiler', () => {
 			expect(compiler.compileRules(rules)).to.eq([
 				'@media baz {',
 				'  .foo, .bar {',
-				'    qux: QUX;',
+				'    cap: QUX;',
 				'  }',
 				'}'
 			].join(newline) + newline);

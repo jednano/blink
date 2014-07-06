@@ -2,19 +2,21 @@
 function experimental(property, value, options) {
     options = options || {};
 
-    return [
-        arguments, function (config) {
-            var decs = [];
-            ['webkit', 'khtml', 'moz', 'ms', 'o'].forEach(function (vendor) {
-                if (options[vendor] && config[vendor + 'Prefix']) {
-                    decs.push(['-' + vendor + '-' + property, value]);
-                }
-            });
-            if (options.official) {
-                decs.push([property, value]);
+    var extender = (function (config) {
+        var decs = [];
+        ['webkit', 'khtml', 'moz', 'ms', 'o'].forEach(function (vendor) {
+            if (options[vendor] && config[vendor + 'Prefix']) {
+                decs.push(['-' + vendor + '-' + property, value]);
             }
-            return decs;
-        }];
+        });
+        if (options.official) {
+            decs.push([property, value]);
+        }
+        return decs;
+    });
+
+    extender.args = arguments;
+    return extender;
 }
 
 module.exports = experimental;

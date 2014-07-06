@@ -3,8 +3,8 @@ var ExtenderRegistry = (function () {
         this.extenders = {};
         this.selectors = {};
     }
-    ExtenderRegistry.prototype.add = function (extender, args, selectors) {
-        var key = this.createKey(extender, args);
+    ExtenderRegistry.prototype.add = function (extender, selectors) {
+        var key = this.createKey(extender);
         if (!this.extenders.hasOwnProperty(key)) {
             this.extenders[key] = extender;
             this.selectors[key] = [];
@@ -12,7 +12,8 @@ var ExtenderRegistry = (function () {
         Array.prototype.push.apply(this.selectors[key], selectors);
     };
 
-    ExtenderRegistry.prototype.createKey = function (extender, args) {
+    ExtenderRegistry.prototype.createKey = function (extender) {
+        var args = extender.args;
         var extenderName = args.callee.name;
         var serializedArgs = JSON.stringify(Array.prototype.slice.call(args, 0));
         return extenderName + serializedArgs;

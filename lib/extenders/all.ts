@@ -1,5 +1,6 @@
 ﻿import IExtenders = require('../interfaces/IExtenders');
 import background = require('./background');
+import clearfix = require('./clearfix');
 import experimental = require('./experimental');
 import font = require('./font');
 import inlineBlock = require('./inlineBlock');
@@ -8,6 +9,7 @@ import inlineBlock = require('./inlineBlock');
 // ReSharper disable once UnusedLocals
 var extenders: IExtenders = {
 	background: background,
+	clearfix: clearfix,
 	experimental: experimental,
 	font: font,
 	inlineBlock: inlineBlock

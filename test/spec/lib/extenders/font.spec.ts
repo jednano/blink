@@ -1,30 +1,38 @@
-﻿import sinonChai = require('../../../sinon-chai');
-var expect = sinonChai.expect;
-import font = require('../../../../lib/extenders/font');
+﻿import blink = require('../../../../lib/blink');
+import sinonChai = require('../../../sinon-chai');
 
+var compiler = new blink.Compiler(blink.config);
+var expect = sinonChai.expect;
+var font = blink.config.extenders.font;
 
 // ReSharper disable WrongExpressionStatement
 describe('font extender', () => {
 
 	it('generates CSS font shorthand values in the correct order', () => {
-		var decs = font({
-			lineHeight: 'quux',
-			size: 'qux',
-			style: 'foo',
-			weight: 'baz',
-			variant: 'bar'
-		})[1]();
-		expect(decs).to.deep.equal([
-			['font', ['foo', 'bar', 'baz', 'qux/quux']]
+		var rule = new blink.Rule('foo', {
+			extend: [font({
+				lineHeight: 'corge',
+				size: 'quux',
+				style: 'bar',
+				weight: 'qux',
+				variant: 'baz'
+			})]
+		});
+		expect(compiler.resolveRules([rule])).to.deep.equal([
+			[['foo'], [
+				['font', 'bar baz qux quux/corge']
+			]]
 		]);
 	});
 
 	it('returns a line-height declaration if no size is specified', () => {
-		var decs = font({
-			lineHeight: 'foo'
-		})[1]();
-		expect(decs).to.deep.equal([
-			['line-height', 'foo']
+		var rule = new blink.Rule('foo', {
+			extend: [font({ lineHeight: 'bar' })]
+		});
+		expect(compiler.resolveRules([rule])).to.deep.equal([
+			[['foo'], [
+				['line-height', 'bar']
+			]]
 		]);
 	});
 

@@ -1,15 +1,17 @@
-﻿// ReSharper disable once UnusedLocals
+﻿import IExtender = require('../interfaces/IExtender');
+
+// ReSharper disable once UnusedLocals
 function font(options?: {
 		style?: string;
 		variant?: string;
 		weight?: string;
 		size?: any;
 		lineHeight?: any;
-	}): any[] {
+	}) {
 
 	options = options || {};
 
-	return [arguments, () => {
+	var extender = <IExtender>(() => {
 
 		var values = [];
 
@@ -39,7 +41,12 @@ function font(options?: {
 		}
 
 		return decs;
-	}];
+
+	});
+
+	extender.args = arguments;
+	return extender;
+
 }
 
 export = font;

@@ -111,8 +111,11 @@ var Rule = (function () {
         var result = [];
         includes.forEach(function (fn) {
             var decs = fn(_this.config);
-            if (!decs.length) {
+            if (typeof decs === 'function') {
                 decs = decs(_this.config);
+            }
+            if (!decs.length) {
+                return;
             }
             [].push.apply(result, decs.map(function (dec) {
                 return [dec[0], _this.compileDeclarationValue(dec[1])];

@@ -127,7 +127,9 @@ var Compiler = (function () {
         var resolved = [];
 
         this.resolveExtenders(rules).forEach(function (extended) {
-            resolved.push(extended[0]);
+            if (typeof extended[0] !== 'undefined') {
+                resolved.push(extended[0]);
+            }
         });
         rules.forEach(function (rule) {
             push(rule.resolve(_this.config));
@@ -152,7 +154,15 @@ var Compiler = (function () {
         var extenders = new ExtenderRegistry();
         this.registerExtenders(extenders, rules);
         return extenders.map(function (extender, selectors) {
-            var r = new Rule(selectors, { include: [extender] });
+            var body = {};
+            if (extender.selectors) {
+                extender.selectors.forEach(function (selector) {
+                    body[selector] = { include: [extender] };
+                });
+            } else {
+                body.include = [extender];
+            }
+            var r = new Rule(selectors, body);
             return r.resolve(_this.config);
         });
     };
@@ -164,10 +174,10 @@ var Compiler = (function () {
         }
         rules.forEach(function (rule) {
             (rule.extenders || []).forEach(function (extender) {
-                if (!extender.length) {
+                if (!extender.hasOwnProperty('args')) {
                     extender = extender();
                 }
-                extenders.add(extender[1], extender[0], rule.selectors);
+                extenders.add(extender, rule.selectors);
             });
             var overrides = _this.config.overrides;
             var body = rule.body;
@@ -175,7 +185,7 @@ var Compiler = (function () {
                 var override = overrides[s.camelize(property)];
                 if (override) {
                     override = override(body[property]);
-                    extenders.add(override[1], override[0], rule.selectors);
+                    extenders.add(override, rule.selectors);
                     delete body[property];
                 }
             });

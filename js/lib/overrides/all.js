@@ -1,5 +1,6 @@
 var background = require('./background');
 var boxSizing = require('./boxSizing');
+var clearfix = require('./clearfix');
 var display = require('./display');
 var font = require('./font');
 
@@ -7,6 +8,7 @@ var font = require('./font');
 var overrides = {
     background: background,
     boxSizing: boxSizing,
+    clearfix: clearfix,
     display: display,
     font: font
 };

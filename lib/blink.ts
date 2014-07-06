@@ -5,7 +5,9 @@ import _Element = require('./Element');
 import _IBlockBody = require('./interfaces/IBlockBody');
 import _IConfigurationOptions = require('./interfaces/IConfigurationOptions');
 import _IElementBody = require('./interfaces/IElementBody');
+import _IExtender = require('./interfaces/IExtender');
 import _IModifierBody = require('./interfaces/IModifierBody');
+import _IOverride = require('./interfaces/IOverride');
 import _IRuleBody = require('./interfaces/IRuleBody');
 import _MediaAtRule = require('./MediaAtRule');
 import _Modifier = require('./Modifier');
@@ -39,7 +41,9 @@ module Blink {
 	export interface IConfigurationOptions extends _IConfigurationOptions {}
 	export interface IBlockBody            extends _IBlockBody {}
 	export interface IElementBody          extends _IElementBody {}
+	export interface IExtender             extends _IExtender {}
 	export interface IModifierBody         extends _IModifierBody {}
+	export interface IOverride             extends _IOverride {}
 	export interface IRuleBody             extends _IRuleBody {}
 
 }

@@ -143,7 +143,9 @@ class Compiler {
 		var resolved = [];
 
 		this.resolveExtenders(rules).forEach(extended => {
-			resolved.push(extended[0]);
+			if (typeof extended[0] !== 'undefined') {
+				resolved.push(extended[0]);
+			}
 		});
 		rules.forEach(rule => {
 			push(rule.resolve(this.config));
@@ -167,7 +169,15 @@ class Compiler {
 		var extenders = new ExtenderRegistry();
 		this.registerExtenders(extenders, rules);
 		return extenders.map((extender, selectors) => {
-			var r = new Rule(selectors, { include: [extender] });
+			var body: any = {};
+			if (extender.selectors) {
+				extender.selectors.forEach(selector => {
+					body[selector] = { include: [extender] };
+				});
+			} else {
+				body.include = [extender];
+			}
+			var r = new Rule(selectors, body);
 			return r.resolve(this.config);
 		});
 	}
@@ -178,10 +188,10 @@ class Compiler {
 		}
 		rules.forEach(rule => {
 			(rule.extenders || []).forEach(extender => {
-				if (!extender.length) {
+				if (!extender.hasOwnProperty('args')) {
 					extender = extender();
 				}
-				extenders.add(extender[1], extender[0], rule.selectors);
+				extenders.add(extender, rule.selectors);
 			});
 			var overrides = this.config.overrides;
 			var body = rule.body;
@@ -189,7 +199,7 @@ class Compiler {
 				var override = overrides[s.camelize(property)];
 				if (override) {
 					override = override(body[property]);
-					extenders.add(override[1], override[0], rule.selectors);
+					extenders.add(override, rule.selectors);
 					delete body[property];
 				}
 			});

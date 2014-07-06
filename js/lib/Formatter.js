@@ -10,9 +10,6 @@ var Formatter = (function () {
 
     Formatter.prototype.formatRules = function (rules, level) {
         var _this = this;
-        if (typeof rules === 'undefined') {
-            console.log('undefined');
-        }
         return rules.map(function (rule) {
             return _this.formatRule(rule, level);
         }).join('');
@@ -41,9 +38,6 @@ var Formatter = (function () {
         }
 
         var firstVal = firstPair[1];
-        if (!firstVal || !firstVal.length) {
-            return '';
-        }
 
         if (firstKey[0] === '@' || !this.isDeclarationValue(firstVal)) {
             return this.formatRules(body, level);
@@ -71,6 +65,9 @@ var Formatter = (function () {
 
     Formatter.prototype.formatValue = function (value) {
         if (typeof value === 'string') {
+            if (value === '') {
+                return '""';
+            }
             return value;
         }
         return value.join(' ');

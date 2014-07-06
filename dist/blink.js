@@ -212,7 +212,9 @@ var Compiler = (function () {
         var resolved = [];
 
         this.resolveExtenders(rules).forEach(function (extended) {
-            resolved.push(extended[0]);
+            if (typeof extended[0] !== 'undefined') {
+                resolved.push(extended[0]);
+            }
         });
         rules.forEach(function (rule) {
             push(rule.resolve(_this.config));
@@ -237,7 +239,15 @@ var Compiler = (function () {
         var extenders = new ExtenderRegistry();
         this.registerExtenders(extenders, rules);
         return extenders.map(function (extender, selectors) {
-            var r = new Rule(selectors, { include: [extender] });
+            var body = {};
+            if (extender.selectors) {
+                extender.selectors.forEach(function (selector) {
+                    body[selector] = { include: [extender] };
+                });
+            } else {
+                body.include = [extender];
+            }
+            var r = new Rule(selectors, body);
             return r.resolve(_this.config);
         });
     };
@@ -249,10 +259,10 @@ var Compiler = (function () {
         }
         rules.forEach(function (rule) {
             (rule.extenders || []).forEach(function (extender) {
-                if (!extender.length) {
+                if (!extender.hasOwnProperty('args')) {
                     extender = extender();
                 }
-                extenders.add(extender[1], extender[0], rule.selectors);
+                extenders.add(extender, rule.selectors);
             });
             var overrides = _this.config.overrides;
             var body = rule.body;
@@ -260,7 +270,7 @@ var Compiler = (function () {
                 var override = overrides[s.camelize(property)];
                 if (override) {
                     override = override(body[property]);
-                    extenders.add(override[1], override[0], rule.selectors);
+                    extenders.add(override, rule.selectors);
                     delete body[property];
                 }
             });
@@ -321,7 +331,7 @@ var Compiler = (function () {
 
 module.exports = Compiler;
 
-},{"./Configuration":4,"./ExtenderRegistry":6,"./Formatter":7,"./Rule":10,"./helpers/string":17,"fs":23,"module":23,"path":30,"strip-bom":45}],4:[function(_dereq_,module,exports){
+},{"./Configuration":4,"./ExtenderRegistry":6,"./Formatter":7,"./Rule":10,"./helpers/string":19,"fs":26,"module":26,"path":33,"strip-bom":48}],4:[function(_dereq_,module,exports){
 ///<reference path="../bower_components/dt-node/node.d.ts"/>
 var stripBom = _dereq_('strip-bom');
 var fs = _dereq_('fs');
@@ -794,7 +804,7 @@ var Configuration = (function () {
 
 module.exports = Configuration;
 
-},{"../defaults.json":1,"./extenders/all":11,"./helpers/string":17,"./overrides/all":18,"fs":23,"node.extend":42,"os":29,"path":30,"strip-bom":45}],5:[function(_dereq_,module,exports){
+},{"../defaults.json":1,"./extenders/all":11,"./helpers/string":19,"./overrides/all":20,"fs":26,"node.extend":45,"os":32,"path":33,"strip-bom":48}],5:[function(_dereq_,module,exports){
 var Rule = _dereq_('./Rule');
 
 var Element = (function () {
@@ -838,8 +848,8 @@ var ExtenderRegistry = (function () {
         this.extenders = {};
         this.selectors = {};
     }
-    ExtenderRegistry.prototype.add = function (extender, args, selectors) {
-        var key = this.createKey(extender, args);
+    ExtenderRegistry.prototype.add = function (extender, selectors) {
+        var key = this.createKey(extender);
         if (!this.extenders.hasOwnProperty(key)) {
             this.extenders[key] = extender;
             this.selectors[key] = [];
@@ -847,7 +857,8 @@ var ExtenderRegistry = (function () {
         Array.prototype.push.apply(this.selectors[key], selectors);
     };
 
-    ExtenderRegistry.prototype.createKey = function (extender, args) {
+    ExtenderRegistry.prototype.createKey = function (extender) {
+        var args = extender.args;
         var extenderName = args.callee.name;
         var serializedArgs = JSON.stringify(Array.prototype.slice.call(args, 0));
         return extenderName + serializedArgs;
@@ -885,9 +896,6 @@ var Formatter = (function () {
 
     Formatter.prototype.formatRules = function (rules, level) {
         var _this = this;
-        if (typeof rules === 'undefined') {
-            console.log('undefined');
-        }
         return rules.map(function (rule) {
             return _this.formatRule(rule, level);
         }).join('');
@@ -916,9 +924,6 @@ var Formatter = (function () {
         }
 
         var firstVal = firstPair[1];
-        if (!firstVal || !firstVal.length) {
-            return '';
-        }
 
         if (firstKey[0] === '@' || !this.isDeclarationValue(firstVal)) {
             return this.formatRules(body, level);
@@ -946,6 +951,9 @@ var Formatter = (function () {
 
     Formatter.prototype.formatValue = function (value) {
         if (typeof value === 'string') {
+            if (value === '') {
+                return '""';
+            }
             return value;
         }
         return value.join(' ');
@@ -955,7 +963,7 @@ var Formatter = (function () {
 
 module.exports = Formatter;
 
-},{"./helpers/string":17}],8:[function(_dereq_,module,exports){
+},{"./helpers/string":19}],8:[function(_dereq_,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -1129,8 +1137,11 @@ var Rule = (function () {
         var result = [];
         includes.forEach(function (fn) {
             var decs = fn(_this.config);
-            if (!decs.length) {
+            if (typeof decs === 'function') {
                 decs = decs(_this.config);
+            }
+            if (!decs.length) {
+                return;
             }
             [].push.apply(result, decs.map(function (dec) {
                 return [dec[0], _this.compileDeclarationValue(dec[1])];
@@ -1214,8 +1225,9 @@ var Rule = (function () {
 
 module.exports = Rule;
 
-},{"./Formatter":7,"./helpers/string":17,"node.extend":42}],11:[function(_dereq_,module,exports){
+},{"./Formatter":7,"./helpers/string":19,"node.extend":45}],11:[function(_dereq_,module,exports){
 var background = _dereq_('./background');
+var clearfix = _dereq_('./clearfix');
 var experimental = _dereq_('./experimental');
 var font = _dereq_('./font');
 var inlineBlock = _dereq_('./inlineBlock');
@@ -1223,6 +1235,7 @@ var inlineBlock = _dereq_('./inlineBlock');
 // ReSharper disable once UnusedLocals
 var extenders = {
     background: background,
+    clearfix: clearfix,
     experimental: experimental,
     font: font,
     inlineBlock: inlineBlock
@@ -1230,125 +1243,164 @@ var extenders = {
 
 module.exports = extenders;
 
-},{"./background":12,"./experimental":13,"./font":14,"./inlineBlock":15}],12:[function(_dereq_,module,exports){
+},{"./background":12,"./clearfix":13,"./experimental":14,"./font":15,"./inlineBlock":16}],12:[function(_dereq_,module,exports){
 // ReSharper disable once UnusedLocals
 function background(options) {
     options = options || {};
 
-    return [
-        arguments, function () {
-            var values = [];
+    var extender = (function () {
+        var values = [];
 
-            ['color', 'image', 'repeat', 'attachment', 'position'].forEach(function (prop) {
-                if (options.hasOwnProperty(prop)) {
-                    values.push(options[prop]);
-                }
-            });
-
-            if (values.length) {
-                return [['background', values]];
+        ['color', 'image', 'repeat', 'attachment', 'position'].forEach(function (prop) {
+            if (options.hasOwnProperty(prop)) {
+                values.push(options[prop]);
             }
+        });
 
-            return [];
-        }];
+        if (values.length) {
+            return [['background', values]];
+        }
+
+        return [];
+    });
+
+    extender.args = arguments;
+    return extender;
 }
 
 module.exports = background;
 
 },{}],13:[function(_dereq_,module,exports){
 // ReSharper disable once UnusedLocals
+function clearfix() {
+    var extender = (function () {
+        return [
+            ['content', ''],
+            ['display', 'table'],
+            ['clear', 'both']
+        ];
+    });
+
+    extender.args = arguments;
+    extender.selectors = [':after'];
+
+    return extender;
+}
+
+module.exports = clearfix;
+
+},{}],14:[function(_dereq_,module,exports){
+// ReSharper disable once UnusedLocals
 function experimental(property, value, options) {
     options = options || {};
 
-    return [
-        arguments, function (config) {
-            var decs = [];
-            ['webkit', 'khtml', 'moz', 'ms', 'o'].forEach(function (vendor) {
-                if (options[vendor] && config[vendor + 'Prefix']) {
-                    decs.push(['-' + vendor + '-' + property, value]);
-                }
-            });
-            if (options.official) {
-                decs.push([property, value]);
+    var extender = (function (config) {
+        var decs = [];
+        ['webkit', 'khtml', 'moz', 'ms', 'o'].forEach(function (vendor) {
+            if (options[vendor] && config[vendor + 'Prefix']) {
+                decs.push(['-' + vendor + '-' + property, value]);
             }
-            return decs;
-        }];
+        });
+        if (options.official) {
+            decs.push([property, value]);
+        }
+        return decs;
+    });
+
+    extender.args = arguments;
+    return extender;
 }
 
 module.exports = experimental;
 
-},{}],14:[function(_dereq_,module,exports){
+},{}],15:[function(_dereq_,module,exports){
 // ReSharper disable once UnusedLocals
 function font(options) {
     options = options || {};
 
-    return [
-        arguments, function () {
-            var values = [];
+    var extender = (function () {
+        var values = [];
 
-            ['style', 'variant', 'weight'].forEach(function (prop) {
-                if (options.hasOwnProperty(prop)) {
-                    values.push(options[prop]);
-                }
-            });
-
-            if (options.hasOwnProperty('size')) {
-                if (options.hasOwnProperty('lineHeight')) {
-                    values.push(options.size + '/' + options.lineHeight);
-                } else {
-                    values.push(options.size);
-                }
-                return [['font', values]];
+        ['style', 'variant', 'weight'].forEach(function (prop) {
+            if (options.hasOwnProperty(prop)) {
+                values.push(options[prop]);
             }
+        });
 
-            var decs = [];
-
+        if (options.hasOwnProperty('size')) {
             if (options.hasOwnProperty('lineHeight')) {
-                decs.push(['line-height', options.lineHeight]);
+                values.push(options.size + '/' + options.lineHeight);
+            } else {
+                values.push(options.size);
             }
+            return [['font', values]];
+        }
 
-            if (values.length) {
-                decs.unshift(['font', values]);
-            }
+        var decs = [];
 
-            return decs;
-        }];
+        if (options.hasOwnProperty('lineHeight')) {
+            decs.push(['line-height', options.lineHeight]);
+        }
+
+        if (values.length) {
+            decs.unshift(['font', values]);
+        }
+
+        return decs;
+    });
+
+    extender.args = arguments;
+    return extender;
 }
 
 module.exports = font;
 
-},{}],15:[function(_dereq_,module,exports){
+},{}],16:[function(_dereq_,module,exports){
 // ReSharper disable once UnusedLocals
 function inlineBlock(options) {
     options = options || {};
 
-    return [
-        arguments, function (config) {
-            var decs = [];
+    var extender = (function (config) {
+        var decs = [];
 
-            if (config.firefox < 3) {
-                decs.push(['display', '-moz-inline-stack']);
-            }
+        if (config.firefox < 3) {
+            decs.push(['display', '-moz-inline-stack']);
+        }
 
-            decs.push(['display', 'inline-block']);
+        decs.push(['display', 'inline-block']);
 
-            if (options.verticalAlign !== null) {
-                decs.push(['vertical-align', options.verticalAlign || 'middle']);
-            }
+        if (options.verticalAlign !== null) {
+            decs.push(['vertical-align', options.verticalAlign || 'middle']);
+        }
 
-            if (config.ie < 8) {
-                decs.push(['*vertical-align', 'auto']);
-                decs.push(['zoom', '1']);
-                decs.push(['*display', 'inline']);
-            }
+        if (config.ie < 8) {
+            decs.push(['*vertical-align', 'auto']);
+            decs.push(['zoom', '1']);
+            decs.push(['*display', 'inline']);
+        }
 
-            return decs;
-        }];
+        return decs;
+    });
+
+    extender.args = arguments;
+    return extender;
 }
 
 module.exports = inlineBlock;
 
-},{}],16:[function(_dereq_,module,exports){
+},{}],17:[function(_dereq_,module,exports){
+// ReSharper disable once UnusedLocals
+function noop() {
+    var extender = (function () {
+        return [];
+    });
+    extender.args = arguments;
+    return extender;
+}
+
+module.exports = noop;
+
+},{}],18:[function(_dereq_,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -1430,7 +1482,7 @@ var Blink;
 
 module.exports = Blink;
 
-},{"./Block":2,"./Compiler":3,"./Configuration":4,"./Element":5,"./MediaAtRule":8,"./Modifier":9,"./Rule":10}],17:[function(_dereq_,module,exports){
+},{"./Block":2,"./Compiler":3,"./Configuration":4,"./Element":5,"./MediaAtRule":8,"./Modifier":9,"./Rule":10}],19:[function(_dereq_,module,exports){
 // ReSharper disable InconsistentNaming
 var STRING_CAMELIZE = (/(\-|_|\.|\s)+(.)?/g);
 var STRING_DASHERIZE = /[ _]/g;
@@ -1479,9 +1531,10 @@ function decamelize(s) {
 }
 exports.decamelize = decamelize;
 
-},{}],18:[function(_dereq_,module,exports){
+},{}],20:[function(_dereq_,module,exports){
 var background = _dereq_('./background');
 var boxSizing = _dereq_('./boxSizing');
+var clearfix = _dereq_('./clearfix');
 var display = _dereq_('./display');
 var font = _dereq_('./font');
 
@@ -1489,80 +1542,100 @@ var font = _dereq_('./font');
 var overrides = {
     background: background,
     boxSizing: boxSizing,
+    clearfix: clearfix,
     display: display,
     font: font
 };
 
 module.exports = overrides;
 
-},{"./background":19,"./boxSizing":20,"./display":21,"./font":22}],19:[function(_dereq_,module,exports){
+},{"./background":21,"./boxSizing":22,"./clearfix":23,"./display":24,"./font":25}],21:[function(_dereq_,module,exports){
 var _background = _dereq_('../extenders/background');
 
 // ReSharper disable once UnusedLocals
 function background(value) {
-    return [
-        arguments, function () {
-            return _background(value)[1]();
-        }];
+    var override = (function () {
+        return _background(value)();
+    });
+
+    override.args = arguments;
+    return override;
 }
 
 module.exports = background;
 
-},{"../extenders/background":12}],20:[function(_dereq_,module,exports){
+},{"../extenders/background":12}],22:[function(_dereq_,module,exports){
 var experimental = _dereq_('../extenders/experimental');
 
 // http://css-tricks.com/box-sizing/
 // ReSharper disable once UnusedLocals
 function boxSizing(value) {
-    return [
-        arguments, function (config) {
-            return experimental('box-sizing', value, {
-                official: true,
-                webkit: true,
-                moz: true
-            })[1](config);
-        }];
+    var override = (function (config) {
+        return experimental('box-sizing', value, {
+            official: true,
+            webkit: true,
+            moz: true
+        })(config);
+    });
+
+    override.args = arguments;
+    return override;
 }
 
 module.exports = boxSizing;
 
-},{"../extenders/experimental":13}],21:[function(_dereq_,module,exports){
+},{"../extenders/experimental":14}],23:[function(_dereq_,module,exports){
+var _clearfix = _dereq_('../extenders/clearfix');
+var noop = _dereq_('../extenders/noop');
+
+// ReSharper disable once UnusedLocals
+function clearfix(value) {
+    return value ? _clearfix() : noop();
+}
+
+module.exports = clearfix;
+
+},{"../extenders/clearfix":13,"../extenders/noop":17}],24:[function(_dereq_,module,exports){
 var inlineBlock = _dereq_('../extenders/inlineBlock');
 
 // ReSharper disable once UnusedLocals
 function display(value) {
-    return [
-        arguments, function (config) {
-            switch (value) {
-                case 'inline-block':
-                    return inlineBlock()[1](config);
-                default:
-                    return [['display', value]];
-            }
-        }];
+    var override = (function (config) {
+        switch (value) {
+            case 'inline-block':
+                return inlineBlock()(config);
+            default:
+                return [['display', value]];
+        }
+    });
+
+    override.args = arguments;
+    return override;
 }
 
 module.exports = display;
 
-},{"../extenders/inlineBlock":15}],22:[function(_dereq_,module,exports){
+},{"../extenders/inlineBlock":16}],25:[function(_dereq_,module,exports){
 var _font = _dereq_('../extenders/font');
 
 // ReSharper disable once UnusedLocals
 function font(value) {
-    return [
-        arguments, function () {
-            if (typeof value === 'string') {
-                return [['font', value]];
-            }
-            return _font(value)[1]();
-        }];
+    var override = (function () {
+        if (typeof value === 'string') {
+            return [['font', value]];
+        }
+        return _font(value)();
+    });
+
+    override.args = arguments;
+    return override;
 }
 
 module.exports = font;
 
-},{"../extenders/font":14}],23:[function(_dereq_,module,exports){
+},{"../extenders/font":15}],26:[function(_dereq_,module,exports){
 
-},{}],24:[function(_dereq_,module,exports){
+},{}],27:[function(_dereq_,module,exports){
 /*!
  * The buffer module from node.js, for the browser.
  *
@@ -2673,7 +2746,7 @@ function assert (test, message) {
   if (!test) throw new Error(message || 'Failed assertion')
 }
 
-},{"base64-js":25,"ieee754":26}],25:[function(_dereq_,module,exports){
+},{"base64-js":28,"ieee754":29}],28:[function(_dereq_,module,exports){
 var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 ;(function (exports) {
@@ -2795,7 +2868,7 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 	exports.fromByteArray = uint8ToBase64
 }(typeof exports === 'undefined' ? (this.base64js = {}) : exports))
 
-},{}],26:[function(_dereq_,module,exports){
+},{}],29:[function(_dereq_,module,exports){
 exports.read = function(buffer, offset, isLE, mLen, nBytes) {
   var e, m,
       eLen = nBytes * 8 - mLen - 1,
@@ -2881,7 +2954,7 @@ exports.write = function(buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128;
 };
 
-},{}],27:[function(_dereq_,module,exports){
+},{}],30:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -3186,7 +3259,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],28:[function(_dereq_,module,exports){
+},{}],31:[function(_dereq_,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -3211,7 +3284,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],29:[function(_dereq_,module,exports){
+},{}],32:[function(_dereq_,module,exports){
 exports.endianness = function () { return 'LE' };
 
 exports.hostname = function () {
@@ -3258,7 +3331,7 @@ exports.tmpdir = exports.tmpDir = function () {
 
 exports.EOL = '\n';
 
-},{}],30:[function(_dereq_,module,exports){
+},{}],33:[function(_dereq_,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -3486,7 +3559,7 @@ var substr = 'ab'.substr(-1) === 'b'
 ;
 
 }).call(this,_dereq_("ngpmcQ"))
-},{"ngpmcQ":31}],31:[function(_dereq_,module,exports){
+},{"ngpmcQ":34}],34:[function(_dereq_,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -3551,7 +3624,7 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],32:[function(_dereq_,module,exports){
+},{}],35:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -3625,7 +3698,7 @@ function onend() {
   });
 }
 
-},{"./readable.js":36,"./writable.js":38,"inherits":28,"process/browser.js":34}],33:[function(_dereq_,module,exports){
+},{"./readable.js":39,"./writable.js":41,"inherits":31,"process/browser.js":37}],36:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -3754,7 +3827,7 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"./duplex.js":32,"./passthrough.js":35,"./readable.js":36,"./transform.js":37,"./writable.js":38,"events":27,"inherits":28}],34:[function(_dereq_,module,exports){
+},{"./duplex.js":35,"./passthrough.js":38,"./readable.js":39,"./transform.js":40,"./writable.js":41,"events":30,"inherits":31}],37:[function(_dereq_,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -3809,7 +3882,7 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],35:[function(_dereq_,module,exports){
+},{}],38:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -3852,7 +3925,7 @@ PassThrough.prototype._transform = function(chunk, encoding, cb) {
   cb(null, chunk);
 };
 
-},{"./transform.js":37,"inherits":28}],36:[function(_dereq_,module,exports){
+},{"./transform.js":40,"inherits":31}],39:[function(_dereq_,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -4789,7 +4862,7 @@ function indexOf (xs, x) {
 }
 
 }).call(this,_dereq_("ngpmcQ"))
-},{"./index.js":33,"buffer":24,"events":27,"inherits":28,"ngpmcQ":31,"process/browser.js":34,"string_decoder":39}],37:[function(_dereq_,module,exports){
+},{"./index.js":36,"buffer":27,"events":30,"inherits":31,"ngpmcQ":34,"process/browser.js":37,"string_decoder":42}],40:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -4995,7 +5068,7 @@ function done(stream, er) {
   return stream.push(null);
 }
 
-},{"./duplex.js":32,"inherits":28}],38:[function(_dereq_,module,exports){
+},{"./duplex.js":35,"inherits":31}],41:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -5383,7 +5456,7 @@ function endWritable(stream, state, cb) {
   state.ended = true;
 }
 
-},{"./index.js":33,"buffer":24,"inherits":28,"process/browser.js":34}],39:[function(_dereq_,module,exports){
+},{"./index.js":36,"buffer":27,"inherits":31,"process/browser.js":37}],42:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -5576,14 +5649,14 @@ function base64DetectIncompleteChar(buffer) {
   return incomplete;
 }
 
-},{"buffer":24}],40:[function(_dereq_,module,exports){
+},{"buffer":27}],43:[function(_dereq_,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],41:[function(_dereq_,module,exports){
+},{}],44:[function(_dereq_,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -6173,11 +6246,11 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this,_dereq_("ngpmcQ"),typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":40,"inherits":28,"ngpmcQ":31}],42:[function(_dereq_,module,exports){
+},{"./support/isBuffer":43,"inherits":31,"ngpmcQ":34}],45:[function(_dereq_,module,exports){
 module.exports = _dereq_('./lib/extend');
 
 
-},{"./lib/extend":43}],43:[function(_dereq_,module,exports){
+},{"./lib/extend":46}],46:[function(_dereq_,module,exports){
 /*!
  * node.extend
  * Copyright 2011, John Resig
@@ -6261,7 +6334,7 @@ extend.version = '1.0.8';
 module.exports = extend;
 
 
-},{"is":44}],44:[function(_dereq_,module,exports){
+},{"is":47}],47:[function(_dereq_,module,exports){
 
 /**!
  * is
@@ -6975,7 +7048,7 @@ is.string = function (value) {
 };
 
 
-},{}],45:[function(_dereq_,module,exports){
+},{}],48:[function(_dereq_,module,exports){
 (function (Buffer){
 'use strict';
 var isUtf8 = _dereq_('is-utf8');
@@ -7003,7 +7076,7 @@ stripBom.stream = function () {
 };
 
 }).call(this,_dereq_("buffer").Buffer)
-},{"buffer":24,"first-chunk-stream":46,"is-utf8":47}],46:[function(_dereq_,module,exports){
+},{"buffer":27,"first-chunk-stream":49,"is-utf8":50}],49:[function(_dereq_,module,exports){
 (function (Buffer){
 'use strict';
 var util = _dereq_('util');
@@ -7100,7 +7173,7 @@ module.exports = function () {
 module.exports.ctor = ctor;
 
 }).call(this,_dereq_("buffer").Buffer)
-},{"buffer":24,"stream":33,"util":41}],47:[function(_dereq_,module,exports){
+},{"buffer":27,"stream":36,"util":44}],50:[function(_dereq_,module,exports){
 
 exports = module.exports = function(bytes)
 {
@@ -7178,6 +7251,6 @@ exports = module.exports = function(bytes)
     return true;
 }
 
-},{}]},{},[16])
-(16)
+},{}]},{},[18])
+(18)
 });

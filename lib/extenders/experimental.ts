@@ -1,5 +1,5 @@
 ﻿import Configuration = require('../Configuration');
-
+import IExtender = require('../interfaces/IExtender');
 
 // ReSharper disable once UnusedLocals
 function experimental(property: string, value: any,
@@ -10,11 +10,11 @@ function experimental(property: string, value: any,
 		     moz?: boolean;  // Firefox, other Gecko
 		      ms?: boolean;  // Internet Explorer
 		       o?: boolean;  // Opera
-	}): any[] {
+	}) {
 
 	options = options || {};
 
-	return [arguments, (config: Configuration) => {
+	var extender = <IExtender>((config: Configuration) => {
 		var decs = [];
 		['webkit', 'khtml', 'moz', 'ms', 'o'].forEach(vendor => {
 			if (options[vendor] && config[vendor + 'Prefix']) {
@@ -25,7 +25,10 @@ function experimental(property: string, value: any,
 			decs.push([property, value]);
 		}
 		return decs;
-	}];
+	});
+
+	extender.args = arguments;
+	return extender;
 }
 
 export = experimental;

@@ -103,8 +103,11 @@ class Rule {
 		var result = [];
 		includes.forEach(fn => {
 			var decs = fn(this.config);
-			if (!decs.length) {
+			if (typeof decs === 'function') {
 				decs = decs(this.config);
+			}
+			if (!decs.length) {
+				return;
 			}
 			[].push.apply(result, decs.map(dec => {
 				return [dec[0], this.compileDeclarationValue(dec[1])];

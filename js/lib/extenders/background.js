@@ -2,22 +2,24 @@
 function background(options) {
     options = options || {};
 
-    return [
-        arguments, function () {
-            var values = [];
+    var extender = (function () {
+        var values = [];
 
-            ['color', 'image', 'repeat', 'attachment', 'position'].forEach(function (prop) {
-                if (options.hasOwnProperty(prop)) {
-                    values.push(options[prop]);
-                }
-            });
-
-            if (values.length) {
-                return [['background', values]];
+        ['color', 'image', 'repeat', 'attachment', 'position'].forEach(function (prop) {
+            if (options.hasOwnProperty(prop)) {
+                values.push(options[prop]);
             }
+        });
 
-            return [];
-        }];
+        if (values.length) {
+            return [['background', values]];
+        }
+
+        return [];
+    });
+
+    extender.args = arguments;
+    return extender;
 }
 
 module.exports = background;

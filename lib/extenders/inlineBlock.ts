@@ -1,14 +1,15 @@
 ﻿import Configuration = require('../Configuration');
+import IExtender = require('../interfaces/IExtender');
 
 
 // ReSharper disable once UnusedLocals
 function inlineBlock(options?: {
 		verticalAlign?: string;
-	}): any[] {
+	}) {
 
 	options = options || {};
 
-	return [arguments, (config: Configuration) => {
+	var extender = <IExtender>((config: Configuration) => {
 		var decs = [];
 
 		if (config.firefox < 3) {
@@ -28,7 +29,10 @@ function inlineBlock(options?: {
 		}
 
 		return decs;
-	}];
+	});
+
+	extender.args = arguments;
+	return extender;
 }
 
 export = inlineBlock;

@@ -1,9 +1,8 @@
 ﻿import sinonChai = require('../../../sinon-chai');
-var expect = sinonChai.expect;
 import blink = require('../../../../lib/blink');
 
-
 var compiler = new blink.Compiler(blink.config);
+var expect = sinonChai.expect;
 
 // ReSharper disable WrongExpressionStatement
 describe('font override', () => {
@@ -19,7 +18,7 @@ describe('font override', () => {
 		]);
 	});
 
-	it('generates shorthand syntax for all font properties', () => {
+	it('inserts shorthand declaration for all font properties', () => {
 		var rule = new blink.Rule('foo', {
 			font: {
 				style: 'bar',

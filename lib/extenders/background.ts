@@ -1,15 +1,17 @@
-﻿// ReSharper disable once UnusedLocals
+﻿import IExtender = require('../interfaces/IExtender');
+
+// ReSharper disable once UnusedLocals
 function background(options?: {
 		color?: string;
 		image?: string;
 		repeat?: string;
 		attachment?: string;
 		position?: any;
-	}): any[] {
+	}) {
 
 	options = options || {};
 
-	return [arguments, () => {
+	var extender = <IExtender>(() => {
 
 		var values = [];
 
@@ -25,7 +27,11 @@ function background(options?: {
 
 		return [];
 
-	}];
+	});
+
+	extender.args = arguments;
+	return extender;
+
 }
 
 export = background;

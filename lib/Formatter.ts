@@ -13,9 +13,6 @@ class Formatter {
 	}
 
 	private formatRules(rules: any[][], level: number) {
-		if (typeof rules === 'undefined') {
-			console.log('undefined');
-		}
 		return rules.map(rule => {
 			return this.formatRule(rule, level);
 		}).join('');
@@ -45,9 +42,6 @@ class Formatter {
 		}
 
 		var firstVal = firstPair[1];
-		if (!firstVal || !firstVal.length) {
-			return '';
-		}
 
 		if (firstKey[0] === '@' || !this.isDeclarationValue(firstVal)) {
 			return this.formatRules(body, level);
@@ -74,6 +68,9 @@ class Formatter {
 
 	private formatValue(value: any) {
 		if (typeof value === 'string') {
+			if (value === '') {
+				return '""';
+			}
 			return value;
 		}
 		return (<string[]>value).join(' ');

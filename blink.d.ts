@@ -151,6 +151,12 @@ declare module "blink" {
 	interface IElementBody extends IRuleBody {
 		modifiers?: Modifier[];
 	}
+	interface IExtender {
+		args: IArguments;
+		selectors?: string[];
+		(config?: Configuration): any[][];
+	}
+	interface IOverride extends IExtender {}
 	interface IModifierBody extends IRuleBody {
 		elements?: Element[];
 	}

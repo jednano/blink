@@ -1,21 +1,29 @@
-﻿import sinonChai = require('../../../sinon-chai');
-var expect = sinonChai.expect;
-import background = require('../../../../lib/extenders/background');
+﻿import blink = require('../../../../lib/blink');
+import sinonChai = require('../../../sinon-chai');
 
+var background = blink.config.extenders.background;
+var compiler = new blink.Compiler(blink.config);
+var expect = sinonChai.expect;
 
 // ReSharper disable WrongExpressionStatement
 describe('background extender', () => {
 
 	it('generates CSS font shorthand values in the correct order', () => {
-		var decs = background({
-			position: 'quux',
-			repeat: 'baz',
-			image: 'bar',
-			color: 'foo',
-			attachment: 'qux'
-		})[1]();
-		expect(decs).to.deep.equal([
-			['background', ['foo', 'bar', 'baz', 'qux', 'quux']]
+		var rule = new blink.Rule('foo', {
+			extend: [
+				background({
+					position: 'corge',
+					repeat: 'qux',
+					image: 'baz',
+					color: 'bar',
+					attachment: 'quux'
+				})
+			]
+		});
+		expect(compiler.resolveRules([rule])).to.deep.equal([
+			[['foo'], [
+				['background', 'bar baz qux quux corge']
+			]]
 		]);
 	});
 
