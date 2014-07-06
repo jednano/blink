@@ -112,14 +112,16 @@ var Compiler = (function () {
             return;
         }
 
-        if (!files.dest) {
+        if (typeof files.dest === 'undefined') {
             callback(new Error('Missing `dest` property'));
             return;
         }
 
         files.src.forEach(function (src) {
             _this.compileFile({ src: src, dest: files.dest }, function (err, file) {
-                file.dest = path.join(files.dest, path.basename(src, path.extname(src)) + '.css');
+                var folder = (files.dest === '') ? path.dirname(src) : files.dest;
+                var filename = path.basename(src, path.extname(src)) + '.css';
+                file.dest = path.join(folder, filename);
                 callback(err, file);
             });
         });
