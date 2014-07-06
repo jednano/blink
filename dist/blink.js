@@ -119,9 +119,11 @@ var Compiler = (function () {
 
         files.src.forEach(function (src) {
             _this.compileFile({ src: src, dest: files.dest }, function (err, file) {
-                var folder = (files.dest === '') ? path.dirname(src) : files.dest;
-                var filename = path.basename(src, path.extname(src)) + '.css';
-                file.dest = path.join(folder, filename);
+                if (!err) {
+                    var folder = (files.dest === '') ? path.dirname(src) : files.dest;
+                    var filename = path.basename(src, path.extname(src)) + '.css';
+                    file.dest = path.join(folder, filename);
+                }
                 callback(err, file);
             });
         });
@@ -137,7 +139,13 @@ var Compiler = (function () {
 
     Compiler.prototype.compileFile = function (file, callback) {
         var stream = fs.createReadStream(path.resolve(file.src));
-        this.compileStream(stream, callback);
+        this.compileStream(stream, function (err, file2) {
+            if (err) {
+                callback(err, file);
+                return;
+            }
+            callback(err, file2);
+        });
     };
 
     Compiler.prototype.compileStream = function (stream, callback) {

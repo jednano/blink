@@ -41,9 +41,11 @@ class Compiler {
 
 		files.src.forEach(src => {
 			this.compileFile({ src: src, dest: files.dest }, (err, file) => {
-				var folder = (files.dest === '') ? path.dirname(src) : files.dest;
-				var filename = path.basename(src, path.extname(src)) + '.css';
-				file.dest = path.join(folder, filename);
+				if (!err) {
+					var folder = (files.dest === '') ? path.dirname(src) : files.dest;
+					var filename = path.basename(src, path.extname(src)) + '.css';
+					file.dest = path.join(folder, filename);
+				}
 				callback(err, file);
 			});
 		});
@@ -60,7 +62,13 @@ class Compiler {
 
 	private compileFile(file: IFile, callback: (err: Error, file?: IFile) => void) {
 		var stream = fs.createReadStream(path.resolve(file.src));
-		this.compileStream(stream, callback);
+		this.compileStream(stream, (err, file2) => {
+			if (err) {
+				callback(err, file);
+				return;
+			}
+			callback(err, file2);
+		});
 	}
 
 	public compileStream(stream: NodeJS.ReadableStream,
