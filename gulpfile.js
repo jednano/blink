@@ -1,12 +1,13 @@
 ﻿var gulp = require('gulp');
-var gutil = require('gulp-util');
 
-var browserify = require('gulp-browserify');
-var clean = require('gulp-clean');
+var browserify = require('browserify');
+var del = require('del');
 var fs = require('fs');
 var tsc = require('gulp-tsc');
 var mocha = require('gulp-mocha');
 var rename = require('gulp-rename');
+var source = require('vinyl-source-stream');
+var streamify = require('gulp-streamify');
 var uglify = require('gulp-uglify');
 
 var paths = {
@@ -27,9 +28,8 @@ var paths = {
 	}
 };
 
-gulp.task('clean', function() {
-	return gulp.src(['js', 'd.ts', 'dist'], { read: false })
-		.pipe(clean());
+gulp.task('clean', function(cb) {
+	del(['js', 'd.ts', 'dist'], cb);
 });
 
 gulp.task('copy', ['clean'], function(done) {
@@ -74,21 +74,21 @@ gulp.task('watch', ['test'], function() {
 });
 
 gulp.task('browserify', ['copy', 'ts'], function() {
-	return gulp.src('js/lib/blink.js')
-		.pipe(browserify({
-			standalone: 'blink'
-		}))
-		.pipe(gulp.dest('dist'));
-});
+	var bundleStream = browserify({
+		entries: ['./js/lib/blink.js'],
+		standalone: 'blink'
+	}).bundle();
 
-gulp.task('compress', ['browserify'], function() {
-	return gulp.src('dist/blink.js')
-		.pipe(uglify())
+	return bundleStream
+		.pipe(source('./js/lib/blink.js'))
+		.pipe(rename('blink.js'))
+		.pipe(gulp.dest('dist'))
+		.pipe(streamify(uglify()))
 		.pipe(rename('blink.min.js'))
 		.pipe(gulp.dest('dist'));
 });
 
-gulp.task('dist', ['compress']);
+gulp.task('dist', ['browserify']);
 
 gulp.task('default', ['watch']);
 
