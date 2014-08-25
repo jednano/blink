@@ -2,12 +2,12 @@
 
 > Blink converts [Node.js][] modules into CSS and provides a CSS Authoring Framework, with BEM support.
 
-[![Build Status][]](http://travis-ci.org/blinkjs/blink)
-[![Dependency Status][]](https://gemnasium.com/blinkjs/blink)
-[![NPM version][]](http://badge.fury.io/js/blink)
-[![Views][]](https://sourcegraph.com/github.com/blinkjs/blink)
+[![Build Status](https://secure.travis-ci.org/blinkjs/blink.svg)](http://travis-ci.org/blinkjs/blink)
+[![Dependency Status](https://gemnasium.com/blinkjs/blink.svg)](https://gemnasium.com/blinkjs/blink)
+[![NPM version](https://badge.fury.io/js/blink.svg)](http://badge.fury.io/js/blink)
+[![Views](https://sourcegraph.com/api/repos/github.com/blinkjs/blink/counters/views-24h.png)](https://sourcegraph.com/github.com/blinkjs/blink)
 
-[![NPM](https://nodei.co/npm/blink.png?downloads=true)](https://nodei.co/npm/blink/)
+[![NPM](https://nodei.co/npm/blink.svg?downloads=true)](https://nodei.co/npm/blink/)
 
 
 ## Requirements
@@ -556,10 +556,6 @@ Released under the MIT license.
 
 
 
-[Build Status]: https://secure.travis-ci.org/blinkjs/blink.png?branch=master
-[Dependency Status]: https://gemnasium.com/blinkjs/blink.png
-[NPM version]: https://badge.fury.io/js/blink.png
-[Views]: https://sourcegraph.com/api/repos/github.com/blinkjs/blink/counters/views-24h.png
 [Node.js]: http://nodejs.org/
 [Node]: http://nodejs.org/
 [BEM syntax]: http://csswizardry.com/2013/01/mindbemding-getting-your-head-round-bem-syntax/
