@@ -79,8 +79,7 @@ gulp.task('browserify', ['copy', 'ts'], function() {
 	}).bundle();
 
 	return bundleStream
-		.pipe(source('./js/lib/blink.js'))
-		.pipe(rename('blink.js'))
+		.pipe(source('blink.js'))
 		.pipe(gulp.dest('dist'))
 		.pipe(streamify(uglify()))
 		.pipe(rename('blink.min.js'))
