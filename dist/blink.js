@@ -81,7 +81,7 @@ var Blink;
 module.exports = Blink;
 
 },{"./Block":3,"./Compiler":4,"./Configuration":5,"./Element":6,"./MediaAtRule":9,"./Modifier":10,"./Rule":11}],2:[function(require,module,exports){
-module.exports=﻿{
+module.exports={
   "quiet": false,
   "trace": false,
   "force": false,
@@ -468,7 +468,7 @@ var Configuration = (function () {
             } catch (err) {
                 throw new Error('Invalid plugin. Node module not found: ' + pluginName);
             }
-            result = plugin.extendConfiguration(_this);
+            result = plugin(_this);
         });
         return result;
     };

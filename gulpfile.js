@@ -28,14 +28,13 @@ var paths = {
 	}
 };
 
-gulp.task('clean', function(cb) {
-	del(['js', 'd.ts', 'dist'], cb);
+gulp.task('clean', function(done) {
+	del(['js', 'd.ts', 'dist'], done);
 });
 
-gulp.task('copy', ['clean'], function(done) {
-	fs.mkdir('js', function() {
-		copyFile('defaults.json', 'js/defaults.json', done);
-	});
+gulp.task('copy', ['clean'], function() {
+	return gulp.src('defaults.json')
+		.pipe(gulp.dest('js'));
 });
 
 gulp.task('build', ['ts']);
@@ -91,24 +90,3 @@ gulp.task('browserify', ['copy', 'ts'], function() {
 gulp.task('dist', ['browserify']);
 
 gulp.task('default', ['watch']);
-
-function copyFile(source, target, cb) {
-	var cbCalled = false;
-
-	var rd = fs.createReadStream(source);
-	rd.on('error', done);
-
-	var wr = fs.createWriteStream(target);
-	wr.on('error', done);
-	wr.on('close', function() {
-		done();
-	});
-	rd.pipe(wr);
-
-	function done(err) {
-		if (!cbCalled) {
-			cb(err);
-			cbCalled = true;
-		}
-	}
-}
