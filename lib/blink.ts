@@ -1,4 +1,4 @@
-﻿///<reference path="../bower_components/dt-node/node.d.ts" />
+﻿///<reference path="../bower_components/dt-vinyl/vinyl.d.ts" />
 import _Block = require('./Block');
 import _Compiler = require('./Compiler');
 import _Element = require('./Element');
@@ -13,22 +13,16 @@ import _MediaAtRule = require('./MediaAtRule');
 import _Modifier = require('./Modifier');
 import _Rule = require('./Rule');
 import Configuration = require('./Configuration');
-import IFile = require('./interfaces/IFile');
-import IFiles = require('./interfaces/IFiles');
 
 
 module Blink {
 
 	export var config = new Configuration();
 
-	export function compile(options: IConfigurationOptions, files: IFiles,
-		callback: (err: Error, config: Configuration, file: IFile) => void) {
-
-		var tempConfig = config.clone().set(options);
+	export function compile(options?: IConfigurationOptions) {
+		var tempConfig = config.clone().set(options || {});
 		var compiler = new Compiler(tempConfig);
-		compiler.compile(files, (err, file) => {
-			callback(err, tempConfig, file);
-		});
+		return compiler.compile();
 	}
 
 	export class Compiler    extends _Compiler {}

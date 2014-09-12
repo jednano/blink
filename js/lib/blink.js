@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-///<reference path="../bower_components/dt-node/node.d.ts" />
+///<reference path="../bower_components/dt-vinyl/vinyl.d.ts" />
 var _Block = require('./Block');
 var _Compiler = require('./Compiler');
 var _Element = require('./Element');
@@ -18,12 +18,11 @@ var Blink;
 (function (Blink) {
     Blink.config = new Configuration();
 
-    function compile(options, files, callback) {
+    function compile(options) {
+        options = options || {};
         var tempConfig = Blink.config.clone().set(options);
         var compiler = new Compiler(tempConfig);
-        compiler.compile(files, function (err, file) {
-            callback(err, tempConfig, file);
-        });
+        return compiler.compile();
     }
     Blink.compile = compile;
 

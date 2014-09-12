@@ -1,8 +1,10 @@
-var fs = require('fs');
+var concat = require('concat-stream');
+
 var mod = require('module');
 var path = require('path');
 
 var stripBOM = require('strip-bom');
+var through = require('through2');
 
 var Configuration = require('./Configuration');
 var ExtenderRegistry = require('./ExtenderRegistry');
@@ -11,111 +13,73 @@ var Formatter = require('./Formatter');
 var Rule = require('./Rule');
 var s = require('./helpers/string');
 
+var PluginError = require('gulp-util').PluginError;
+var PLUGIN_NAME = 'blink';
+
 var Compiler = (function () {
     function Compiler(config) {
         this.config = config;
         this.config = config || new Configuration();
     }
-    Compiler.prototype.compile = function (files, callback) {
-        var _this = this;
-        if (!files) {
-            return;
-        }
+    Compiler.prototype.compile = function () {
+        var compiler = this;
 
-        if (!files.src) {
-            callback(new Error('Missing `src` property'));
-            return;
-        }
-
-        if (typeof files.dest === 'undefined') {
-            callback(new Error('Missing `dest` property'));
-            return;
-        }
-
-        files.src.forEach(function (src) {
-            _this.compileFile({ src: src, dest: files.dest }, function (err, file) {
-                if (!err) {
-                    var folder = (files.dest === '') ? path.dirname(src) : files.dest;
-                    var filename = path.basename(src, path.extname(src)) + '.css';
-                    file.dest = path.join(folder, filename);
+        // ReSharper disable once JsFunctionCanBeConvertedToLambda
+        var stream = through(function (file, enc, done) {
+            var onSuccess;
+            var onBufferCompiled = function (err, css) {
+                if (err) {
+                    this.emit('error', new PluginError(PLUGIN_NAME, err.message));
+                } else {
+                    onSuccess(css);
                 }
-                callback(err, file);
-            });
-        });
-    };
+                this.push(file);
+                done();
+            }.bind(this);
 
-    Compiler.prototype.tryCompileRule = function (rule, callback) {
-        try  {
-            callback(null, this.compileRules([rule]));
-        } catch (err) {
-            callback(err);
-        }
-    };
-
-    Compiler.prototype.compileFile = function (file, callback) {
-        var stream = fs.createReadStream(path.resolve(file.src));
-        this.compileStream(stream, function (err, file2) {
-            if (err) {
-                callback(err, file);
+            if (file.isStream()) {
+                file.pipe(concat(function (data) {
+                    compiler.compileBuffer(data, file.path, onBufferCompiled);
+                }));
+                onSuccess = function (css) {
+                    file.contents = through();
+                    file.contents.write(css);
+                    file.path = compiler.renameExtToCss(file);
+                };
                 return;
             }
-            callback(err, file2);
-        });
-    };
 
-    Compiler.prototype.compileStream = function (stream, callback) {
-        var _this = this;
-        this.readStream(stream, function (err, contents) {
-            if (err) {
-                callback(err);
+            if (file.isBuffer()) {
+                compiler.compileBuffer(file.contents, file.path, onBufferCompiled);
+                onSuccess = function (css) {
+                    file.contents = new Buffer(css);
+                };
                 return;
             }
-            _this.tryCompileContents({
-                src: stream.path,
-                contents: contents
-            }, callback);
+
+            this.emit('error', new PluginError(PLUGIN_NAME, 'Unexpected file mode. Expected stream or buffer.'));
+
+            this.push(file);
+            done();
         });
+
+        return stream;
     };
 
-    Compiler.prototype.readStream = function (stream, callback) {
-        var contents = '';
-        stream.setEncoding('utf8');
-        stream.on('readable', function () {
-            contents += stream.read() || '';
-        });
-        stream.on('error', function (err) {
-            callback(err);
-        });
-        stream.on('end', function () {
-            callback(null, contents);
-        });
-    };
-
-    Compiler.prototype.tryCompileContents = function (file, callback) {
-        try  {
-            var compiled = this.compileModule(stripBOM(file.contents), path.dirname(file.src));
-            callback(null, {
-                src: file.src,
-                dest: this.renameExtToCss(file),
-                contents: this.compileRules(compiled instanceof Array ? compiled : [compiled])
-            });
-        } catch (err) {
-            callback(err);
+    Compiler.prototype.compileBuffer = function (data, filepath, callback) {
+        var exported = this.compileModule(stripBOM(data), filepath);
+        if (!(exported instanceof Array)) {
+            exported = [exported];
         }
+        callback(null, this.compileRules(exported));
     };
 
     Compiler.prototype.renameExtToCss = function (file) {
-        if (typeof file.dest === 'undefined' && file.src) {
-            return path.join(path.dirname(file.src), path.basename(file.src, path.extname(file.src)) + '.css');
-        }
-        return file.dest;
+        return path.join(file.base, path.basename(file.path, path.extname(file.path)) + '.css');
     };
 
-    Compiler.prototype.compileModule = function (contents, folder) {
-        var m = new mod();
-        m.paths = mod._nodeModulePaths(folder);
-        m._compile(contents);
-        return m.exports;
+    Compiler.prototype.compileModule = function (contents, filepath) {
+        return new mod()._compile(contents, filepath).exports;
     };
 
     Compiler.prototype.compileRules = function (rules) {

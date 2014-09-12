@@ -1,21 +1,23 @@
-﻿import fs = require('fs');
+﻿var concat = require('concat-stream');
+import fs = require('fs');
 var mod = require('module');
 import path = require('path');
 import _stream = require('stream');
 var stripBOM = require('strip-bom');
+var through = require('through2');
 
 import a = require('./helpers/array');
 import Configuration = require('./Configuration');
 import ExtenderRegistry = require('./ExtenderRegistry');
 import Formatter = require('./Formatter');
 import IConfigurationOptions = require('./interfaces/IConfigurationOptions');
-import IFile = require('./interfaces/IFile');
-import IFiles = require('./interfaces/IFiles');
 import IHashTable = require('./interfaces/IHashTable');
 import MediaAtRule = require('./MediaAtRule');
 import Rule = require('./Rule');
 import s = require('./helpers/string');
 
+var PluginError = require('gulp-util').PluginError;
+var PLUGIN_NAME = 'blink';
 
 class Compiler {
 
@@ -23,116 +25,75 @@ class Compiler {
 		this.config = config || new Configuration();
 	}
 
-	public compile(files: IFiles, callback: (err: Error, file?: IFile) => void) {
+	public compile() {
 
-		if (!files) {
-			return;
-		}
+		var compiler = this;
 
-		if (!files.src) {
-			callback(new Error('Missing `src` property'));
-			return;
-		}
+		// ReSharper disable once JsFunctionCanBeConvertedToLambda
+		var stream = through(function(file: Vinyl.IFile, enc, done: Function) {
 
-		if (typeof files.dest === 'undefined') {
-			callback(new Error('Missing `dest` property'));
-			return;
-		}
-
-		files.src.forEach(src => {
-			this.compileFile({ src: src, dest: files.dest }, (err, file) => {
-				if (!err) {
-					var folder = (files.dest === '') ? path.dirname(src) : files.dest;
-					var filename = path.basename(src, path.extname(src)) + '.css';
-					file.dest = path.join(folder, filename);
+			var onSuccess: Function;
+			var onBufferCompiled = function(err: Error, css: string) {
+				if (err) {
+					this.emit('error', new PluginError(PLUGIN_NAME, err.message));
+				} else {
+					onSuccess(css);
 				}
-				callback(err, file);
-			});
-		});
-	}
+				this.push(file);
+				done();
+			}.bind(this);
 
-	private tryCompileRule(rule: Rule,
-		callback: (err: Error, contents?: string) => void) {
-		try {
-			callback(null, this.compileRules([rule]));
-		} catch (err) {
-			callback(err);
-		}
-	}
-
-	private compileFile(file: IFile, callback: (err: Error, file?: IFile) => void) {
-		var stream = fs.createReadStream(path.resolve(file.src));
-		this.compileStream(stream, (err, file2) => {
-			if (err) {
-				callback(err, file);
+			if (file.isStream()) {
+				file.pipe(concat(data => {
+					compiler.compileBuffer(data, file.path, onBufferCompiled);
+				}));
+				onSuccess = css => {
+					file.contents = through();
+					file.contents.write(css);
+					file.path = compiler.renameExtToCss(file);
+				};
 				return;
 			}
-			callback(err, file2);
-		});
-	}
 
-	public compileStream(stream: NodeJS.ReadableStream,
-		callback: (err: Error, file?: IFile) => void) {
-
-		this.readStream(stream, (err, contents) => {
-			if (err) {
-				callback(err);
+			if (file.isBuffer()) {
+				compiler.compileBuffer(file.contents, file.path, onBufferCompiled);
+				onSuccess = css => {
+					file.contents = new Buffer(css);
+				};
 				return;
 			}
-			this.tryCompileContents({
-				src: (<any>stream).path,
-				contents: contents
-			}, callback);
+
+			this.emit('error', new PluginError(PLUGIN_NAME,
+				'Unexpected file mode. Expected stream or buffer.'));
+
+			this.push(file);
+			done();
+
 		});
+
+		return stream;
 	}
 
-	private readStream(stream: NodeJS.ReadableStream,
-		callback: (err: Error, contents?: string) => void) {
-		var contents = '';
-		stream.setEncoding('utf8');
-		stream.on('readable', () => {
-			contents += stream.read() || '';
-		});
-		stream.on('error', (err: Error) => {
-			callback(err);
-		});
-		stream.on('end', () => {
-			callback(null, contents);
-		});
-	}
+	private compileBuffer(data: Buffer, filepath: string,
+		callback: (err: Error, css: string) => void) {
 
-	public tryCompileContents(file: IFile,
-		callback: (err: Error, file?: IFile) => void) {
-
-		try {
-			var compiled = this.compileModule(
-				stripBOM(file.contents),
-				path.dirname(file.src)
-			);
-			callback(null, {
-				src: file.src,
-				dest: this.renameExtToCss(file),
-				contents: this.compileRules(compiled instanceof Array ?
-					compiled : [compiled])
-			});
-		} catch (err) {
-			callback(err);
+		var exported = this.compileModule(
+			stripBOM(data),
+			filepath
+		);
+		if (!(exported instanceof Array)) {
+			exported = [exported];
 		}
+		callback(null, this.compileRules(exported));
 	}
 
-	private renameExtToCss(file: IFile) {
-		if (typeof file.dest === 'undefined' && file.src) {
-			return path.join(path.dirname(file.src),
-				path.basename(file.src, path.extname(file.src)) + '.css');
-		}
-		return file.dest;
+	private renameExtToCss(file: Vinyl.IFile) {
+		return path.join(file.base,
+			path.basename(file.path, path.extname(file.path)) + '.css');
 	}
 
-	private compileModule(contents: string, folder: string) {
-		var m = new mod();
-		m.paths = mod._nodeModulePaths(folder);
-		m._compile(contents);
-		return m.exports;
+	private compileModule(contents: string, filepath: string) {
+		return new mod()._compile(contents, filepath).exports;
 	}
 
 	public compileRules(rules: Rule[]) {

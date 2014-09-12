@@ -36,7 +36,8 @@
     "test"
   ],
   "dependencies": {
-    "dt-node": "https://github.com/jedmao/dt-node.git"
+    "dt-node": "https://github.com/jedmao/dt-node.git",
+    "dt-vinyl": "~0.3.1"
   },
   "devDependencies": {
     "dt-mocha": "~1.9.0",
