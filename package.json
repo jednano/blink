@@ -15,7 +15,8 @@
     "css",
     "bem",
     "oocss",
-    "framework"
+    "framework",
+    "gulpfriendly"
   ],
   "author": "Jed Mao <jed.hunsaker+npm@gmail.com>",
   "license": "MIT",
