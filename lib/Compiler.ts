@@ -38,6 +38,7 @@ class Compiler {
 					this.emit('error', new PluginError(PLUGIN_NAME, err.message));
 				} else {
 					onSuccess(css);
+					file.path = compiler.renameExtToCss(file);
 				}
 				this.push(file);
 				done();
@@ -50,7 +51,6 @@ class Compiler {
 				onSuccess = css => {
 					file.contents = through();
 					file.contents.write(css);
-					file.path = compiler.renameExtToCss(file);
 				};
 				return;
 			}

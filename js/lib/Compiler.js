@@ -32,6 +32,7 @@ var Compiler = (function () {
                     this.emit('error', new PluginError(PLUGIN_NAME, err.message));
                 } else {
                     onSuccess(css);
+                    file.path = compiler.renameExtToCss(file);
                 }
                 this.push(file);
                 done();
@@ -44,7 +45,6 @@ var Compiler = (function () {
                 onSuccess = function (css) {
                     file.contents = through();
                     file.contents.write(css);
-                    file.path = compiler.renameExtToCss(file);
                 };
                 return;
             }

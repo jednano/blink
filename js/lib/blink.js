@@ -19,8 +19,7 @@ var Blink;
     Blink.config = new Configuration();
 
     function compile(options) {
-        options = options || {};
-        var tempConfig = Blink.config.clone().set(options);
+        var tempConfig = Blink.config.clone().set(options || {});
         var compiler = new Compiler(tempConfig);
         return compiler.compile();
     }
