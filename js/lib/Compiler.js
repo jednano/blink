@@ -25,7 +25,7 @@ var Compiler = (function () {
         var compiler = this;
 
         // ReSharper disable once JsFunctionCanBeConvertedToLambda
-        var stream = through(function (file, enc, done) {
+        var stream = through.obj(function (file, enc, done) {
             var onSuccess;
             var onBufferCompiled = function (err, css) {
                 if (err) {
@@ -50,10 +50,10 @@ var Compiler = (function () {
             }
 
             if (file.isBuffer()) {
-                compiler.compileBuffer(file.contents, file.path, onBufferCompiled);
                 onSuccess = function (css) {
                     file.contents = new Buffer(css);
                 };
+                compiler.compileBuffer(file.contents, file.path, onBufferCompiled);
                 return;
             }
 
@@ -67,7 +67,7 @@ var Compiler = (function () {
     };
 
     Compiler.prototype.compileBuffer = function (data, filepath, callback) {
-        var exported = this.compileModule(stripBOM(data), filepath);
+        var exported = this.compileModule(data, path.dirname(filepath));
         if (!(exported instanceof Array)) {
             exported = [exported];
         }
@@ -78,8 +78,11 @@ var Compiler = (function () {
         return path.join(file.base, path.basename(file.path, path.extname(file.path)) + '.css');
     };
 
-    Compiler.prototype.compileModule = function (contents, filepath) {
-        return new mod()._compile(contents, filepath).exports;
+    Compiler.prototype.compileModule = function (contents, dirname) {
+        var m = new mod();
+        m.paths = mod._nodeModulePaths(dirname);
+        m._compile(contents.toString());
+        return m.exports;
     };
 
     Compiler.prototype.compileRules = function (rules) {

@@ -30,7 +30,7 @@ class Compiler {
 		var compiler = this;
 
 		// ReSharper disable once JsFunctionCanBeConvertedToLambda
-		var stream = through(function(file: Vinyl.IFile, enc, done: Function) {
+		var stream = through.obj(function(file: Vinyl.IFile, enc, done: Function) {
 
 			var onSuccess: Function;
 			var onBufferCompiled = function(err: Error, css: string) {
@@ -56,10 +56,10 @@ class Compiler {
 			}
 
 			if (file.isBuffer()) {
-				compiler.compileBuffer(file.contents, file.path, onBufferCompiled);
 				onSuccess = css => {
 					file.contents = new Buffer(css);
 				};
+				compiler.compileBuffer(file.contents, file.path, onBufferCompiled);
 				return;
 			}
 
@@ -77,10 +77,7 @@ class Compiler {
 	private compileBuffer(data: Buffer, filepath: string,
 		callback: (err: Error, css: string) => void) {
 
-		var exported = this.compileModule(
-			stripBOM(data),
-			filepath
-		);
+		var exported = this.compileModule(data, path.dirname(filepath));
 		if (!(exported instanceof Array)) {
 			exported = [exported];
 		}
@@ -92,8 +89,11 @@ class Compiler {
 			path.basename(file.path, path.extname(file.path)) + '.css');
 	}
 
-	private compileModule(contents: string, filepath: string) {
-		return new mod()._compile(contents, filepath).exports;
+	private compileModule(contents: Buffer, dirname: string) {
+		var m = new mod();
+		m.paths = mod._nodeModulePaths(dirname);
+		m._compile(contents.toString());
+		return m.exports;
 	}
 
 	public compileRules(rules: Rule[]) {
