@@ -3,7 +3,6 @@ var concat = require('concat-stream');
 var mod = require('module');
 var path = require('path');
 
-var stripBOM = require('strip-bom');
 var through = require('through2');
 
 var Configuration = require('./Configuration');

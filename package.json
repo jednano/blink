@@ -31,7 +31,7 @@
     "concat-stream": "^1.4.6",
     "gulp-util": "^3.0.1",
     "node.extend": "^1.0.10",
-    "strip-bom": "^0.3.1",
+    "strip-bom": "^1.0.0",
     "through2": "^0.6.1"
   },
   "devDependencies": {

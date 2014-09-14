@@ -3,7 +3,6 @@ import fs = require('fs');
 var mod = require('module');
 import path = require('path');
 import _stream = require('stream');
-var stripBOM = require('strip-bom');
 var through = require('through2');
 
 import a = require('./helpers/array');
