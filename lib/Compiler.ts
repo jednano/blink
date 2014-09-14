@@ -76,7 +76,12 @@ class Compiler {
 	private compileBuffer(data: Buffer, filepath: string,
 		callback: (err: Error, css: string) => void) {
 
-		var exported = this.compileModule(data, path.dirname(filepath));
+		var exported;
+		if (filepath) {
+			exported = mod._load(filepath);
+		} else {
+			exported = this.compileModule(data);
+		}
 		if (!(exported instanceof Array)) {
 			exported = [exported];
 		}
@@ -88,9 +93,8 @@ class Compiler {
 			path.basename(file.path, path.extname(file.path)) + '.css');
 	}
 
-	private compileModule(contents: Buffer, dirname: string) {
+	private compileModule(contents: Buffer) {
 		var m = new mod();
-		m.paths = mod._nodeModulePaths(dirname);
 		m._compile(contents.toString());
 		return m.exports;
 	}

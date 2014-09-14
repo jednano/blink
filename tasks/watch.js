@@ -3,8 +3,9 @@
 function watch() {
 	gulp.watch([
 		['lib/**/*.ts'],
-		['test/fixtures/*.ts'],
-		['test/spec/**/*.ts']
+		['test/spec/**/*.ts'],
+		['test/fixtures/*.js'],
+		['test/expected/*.css']
 	], ['test']);
 }
 

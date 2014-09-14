@@ -66,7 +66,12 @@ var Compiler = (function () {
     };
 
     Compiler.prototype.compileBuffer = function (data, filepath, callback) {
-        var exported = this.compileModule(data, path.dirname(filepath));
+        var exported;
+        if (filepath) {
+            exported = mod._load(filepath);
+        } else {
+            exported = this.compileModule(data);
+        }
         if (!(exported instanceof Array)) {
             exported = [exported];
         }
@@ -77,9 +82,8 @@ var Compiler = (function () {
         return path.join(file.base, path.basename(file.path, path.extname(file.path)) + '.css');
     };
 
-    Compiler.prototype.compileModule = function (contents, dirname) {
+    Compiler.prototype.compileModule = function (contents) {
         var m = new mod();
-        m.paths = mod._nodeModulePaths(dirname);
         m._compile(contents.toString());
         return m.exports;
     };

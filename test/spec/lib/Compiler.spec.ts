@@ -39,12 +39,12 @@ describe('Compiler', () => {
 	}
 
 	function readExpected(filename) {
-		return fs.readFileSync(path.join('test/expected', filename), {
+		return fs.readFileSync(path.join('test', 'expected', filename), {
 			encoding: 'utf8'
 		});
 	}
 
-	it('compiles streams', done => {
+	it('compiles files in streaming mode', done => {
 		vfs.src('test/fixtures/foo.js', { buffer: false })
 			.pipe(blink.compile())
 			.on('data', file => {
@@ -55,12 +55,23 @@ describe('Compiler', () => {
 			});
 	});
 
-	it('compiles buffers', done => {
+	it('compiles files in buffer mode', done => {
 		vfs.src('test/fixtures/foo.js')
 			.pipe(blink.compile())
 			.on('data', file => {
 				var transpiled = readFile(file);
 				var expected = readExpected('foo.css');
+				expect(transpiled).to.eq(expected);
+				done();
+			});
+	});
+
+	it('compiles master files (i.e., files that include other files)', done => {
+		vfs.src('test/fixtures/app.js')
+			.pipe(blink.compile())
+			.on('data', file => {
+				var transpiled = readFile(file);
+				var expected = readExpected('app.css');
 				expect(transpiled).to.eq(expected);
 				done();
 			});
