@@ -1,10 +1,10 @@
 ﻿import Configuration = require('../Configuration');
 
 
-interface IExtender {
+interface Extender {
 	args: IArguments;
 	selectors?: string[];
 	(config?: Configuration): any[][];
 }
 
-export = IExtender;
+export = Extender;

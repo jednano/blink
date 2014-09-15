@@ -1,5 +1,4 @@
 ﻿import Configuration = require('./Configuration');
-import IRuleBody = require('./interfaces/IRuleBody');
 import s = require('./helpers/string');
 
 

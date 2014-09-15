@@ -1,11 +1,11 @@
-﻿import IHashTable = require('./IHashTable');
+﻿import HashTable = require('./HashTable');
 import MediaAtRule = require('../MediaAtRule');
 
 
-interface IRuleBody extends IHashTable<any> {
+interface RuleBody extends HashTable<any> {
 	extend?: any[];
 	include?: Function[];
 	respond?: MediaAtRule[];
 }
 
-export = IRuleBody;
+export = RuleBody;

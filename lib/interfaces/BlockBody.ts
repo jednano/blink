@@ -1,11 +1,11 @@
 ﻿import Element = require('../Element');
-import IRuleBody = require('./IRuleBody');
 import Modifier = require('../Modifier');
+import RuleBody = require('./RuleBody');
 
 
-interface IBlockBody extends IRuleBody {
+interface BlockBody extends RuleBody {
 	elements?: Element[];
 	modifiers?: Modifier[];
 }
 
-export = IBlockBody;
+export = BlockBody;

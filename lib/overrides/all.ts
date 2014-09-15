@@ -1,4 +1,4 @@
-﻿import IOverrides = require('../interfaces/IOverrides');
+﻿import Overrides = require('../interfaces/Overrides');
 import background = require('./background');
 import boxSizing = require('./boxSizing');
 import clearfix = require('./clearfix');
@@ -7,7 +7,7 @@ import font = require('./font');
 
 
 // ReSharper disable once UnusedLocals
-var overrides: IOverrides = {
+var overrides: Overrides = {
 	background: background,
 	boxSizing: boxSizing,
 	clearfix: clearfix,

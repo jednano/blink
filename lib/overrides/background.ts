@@ -1,10 +1,10 @@
 ﻿import _background = require('../extenders/background');
-import IOverride = require('../interfaces/IOverride');
+import Override = require('../interfaces/Override');
 
 // ReSharper disable once UnusedLocals
 function background(value: any) {
 
-	var override = <IOverride>(() => {
+	var override = <Override>(() => {
 		return _background(value)();
 	});
 

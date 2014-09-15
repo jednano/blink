@@ -7,12 +7,16 @@ var __extends = this.__extends || function (d, b) {
 };
 ///<reference path="../bower_components/dt-vinyl/vinyl.d.ts" />
 var _Block = require('./Block');
+
 var _Compiler = require('./CompilerBrowser');
+
 var _Element = require('./Element');
 
 var _MediaAtRule = require('./MediaAtRule');
 var _Modifier = require('./Modifier');
+
 var _Rule = require('./Rule');
+
 var Configuration = require('./Configuration');
 
 var Blink;

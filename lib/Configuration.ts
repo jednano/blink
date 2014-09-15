@@ -7,9 +7,9 @@ var extend = require('node.extend');
 
 import _extenders = require('./extenders/all');
 import _overrides = require('./overrides/all');
-import IConfigurationOptions = require('./interfaces/IConfigurationOptions');
-import IExtenders = require('./interfaces/IExtenders');
-import IOverrides = require('./interfaces/IOverrides');
+import ConfigurationOptions = require('./interfaces/ConfigurationOptions');
+import Extenders = require('./interfaces/Extenders');
+import Overrides = require('./interfaces/Overrides');
 import s = require('./helpers/string');
 
 
@@ -33,9 +33,9 @@ var quotes = {
 	'single': "'"
 };
 
-class Configuration implements IConfigurationOptions {
+class Configuration implements ConfigurationOptions {
 
-	constructor(options?: IConfigurationOptions) {
+	constructor(options?: ConfigurationOptions) {
 		this.set(require('../defaults.json'));
 		var extended = this.loadPlugins(options);
 		var clonedOptions = extend({}, options || {});
@@ -44,7 +44,7 @@ class Configuration implements IConfigurationOptions {
 		return extended;
 	}
 
-	private loadPlugins(options?: IConfigurationOptions) {
+	private loadPlugins(options?: ConfigurationOptions) {
 		if (!options) {
 			return this;
 		}
@@ -80,7 +80,7 @@ class Configuration implements IConfigurationOptions {
 		return clone;
 	}
 
-	public set(options: IConfigurationOptions) {
+	public set(options: ConfigurationOptions) {
 		options = options || {};
 		if (options.config) {
 			options = extend(this.loadConfig(options.config), options);
@@ -102,7 +102,7 @@ class Configuration implements IConfigurationOptions {
 		return config;
 	}
 
-	public raw: IConfigurationOptions = {};
+	public raw: ConfigurationOptions = {};
 
 	public toString() {
 		return JSON.stringify(this.raw);

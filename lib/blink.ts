@@ -1,17 +1,17 @@
 ﻿///<reference path="../bower_components/dt-vinyl/vinyl.d.ts" />
 import _Block = require('./Block');
+import _BlockBody = require('./interfaces/BlockBody');
 import _Compiler = require('./Compiler');
+import _ConfigurationOptions = require('./interfaces/ConfigurationOptions');
 import _Element = require('./Element');
-import _IBlockBody = require('./interfaces/IBlockBody');
-import _IConfigurationOptions = require('./interfaces/IConfigurationOptions');
-import _IElementBody = require('./interfaces/IElementBody');
-import _IExtender = require('./interfaces/IExtender');
-import _IModifierBody = require('./interfaces/IModifierBody');
-import _IOverride = require('./interfaces/IOverride');
-import _IRuleBody = require('./interfaces/IRuleBody');
+import _ElementBody = require('./interfaces/ElementBody');
+import _Extender = require('./interfaces/Extender');
 import _MediaAtRule = require('./MediaAtRule');
 import _Modifier = require('./Modifier');
+import _ModifierBody = require('./interfaces/ModifierBody');
+import _Override = require('./interfaces/Override');
 import _Rule = require('./Rule');
+import _RuleBody = require('./interfaces/RuleBody');
 import Configuration = require('./Configuration');
 
 
@@ -19,7 +19,7 @@ module Blink {
 
 	export var config = new Configuration();
 
-	export function compile(options?: IConfigurationOptions):
+	export function compile(options?: ConfigurationOptions):
 		NodeJS.ReadWriteStream {
 		var tempConfig = config.clone().set(options || {});
 		var compiler = new Compiler(tempConfig);
@@ -33,13 +33,13 @@ module Blink {
 	export class MediaAtRule extends _MediaAtRule {}
 	export class Modifier    extends _Modifier {}
 
-	export interface IConfigurationOptions extends _IConfigurationOptions {}
-	export interface IBlockBody            extends _IBlockBody {}
-	export interface IElementBody          extends _IElementBody {}
-	export interface IExtender             extends _IExtender {}
-	export interface IModifierBody         extends _IModifierBody {}
-	export interface IOverride             extends _IOverride {}
-	export interface IRuleBody             extends _IRuleBody {}
+	export interface ConfigurationOptions extends _ConfigurationOptions {}
+	export interface BlockBody            extends _BlockBody {}
+	export interface ElementBody          extends _ElementBody {}
+	export interface Extender             extends _Extender {}
+	export interface ModifierBody         extends _ModifierBody {}
+	export interface Override             extends _Override {}
+	export interface RuleBody             extends _RuleBody {}
 
 }
 

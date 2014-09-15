@@ -5,7 +5,7 @@ import font = require('../extenders/font');
 import inlineBlock = require('../extenders/inlineBlock');
 
 
-interface IExtenders {
+interface Extenders {
 	background: typeof background;
 	clearfix: typeof clearfix;
 	experimental: typeof experimental;
@@ -13,4 +13,4 @@ interface IExtenders {
 	inlineBlock: typeof inlineBlock;
 }
 
-export = IExtenders;
+export = Extenders;

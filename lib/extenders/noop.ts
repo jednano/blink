@@ -1,8 +1,8 @@
-﻿import IExtender = require('../interfaces/IExtender');
+﻿import Extender = require('../interfaces/Extender');
 
 // ReSharper disable once UnusedLocals
 function noop() {
-	var extender = <IExtender>(() => []);
+	var extender = <Extender>(() => []);
 	extender.args = arguments;
 	return extender;
 }

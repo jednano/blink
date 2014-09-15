@@ -1,6 +1,6 @@
 ﻿import Configuration = require('../Configuration');
 import experimental = require('../extenders/experimental');
-import IOverride = require('../interfaces/IOverride');
+import Override = require('../interfaces/Override');
 
 
 // http://css-tricks.com/box-sizing/
@@ -8,7 +8,7 @@ import IOverride = require('../interfaces/IOverride');
 // ReSharper disable once UnusedLocals
 function boxSizing(value: string) {
 
-	var override = <IOverride>((config: Configuration) => {
+	var override = <Override>((config: Configuration) => {
 		return experimental('box-sizing', value, {
 			official: true,  // Opera/IE 8+
 			  webkit: true,  // Safari/Chrome, other WebKit

@@ -1,9 +1,9 @@
-﻿import IExtender = require('../interfaces/IExtender');
+﻿import Extender = require('../interfaces/Extender');
 
 // ReSharper disable once UnusedLocals
 function clearfix() {
 
-	var extender = <IExtender>(() => [
+	var extender = <Extender>(() => [
 		['content', ''],
 		['display', 'table'],
 		['clear', 'both']

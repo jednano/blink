@@ -9,7 +9,7 @@ var expect = sinonChai.expect;
 var newline = config.newline;
 
 function cap(val: string) {
-	var fn = <blink.IExtender>(() => {
+	var fn = <blink.Extender>(() => {
 		return [
 			['cap', val.toUpperCase()]
 		];
@@ -27,7 +27,7 @@ describe('Compiler (Browser)', () => {
 	});
 
 	it('compiles extenders', () => {
-		var extender = <blink.IExtender>(() => {
+		var extender = <blink.Extender>(() => {
 			return [
 				['baz', 'BAZ'],
 				['qux', 'QUX']

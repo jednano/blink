@@ -1,11 +1,11 @@
 ﻿import _font = require('../extenders/font');
-import IOverride = require('../interfaces/IOverride');
+import Override = require('../interfaces/Override');
 
 
 // ReSharper disable once UnusedLocals
 function font(value: any) {
 
-	var override = <IOverride>(() => {
+	var override = <Override>(() => {
 		if (typeof value === 'string') {
 			return [['font', value]];
 		}

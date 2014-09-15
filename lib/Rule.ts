@@ -3,8 +3,8 @@
 import a = require('./helpers/array');
 import Configuration = require('./Configuration');
 import Formatter = require('./Formatter');
-import IRuleBody = require('./interfaces/IRuleBody');
 import MediaAtRule = require('./MediaAtRule');
+import RuleBody = require('./interfaces/RuleBody');
 import s = require('./helpers/string');
 
 
@@ -44,7 +44,7 @@ class Rule {
 		});
 	}
 
-	constructor(selectors: any, public body?: IRuleBody) {
+	constructor(selectors: any, public body?: RuleBody) {
 		this.selectors = selectors;
 	}
 

@@ -5,7 +5,7 @@ import display = require('../overrides/display');
 import font = require('../overrides/font');
 
 
-interface IOverrides {
+interface Overrides {
 	background: typeof background;
 	boxSizing: typeof boxSizing;
 	clearfix: typeof clearfix;
@@ -13,4 +13,4 @@ interface IOverrides {
 	font: typeof font;
 }
 
-export = IOverrides;
+export = Overrides;

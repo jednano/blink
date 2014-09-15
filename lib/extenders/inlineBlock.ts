@@ -1,5 +1,5 @@
 ﻿import Configuration = require('../Configuration');
-import IExtender = require('../interfaces/IExtender');
+import Extender = require('../interfaces/Extender');
 
 
 // ReSharper disable once UnusedLocals
@@ -9,7 +9,7 @@ function inlineBlock(options?: {
 
 	options = options || {};
 
-	var extender = <IExtender>((config: Configuration) => {
+	var extender = <Extender>((config: Configuration) => {
 		var decs = [];
 
 		if (config.firefox < 3) {
