@@ -71,16 +71,14 @@ var Compiler = (function (_super) {
     };
 
     Compiler.prototype.compileBuffer = function (data, filepath, callback) {
-        if (filepath) {
-            var rules = a.flatten([mod._load(filepath)]);
-            _super.prototype.compileRules.call(this, rules, callback);
-        } else {
-            _super.prototype.compile.call(this, data.toString(), callback);
-        }
+        var rules = (filepath) ? mod._load(filepath) : this.compileModule(data);
+        _super.prototype.compileRules.call(this, a.flatten([rules]), callback);
     };
 
     Compiler.prototype.compileModule = function (contents) {
-        return _super.prototype.compileModule.call(this, contents.toString());
+        var m = new mod();
+        m._compile(contents);
+        return m.exports;
     };
     return Compiler;
 })(CompilerBrowser);

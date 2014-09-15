@@ -1,6 +1,4 @@
-﻿var mod = require('module');
-
-import a = require('./helpers/array');
+﻿import a = require('./helpers/array');
 import Configuration = require('./Configuration');
 import ExtenderRegistry = require('./ExtenderRegistry');
 import Formatter = require('./Formatter');
@@ -17,14 +15,14 @@ class CompilerBrowser {
 
 	public compile(contents: string,
 		callback: (err: Error, css?: string) => void) {
-		var rules = a.flatten([this.compileModule(contents)]);
+		try {
+			var exports = eval(contents);
+		} catch (err) {
+			callback(err);
+			return;
+		}
+		var rules = a.flatten([exports]);
 		this.compileRules(rules, callback);
-	}
-
-	public compileModule(contents: any) {
-		var m = new mod();
-		m._compile(contents);
-		return m.exports;
 	}
 
 	public compileRules(rules: Rule[],

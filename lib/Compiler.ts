@@ -74,16 +74,14 @@ class Compiler extends CompilerBrowser {
 	private compileBuffer(data: Buffer, filepath: string,
 		callback: (err: Error, css: string) => void) {
 
-		if (filepath) {
-			var rules = a.flatten([mod._load(filepath)]);
-			super.compileRules(rules, callback);
-		} else {
-			super.compile(data.toString(), callback);
-		}
+		var rules = (filepath) ? mod._load(filepath) : this.compileModule(data);
+		super.compileRules(a.flatten([rules]), callback);
 	}
 
 	public compileModule(contents: Buffer) {
-		return super.compileModule(contents.toString());
+		var m = new mod();
+		m._compile(contents);
+		return m.exports;
 	}
 
 }

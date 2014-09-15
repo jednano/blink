@@ -166,8 +166,6 @@ var Block = (function () {
 module.exports = Block;
 
 },{"./Rule":11}],4:[function(require,module,exports){
-var mod = require('module');
-
 var a = require('./helpers/array');
 var Configuration = require('./Configuration');
 var ExtenderRegistry = require('./ExtenderRegistry');
@@ -182,14 +180,14 @@ var CompilerBrowser = (function () {
         this.config = config || new Configuration();
     }
     CompilerBrowser.prototype.compile = function (contents, callback) {
-        var rules = a.flatten([this.compileModule(contents)]);
+        try  {
+            var exports = eval(contents);
+        } catch (err) {
+            callback(err);
+            return;
+        }
+        var rules = a.flatten([exports]);
         this.compileRules(rules, callback);
-    };
-
-    CompilerBrowser.prototype.compileModule = function (contents) {
-        var m = new mod();
-        m._compile(contents);
-        return m.exports;
     };
 
     CompilerBrowser.prototype.compileRules = function (rules, callback) {
@@ -326,7 +324,7 @@ var CompilerBrowser = (function () {
 
 module.exports = CompilerBrowser;
 
-},{"./Configuration":5,"./ExtenderRegistry":7,"./Formatter":8,"./Rule":11,"./helpers/array":19,"./helpers/string":20,"module":27}],5:[function(require,module,exports){
+},{"./Configuration":5,"./ExtenderRegistry":7,"./Formatter":8,"./Rule":11,"./helpers/array":19,"./helpers/string":20}],5:[function(require,module,exports){
 ///<reference path="../bower_components/dt-node/node.d.ts"/>
 var stripBom = require('strip-bom');
 var fs = require('fs');

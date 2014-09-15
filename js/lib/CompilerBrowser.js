@@ -1,5 +1,3 @@
-var mod = require('module');
-
 var a = require('./helpers/array');
 var Configuration = require('./Configuration');
 var ExtenderRegistry = require('./ExtenderRegistry');
@@ -14,14 +12,14 @@ var CompilerBrowser = (function () {
         this.config = config || new Configuration();
     }
     CompilerBrowser.prototype.compile = function (contents, callback) {
-        var rules = a.flatten([this.compileModule(contents)]);
+        try  {
+            var exports = eval(contents);
+        } catch (err) {
+            callback(err);
+            return;
+        }
+        var rules = a.flatten([exports]);
         this.compileRules(rules, callback);
-    };
-
-    CompilerBrowser.prototype.compileModule = function (contents) {
-        var m = new mod();
-        m._compile(contents);
-        return m.exports;
     };
 
     CompilerBrowser.prototype.compileRules = function (rules, callback) {

@@ -145,7 +145,6 @@ declare module "blinkBrowser" {
 		public config: Configuration;
 		constructor(config?: Configuration);
 		public compile(contents: string, callback: (err: Error, css?: string) => void): void;
-		public compileModule(contents: any): any;
 		public compileRules(rules: Rule[], callback: (err: Error, css?: string) => void): void;
 		public resolveRules(rules: Rule[]): any[];
 		private format(rules);
