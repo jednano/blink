@@ -1,7 +1,6 @@
-﻿///<reference path="../bower_components/dt-vinyl/vinyl.d.ts" />
+﻿///<reference path="../bower_components/dt-node/node.d.ts" />
 import _Block = require('./Block');
 import _BlockBody = require('./interfaces/BlockBody');
-import _Compiler = require('./CompilerBrowser');
 import _ConfigurationOptions = require('./interfaces/ConfigurationOptions');
 import _Element = require('./Element');
 import _ElementBody = require('./interfaces/ElementBody');
@@ -12,6 +11,7 @@ import _ModifierBody = require('./interfaces/ModifierBody');
 import _Override = require('./interfaces/Override');
 import _Rule = require('./Rule');
 import _RuleBody = require('./interfaces/RuleBody');
+import CompilerBrowser = require('./CompilerBrowser');
 import Configuration = require('./Configuration');
 
 module Blink {
@@ -26,7 +26,7 @@ module Blink {
 		compiler.compile(contents, callback);
 	}
 
-	export class Compiler extends _Compiler { }
+	export class Compiler extends CompilerBrowser { }
 	export class Rule extends _Rule { }
 	export class Block extends _Block { }
 	export class Element extends _Element { }

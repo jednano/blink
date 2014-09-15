@@ -4,10 +4,8 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-///<reference path="../bower_components/dt-vinyl/vinyl.d.ts" />
+///<reference path="../bower_components/dt-node/node.d.ts" />
 var _Block = require('./Block');
-
-var _Compiler = require('./CompilerBrowser');
 
 var _Element = require('./Element');
 
@@ -16,6 +14,7 @@ var _Modifier = require('./Modifier');
 
 var _Rule = require('./Rule');
 
+var CompilerBrowser = require('./CompilerBrowser');
 var Configuration = require('./Configuration');
 
 var Blink;
@@ -35,7 +34,7 @@ var Blink;
             _super.apply(this, arguments);
         }
         return Compiler;
-    })(_Compiler);
+    })(CompilerBrowser);
     Blink.Compiler = Compiler;
     var Rule = (function (_super) {
         __extends(Rule, _super);

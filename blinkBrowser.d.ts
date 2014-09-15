@@ -1,5 +1,5 @@
-/// <reference path="./bower_components/dt-vinyl/vinyl.d.ts" />
-declare module "blink" {
+﻿/// <reference path="./bower_components/dt-node/node.d.ts" />
+declare module "blinkBrowser" {
 	var config: Configuration;
 	class Configuration implements ConfigurationOptions {
 		constructor(options?: ConfigurationOptions);
@@ -141,15 +141,7 @@ declare module "blink" {
 		display: any;
 		font: any;
 	}
-	class Compiler extends CompilerBrowser {
-		public config: Configuration;
-		constructor(config?: Configuration);
-		public compile(): NodeJS.ReadWriteStream;
-		private renameExtToCss(file);
-		private compileBuffer(data, filepath, callback);
-		public compileModule(contents: Buffer): any;
-	}
-	class CompilerBrowser {
+	class Compiler {
 		public config: Configuration;
 		constructor(config?: Configuration);
 		public compile(contents: string, callback: (err: Error, css?: string) => void): void;
