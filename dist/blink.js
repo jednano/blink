@@ -5,7 +5,6 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-///<reference path="../bower_components/dt-node/node.d.ts" />
 var _Block = require('./Block');
 
 var _Element = require('./Element');

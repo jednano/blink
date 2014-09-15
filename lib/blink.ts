@@ -1,5 +1,4 @@
-﻿///<reference path="../bower_components/dt-vinyl/vinyl.d.ts" />
-import _Block = require('./Block');
+﻿import _Block = require('./Block');
 import _BlockBody = require('./interfaces/BlockBody');
 import _Compiler = require('./Compiler');
 import _ConfigurationOptions = require('./interfaces/ConfigurationOptions');

@@ -1,5 +1,4 @@
-﻿///<reference path="../bower_components/dt-node/node.d.ts" />
-import _Block = require('./Block');
+﻿import _Block = require('./Block');
 import _BlockBody = require('./interfaces/BlockBody');
 import _ConfigurationOptions = require('./interfaces/ConfigurationOptions');
 import _Element = require('./Element');

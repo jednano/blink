@@ -1,4 +1,5 @@
-﻿var concat = require('concat-stream');
+﻿///<reference path="../bower_components/dt-vinyl/vinyl.d.ts" />
+var concat = require('concat-stream');
 var mod = require('module');
 import path = require('path');
 var through = require('through2');

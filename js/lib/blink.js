@@ -4,7 +4,6 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-///<reference path="../bower_components/dt-vinyl/vinyl.d.ts" />
 var _Block = require('./Block');
 
 var _Compiler = require('./Compiler');
