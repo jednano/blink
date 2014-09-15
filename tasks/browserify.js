@@ -7,7 +7,7 @@ var uglify = require('gulp-uglify');
 
 function browserifyTask() {
 	var bundleStream = browserify({
-		entries: ['./js/lib/blink.js'],
+		entries: ['./js/lib/blinkBrowser.js'],
 		standalone: 'blink'
 	}).bundle();
 
