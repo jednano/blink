@@ -11,7 +11,8 @@ var path = require('path');
 var through = require('through2');
 
 var a = require('./helpers/array');
-var CompilerBrowser = require('./CompilerBrowser');
+var CompilerForBrowser = require('./browser/Compiler');
+var Configuration = require('./Configuration');
 
 var PluginError = require('gulp-util').PluginError;
 var PLUGIN_NAME = 'blink';
@@ -19,7 +20,7 @@ var PLUGIN_NAME = 'blink';
 var Compiler = (function (_super) {
     __extends(Compiler, _super);
     function Compiler(config) {
-        _super.call(this, config);
+        _super.call(this, config || new Configuration());
         this.config = config;
     }
     Compiler.prototype.compile = function () {
@@ -82,6 +83,6 @@ var Compiler = (function (_super) {
         return m.exports;
     };
     return Compiler;
-})(CompilerBrowser);
+})(CompilerForBrowser);
 
 module.exports = Compiler;

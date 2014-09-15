@@ -5,17 +5,18 @@ import path = require('path');
 var through = require('through2');
 
 import a = require('./helpers/array');
-import CompilerBrowser = require('./CompilerBrowser');
+import CompilerForBrowser = require('./browser/Compiler');
 import Configuration = require('./Configuration');
+import ConfigurationForBrowser = require('./browser/Configuration');
 
 
 var PluginError = require('gulp-util').PluginError;
 var PLUGIN_NAME = 'blink';
 
-class Compiler extends CompilerBrowser {
+class Compiler extends CompilerForBrowser {
 
-	constructor(public config?: Configuration) {
-		super(config);
+	constructor(public config?: ConfigurationForBrowser) {
+		super(config || new Configuration());
 	}
 
 	public compile(): NodeJS.ReadWriteStream {
@@ -74,7 +75,6 @@ class Compiler extends CompilerBrowser {
 
 	private compileBuffer(data: Buffer, filepath: string,
 		callback: (err: Error, css: string) => void) {
-
 		var rules = (filepath) ? mod._load(filepath) : this.compileModule(data);
 		super.compileRules(a.flatten([rules]), callback);
 	}

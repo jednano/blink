@@ -1,6 +1,5 @@
-﻿import Configuration = require('./Configuration');
+﻿import Configuration = require('./browser/Configuration');
 import s = require('./helpers/string');
-
 
 class Formatter {
 

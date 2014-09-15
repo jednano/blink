@@ -1,27 +1,29 @@
-﻿import a = require('./helpers/array');
+﻿import a = require('../helpers/array');
 import Configuration = require('./Configuration');
-import ExtenderRegistry = require('./ExtenderRegistry');
-import Formatter = require('./Formatter');
-import MediaAtRule = require('./MediaAtRule');
-import Rule = require('./Rule');
-import s = require('./helpers/string');
+import ExtenderRegistry = require('../ExtenderRegistry');
+import Formatter = require('../Formatter');
+import MediaAtRule = require('../MediaAtRule');
+import Rule = require('../Rule');
+import s = require('../helpers/string');
 
 
-class CompilerBrowser {
+class Compiler {
 
 	constructor(public config?: Configuration) {
 		this.config = config || new Configuration();
 	}
 
-	public compile(contents: string,
+	public compile(rules: any,
 		callback: (err: Error, css?: string) => void) {
-		try {
-			var exports = eval(contents);
-		} catch (err) {
-			callback(err);
-			return;
+		if (typeof rules === 'string') {
+			try {
+				rules = eval(rules);
+			} catch (err) {
+				callback(err);
+				return;
+			}
 		}
-		var rules = a.flatten([exports]);
+		rules = a.flatten([rules]);
 		this.compileRules(rules, callback);
 	}
 
@@ -155,4 +157,4 @@ class CompilerBrowser {
 
 }
 
-export = CompilerBrowser;
+export = Compiler;

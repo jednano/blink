@@ -20,8 +20,7 @@ module Blink {
 
 	export function compile(options?: ConfigurationOptions):
 		NodeJS.ReadWriteStream {
-		var tempConfig = config.clone().set(options || {});
-		var compiler = new Compiler(tempConfig);
+		var compiler = new Compiler(new Configuration(options || {}));
 		return compiler.compile();
 	}
 

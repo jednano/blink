@@ -2,7 +2,7 @@
 
 function copy() {
 	gulp.task('copy', ['clean'], function() {
-		return gulp.src('defaults.json')
+		return gulp.src('defaults*.json')
 			.pipe(gulp.dest('js'));
 	});
 }

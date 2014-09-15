@@ -510,7 +510,7 @@ doesn't matter as long as it ends up in JavaScript.
 ### CLI Usage
 
 ```bash
-$ npm install -g blink
+$ npm install -g blink-cli
 ```
 
 
@@ -523,6 +523,23 @@ $ npm install --save-dev blink
 ```ts
 ///<reference path="./node_modules/blink/blink.d.ts"/>
 import blink = require('blink');
+```
+
+### In the browser
+
+```bash
+$ bower install --save blink
+```
+
+```html
+<script src="/bower_components/blink/dist/blink.js"/>
+```
+
+```js
+var foo = "exports = new blink.Block('foo', { bar: 'baz' });";
+blink.compile(foo, function(err, css) {
+  console.log(css);
+});
 ```
 
 Refer to the [blink module](https://github.com/blinkjs/blink/blob/master/blink.d.ts)

@@ -1,8 +1,5 @@
-﻿import fs = require('fs');
-import path = require('path');
-
-import blink = require('../../../lib/blinkBrowser');
-import sinonChai = require('../../sinon-chai');
+﻿import blink = require('../../../../lib/browser/blink');
+import sinonChai = require('../../../sinon-chai');
 
 var config = blink.config;
 var expect = sinonChai.expect;
@@ -19,7 +16,7 @@ function cap(val: string) {
 };
 
 // ReSharper disable WrongExpressionStatement
-describe('Compiler (Browser)', () => {
+describe('Compiler for browser', () => {
 
 	var compiler: blink.Compiler;
 	beforeEach(() => {

@@ -1,0 +1,26 @@
+{
+  "quiet": false,
+  "trace": false,
+  "force": false,
+  "boring": false,
+
+  "style": "nested",
+  "oneIndent": "2s",
+  "newline": "lf",
+  "quote": "double",
+
+  "block": ".%s",
+  "element": "__%s",
+  "modifier": "--%s",
+
+  "chrome": 0,
+  "firefox": 0,
+  "ie": 0,
+  "opera": 0,
+
+  "webkitPrefix": true,
+  "khtmlPrefix": false,
+  "mozPrefix": true,
+  "msPrefix": true,
+  "oPrefix": true
+}

@@ -1,28 +1,30 @@
-var a = require('./helpers/array');
+var a = require('../helpers/array');
 var Configuration = require('./Configuration');
-var ExtenderRegistry = require('./ExtenderRegistry');
-var Formatter = require('./Formatter');
+var ExtenderRegistry = require('../ExtenderRegistry');
+var Formatter = require('../Formatter');
 
-var Rule = require('./Rule');
-var s = require('./helpers/string');
+var Rule = require('../Rule');
+var s = require('../helpers/string');
 
-var CompilerBrowser = (function () {
-    function CompilerBrowser(config) {
+var Compiler = (function () {
+    function Compiler(config) {
         this.config = config;
         this.config = config || new Configuration();
     }
-    CompilerBrowser.prototype.compile = function (contents, callback) {
-        try  {
-            var exports = eval(contents);
-        } catch (err) {
-            callback(err);
-            return;
+    Compiler.prototype.compile = function (rules, callback) {
+        if (typeof rules === 'string') {
+            try  {
+                rules = eval(rules);
+            } catch (err) {
+                callback(err);
+                return;
+            }
         }
-        var rules = a.flatten([exports]);
+        rules = a.flatten([rules]);
         this.compileRules(rules, callback);
     };
 
-    CompilerBrowser.prototype.compileRules = function (rules, callback) {
+    Compiler.prototype.compileRules = function (rules, callback) {
         try  {
             var resolved = this.resolveRules(rules);
             var formatted = new Formatter().format(this.config, resolved);
@@ -32,7 +34,7 @@ var CompilerBrowser = (function () {
         }
     };
 
-    CompilerBrowser.prototype.resolveRules = function (rules) {
+    Compiler.prototype.resolveRules = function (rules) {
         var _this = this;
         var resolved = [];
 
@@ -55,11 +57,11 @@ var CompilerBrowser = (function () {
         return resolved;
     };
 
-    CompilerBrowser.prototype.format = function (rules) {
+    Compiler.prototype.format = function (rules) {
         return new Formatter().format(this.config, rules);
     };
 
-    CompilerBrowser.prototype.resolveExtenders = function (rules) {
+    Compiler.prototype.resolveExtenders = function (rules) {
         var _this = this;
         var extenders = new ExtenderRegistry();
         this.registerExtenders(extenders, rules);
@@ -77,7 +79,7 @@ var CompilerBrowser = (function () {
         });
     };
 
-    CompilerBrowser.prototype.registerExtenders = function (extenders, rules) {
+    Compiler.prototype.registerExtenders = function (extenders, rules) {
         var _this = this;
         if (!rules) {
             return;
@@ -102,7 +104,7 @@ var CompilerBrowser = (function () {
         });
     };
 
-    CompilerBrowser.prototype.resolveResponders = function (responders) {
+    Compiler.prototype.resolveResponders = function (responders) {
         var _this = this;
         var registry = {};
         responders.forEach(function (responder) {
@@ -111,7 +113,7 @@ var CompilerBrowser = (function () {
         return this.resolveTree(registry);
     };
 
-    CompilerBrowser.prototype.registerResponders = function (registry, selectors, responders) {
+    Compiler.prototype.registerResponders = function (registry, selectors, responders) {
         var _this = this;
         (responders || []).forEach(function (responder) {
             var condition = responder.condition;
@@ -128,7 +130,7 @@ var CompilerBrowser = (function () {
         });
     };
 
-    CompilerBrowser.prototype.resolveTree = function (tree) {
+    Compiler.prototype.resolveTree = function (tree) {
         var _this = this;
         var result = [];
         Object.keys(tree).forEach(function (key) {
@@ -151,7 +153,7 @@ var CompilerBrowser = (function () {
         });
         return result;
     };
-    return CompilerBrowser;
+    return Compiler;
 })();
 
-module.exports = CompilerBrowser;
+module.exports = Compiler;

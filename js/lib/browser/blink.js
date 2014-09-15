@@ -4,16 +4,17 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-var _Block = require('./Block');
+var _Block = require('../Block');
 
-var _Element = require('./Element');
+var _Compiler = require('./Compiler');
 
-var _MediaAtRule = require('./MediaAtRule');
-var _Modifier = require('./Modifier');
+var _Element = require('../Element');
 
-var _Rule = require('./Rule');
+var _MediaAtRule = require('../MediaAtRule');
+var _Modifier = require('../Modifier');
 
-var CompilerBrowser = require('./CompilerBrowser');
+var _Rule = require('../Rule');
+
 var Configuration = require('./Configuration');
 
 var Blink;
@@ -21,8 +22,7 @@ var Blink;
     Blink.config = new Configuration();
 
     function compile(contents, callback, options) {
-        var tempConfig = Blink.config.clone().set(options || {});
-        var compiler = new Compiler(tempConfig);
+        var compiler = new Compiler(new Configuration(options || {}));
         compiler.compile(contents, callback);
     }
     Blink.compile = compile;
@@ -33,7 +33,7 @@ var Blink;
             _super.apply(this, arguments);
         }
         return Compiler;
-    })(CompilerBrowser);
+    })(_Compiler);
     Blink.Compiler = Compiler;
     var Rule = (function (_super) {
         __extends(Rule, _super);

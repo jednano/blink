@@ -1,7 +1,7 @@
 ﻿var extend = require('node.extend');
 
 import a = require('./helpers/array');
-import Configuration = require('./Configuration');
+import Configuration = require('./browser/Configuration');
 import Formatter = require('./Formatter');
 import MediaAtRule = require('./MediaAtRule');
 import RuleBody = require('./interfaces/RuleBody');

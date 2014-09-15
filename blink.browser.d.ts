@@ -1,5 +1,4 @@
-﻿/// <reference path="./bower_components/dt-node/node.d.ts" />
-declare module "blinkBrowser" {
+﻿declare module "blink" {
 	var config: Configuration;
 	class Configuration implements ConfigurationOptions {
 		constructor(options?: ConfigurationOptions);
@@ -75,7 +74,7 @@ declare module "blinkBrowser" {
 		*/
 		quote?: string;
 		/**
-		* Newline: os (default), lf, crlf.
+		* Newline: lf (default) or crlf.
 		*/
 		newline?: string;
 		/**
