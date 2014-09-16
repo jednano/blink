@@ -587,6 +587,7 @@ module.exports = Rule;
 
 },{"./Formatter":6,"./helpers/string":20,"node.extend":27}],10:[function(require,module,exports){
 var a = require('../helpers/array');
+
 var Configuration = require('./Configuration');
 var ExtenderRegistry = require('../ExtenderRegistry');
 var Formatter = require('../Formatter');

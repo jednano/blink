@@ -17,9 +17,12 @@ module Blink {
 
 	export var config = new Configuration();
 
-	export function compile(contents: string,
-		callback: (err: Error, css: string) => void,
-		options?: ConfigurationOptions) {
+	export function compile(contents: string, callback: CompileCallback, options?: ConfigurationOptions): void;
+	export function compile(rule: Rule, callback: CompileCallback, options?: ConfigurationOptions): void;
+	export function compile(rules: Rule[], callback: CompileCallback, options?: ConfigurationOptions): void;
+	export function compile(block: Block, callback: CompileCallback, options?: ConfigurationOptions): void;
+	export function compile(blocks: Block[], callback: CompileCallback, options?: ConfigurationOptions): void;
+	export function compile(contents: any, callback: CompileCallback, options?: ConfigurationOptions) {
 		var compiler = new Compiler(new Configuration(options || {}));
 		compiler.compile(contents, callback);
 	}
@@ -31,6 +34,9 @@ module Blink {
 	export class MediaAtRule extends _MediaAtRule { }
 	export class Modifier extends _Modifier { }
 
+	export interface CompileCallback {
+		(err: Error, css?: string): void;
+	}
 	export interface ConfigurationOptions extends _ConfigurationOptions { }
 	export interface BlockBody extends _BlockBody { }
 	export interface ElementBody extends _ElementBody { }

@@ -1,4 +1,5 @@
 var a = require('../helpers/array');
+
 var Configuration = require('./Configuration');
 var ExtenderRegistry = require('../ExtenderRegistry');
 var Formatter = require('../Formatter');

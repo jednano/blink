@@ -1,4 +1,5 @@
 ﻿import a = require('../helpers/array');
+import blink = require('./blink');
 import Configuration = require('./Configuration');
 import ExtenderRegistry = require('../ExtenderRegistry');
 import Formatter = require('../Formatter');
@@ -6,15 +7,18 @@ import MediaAtRule = require('../MediaAtRule');
 import Rule = require('../Rule');
 import s = require('../helpers/string');
 
-
 class Compiler {
 
 	constructor(public config?: Configuration) {
 		this.config = config || new Configuration();
 	}
 
-	public compile(rules: any,
-		callback: (err: Error, css?: string) => void) {
+	public compile(contents: string, callback: blink.CompileCallback): void;
+	public compile(rule: Rule, callback: blink.CompileCallback): void;
+	public compile(rules: Rule[], callback: blink.CompileCallback): void;
+	public compile(block: blink.Block, callback: blink.CompileCallback): void;
+	public compile(blocks: blink.Block[], callback: blink.CompileCallback): void;
+	public compile(rules: any, callback: blink.CompileCallback) {
 		if (typeof rules === 'string') {
 			try {
 				rules = eval(rules);
