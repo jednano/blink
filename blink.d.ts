@@ -1,14 +1,19 @@
-/// <reference path="./bower_components/dt-node/node.d.ts" />
-
+/// <reference path="./bower_components/dt-vinyl/vinyl.d.ts" />
 declare module "blink" {
 	var config: Configuration;
-	class Configuration implements IConfigurationOptions {
-		constructor(options?: IConfigurationOptions);
-		private extendPlugins(options?: IConfigurationOptions): any;
-		public clone(): Configuration;
-		public set(options: IConfigurationOptions): Configuration;
+	function compile(options?: ConfigurationOptions): NodeJS.ReadWriteStream;
+	class Configuration extends ConfigurationForBrowser implements ConfigurationOptions {
+		constructor(options?: ConfigurationOptions);
+		public registerFunctions(configProperty: string, folder: string): any;
 		private loadConfig(filename);
-		public raw: IConfigurationOptions;
+		public newline: string;
+	}
+	class ConfigurationForBrowser implements ConfigurationOptions {
+		constructor(options?: ConfigurationOptions);
+		public loadPlugins(options?: ConfigurationOptions): Configuration;
+		public clone(): Configuration;
+		public set(options: ConfigurationOptions): Configuration;
+		public raw: ConfigurationOptions;
 		public toString(): string;
 		public config: string;
 		public quiet: boolean;
@@ -34,21 +39,137 @@ declare module "blink" {
 		public mozPrefix: boolean;
 		public msPrefix: boolean;
 		public oPrefix: boolean;
-		public overrides: any;
+		public extenders: Extenders;
+		public overrides: Overrides;
 	}
-	function compile(options: IConfigurationOptions, files: IFiles,
-		callback: (err: Error, config: Configuration, file: IFile) => void): void;
-	interface IFile {
-		src?: string;
-		dest?: string;
-		contents?: string;
+	interface ConfigurationOptions {
+		/**
+		* Specify location of config file.
+		*/
+		config?: string;
+		/**
+		* Extend configuration with these plugins.
+		*/
+		plugins?: string[];
+		/**
+		* Quiet mode.
+		*/
+		quiet?: boolean;
+		/**
+		* Show a full stacktrace on error.
+		*/
+		trace?: boolean;
+		/**
+		* Overwrites existing files.
+		*/
+		force?: boolean;
+		/**
+		* Turn off colorized output.
+		*/
+		boring?: boolean;
+		/**
+		* Output style: nested (default), expanded, compact, compressed.
+		*/
+		style?: string;
+		/**
+		* One indent: 2s (default), 4s, 1t.
+		*/
+		oneIndent?: string;
+		/**
+		* Quote type: double (default), single.
+		*/
+		quote?: string;
+		/**
+		* Newline: os (default), lf, crlf.
+		*/
+		newline?: string;
+		/**
+		* BEM block format: .%s (default).
+		*/
+		block?: string;
+		/**
+		* BEM element format: __%s (default).
+		*/
+		element?: string;
+		/**
+		* BEM modifier format: --%s (default).
+		*/
+		modifier?: string;
+		/**
+		* Minimum Chrome version supported: 0 (default)
+		*/
+		chrome?: number;
+		/**
+		* Minimum Firefox version supported: 0 (default)
+		*/
+		firefox?: number;
+		/**
+		* Minimum IE version supported: 0 (default)
+		*/
+		ie?: number;
+		/**
+		* Minimum Opera version supported: 0 (default)
+		*/
+		opera?: number;
+		/**
+		* Enable experimental -webkit- prefix: true (default)
+		*/
+		webkitPrefix?: boolean;
+		/**
+		* Enable experimental -khtml- prefix: false (default)
+		*/
+		khtmlPrefix?: boolean;
+		/**
+		* Enable experimental -moz- prefix: true (default)
+		*/
+		mozPrefix?: boolean;
+		/**
+		* Enable experimental -ms- prefix: true (default)
+		*/
+		msPrefix?: boolean;
+		/**
+		* Enable experimental -o- prefix: true (default)
+		*/
+		oPrefix?: boolean;
 	}
-	interface IFiles {
-		src: string[];
-		dest: string;
+	interface Extenders {
+		background: any;
+		clearfix: any;
+		experimental: any;
+		font: any;
+		inlineBlock: any;
+	}
+	interface Overrides {
+		background: any;
+		boxSizing: any;
+		clearfix: any;
+		display: any;
+		font: any;
+	}
+	class Compiler extends CompilerBrowser {
+		public config: Configuration;
+		constructor(config?: Configuration);
+		public compile(): NodeJS.ReadWriteStream;
+		private renameExtToCss(file);
+		private compileBuffer(data, filepath, callback);
+		public compileModule(contents: Buffer): any;
+	}
+	class CompilerBrowser {
+		public config: Configuration;
+		constructor(config?: Configuration);
+		public compile(contents: string, callback: (err: Error, css?: string) => void): void;
+		public compileModule(contents: any): any;
+		public compileRules(rules: Rule[], callback: (err: Error, css?: string) => void): void;
+		public resolveRules(rules: Rule[]): any[];
+		private format(rules);
+		private resolveExtenders(rules);
+		private registerExtenders(extenders, rules);
+		private resolveResponders(responders);
+		private registerResponders(registry, selectors, responders);
+		private resolveTree(tree);
 	}
 	class Rule {
-		public body: IRuleBody;
+		public body: RuleBody;
 		private config;
 		private decs;
 		public extenders: any[];
@@ -56,7 +177,7 @@ declare module "blink" {
 		public responders: MediaAtRule[];
 		private _selectors;
 		public selectors: any;
-		constructor(selectors: any, body?: IRuleBody);
+		constructor(selectors: any, body?: RuleBody);
 		private splitSelectors(selectors);
 		public resolve(config: Configuration): any[];
 		private joinSelectors(left, right);
@@ -70,102 +191,56 @@ declare module "blink" {
 		private compilePrimitive(value);
 		public compile(config: Configuration): string;
 	}
-	class Block {
-		public name: string;
-		public body: IBlockBody;
-		public elements: Element[];
-		public modifiers: Modifier[];
-		constructor(name: string, body?: IBlockBody);
-		public resolve(config: Configuration): any[];
-	}
-	class Compiler {
-		public config: Configuration;
-		constructor(config?: Configuration);
-		public compile(files: IFiles,
-			callback: (err: Error, file?: IFile) => void): void;
-		private tryCompileRule(rule, callback);
-		private compileFile(file, callback);
-		public compileStream(stream: NodeJS.ReadableStream,
-			callback: (err: Error, file?: IFile) => void): void;
-		private readStream(stream, callback);
-		public tryCompileContents(file: IFile,
-			callback: (err: Error, file?: IFile) => void): void;
-		private renameExtToCss(file);
-		private compileModule(contents, folder);
-		public compileRules(rules: Rule[]): string;
-		public resolveRules(rules: Rule[]): any[];
-		private format(rules);
-		private resolveExtenders(rules);
-		private registerExtenders(extenders, rules);
-		private resolveResponders(responders);
-		private registerResponders(registry, selectors, responders);
-		private resolveTree(tree);
-	}
-	class Element {
-		public name: string;
-		public body: IElementBody;
-		public modifiers: Modifier[];
-		constructor(name: string, body?: IElementBody);
-		public resolve(base: string, config: Configuration): any[];
-	}
-	class MediaAtRule extends Rule {
-		public condition: string;
-		public body: IRuleBody;
-		constructor(condition: string, body?: IRuleBody);
-	}
-	class Modifier {
-		public name: string;
-		public body: IModifierBody;
-		public elements: Element[];
-		constructor(name: string, body?: IModifierBody);
-		public resolve(base: string, config: Configuration): any[];
-	}
-	interface IConfigurationOptions {
-		config?: string;
-		plugins?: string[];
-		quiet?: boolean;
-		trace?: boolean;
-		force?: boolean;
-		boring?: boolean;
-		style?: string;
-		oneIndent?: string;
-		quote?: string;
-		newline?: string;
-		block?: string;
-		element?: string;
-		modifier?: string;
-		chrome?: number;
-		firefox?: number;
-		ie?: number;
-		opera?: number;
-		webkitPrefix?: boolean;
-		khtmlPrefix?: boolean;
-		mozPrefix?: boolean;
-		msPrefix?: boolean;
-		oPrefix?: boolean;
-	}
-	interface IBlockBody extends IRuleBody {
-		elements?: Element[];
-		modifiers?: Modifier[];
-	}
-	interface IElementBody extends IRuleBody {
-		modifiers?: Modifier[];
-	}
-	interface IExtender {
-		args: IArguments;
-		selectors?: string[];
-		(config?: Configuration): any[][];
-	}
-	interface IOverride extends IExtender {}
-	interface IModifierBody extends IRuleBody {
-		elements?: Element[];
-	}
-	interface IRuleBody extends IHashTable<any> {
+	interface RuleBody extends HashTable<any> {
 		extend?: any[];
 		include?: Function[];
 		respond?: MediaAtRule[];
 	}
-	interface IHashTable<T> {
+	class MediaAtRule extends Rule {
+		public condition: string;
+		public body: RuleBody;
+		constructor(condition: string, body?: RuleBody);
+	}
+	interface HashTable<T> {
 		[key: string]: T;
+	}
+	class Block {
+		public name: string;
+		public body: BlockBody;
+		public elements: Element[];
+		public modifiers: Modifier[];
+		constructor(name: string, body?: BlockBody);
+		public resolve(config: Configuration): any[];
+	}
+	interface BlockBody extends RuleBody {
+		elements?: Element[];
+		modifiers?: Modifier[];
+	}
+	class Modifier {
+		public name: string;
+		public body: ModifierBody;
+		public elements: Element[];
+		constructor(name: string, body?: ModifierBody);
+		public resolve(base: string, config: Configuration): any[];
+	}
+	interface ModifierBody extends RuleBody {
+		elements?: Element[];
+	}
+	class Element {
+		public name: string;
+		public body: ElementBody;
+		public modifiers: Modifier[];
+		constructor(name: string, body?: ElementBody);
+		public resolve(base: string, config: Configuration): any[];
+	}
+	interface ElementBody extends RuleBody {
+		modifiers?: Modifier[];
+	}
+	interface Extender {
+		args: IArguments;
+		selectors?: string[];
+		(config?: Configuration): any[][];
+	}
+	interface Override extends Extender {
 	}
 }

@@ -1,5 +1,5 @@
 ﻿import Configuration = require('../Configuration');
-import IExtender = require('../interfaces/IExtender');
+import Extender = require('../interfaces/Extender');
 
 // ReSharper disable once UnusedLocals
 function experimental(property: string, value: any,
@@ -14,7 +14,7 @@ function experimental(property: string, value: any,
 
 	options = options || {};
 
-	var extender = <IExtender>((config: Configuration) => {
+	var extender = <Extender>((config: Configuration) => {
 		var decs = [];
 		['webkit', 'khtml', 'moz', 'ms', 'o'].forEach(vendor => {
 			if (options[vendor] && config[vendor + 'Prefix']) {

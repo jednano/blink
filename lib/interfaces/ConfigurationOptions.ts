@@ -1,4 +1,4 @@
-﻿interface IConfigurationOptions {
+﻿interface ConfigurationOptions {
 
 	// ==============================================================================
 	// Configuration object
@@ -126,4 +126,4 @@
 
 }
 
-export = IConfigurationOptions;
+export = ConfigurationOptions;

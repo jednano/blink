@@ -1,12 +1,12 @@
 ﻿import Configuration = require('../Configuration');
 import inlineBlock = require('../extenders/inlineBlock');
-import IOverride = require('../interfaces/IOverride');
+import Override = require('../interfaces/Override');
 
 
 // ReSharper disable once UnusedLocals
 function display(value: string) {
 
-	var override = <IOverride>((config: Configuration) => {
+	var override = <Override>((config: Configuration) => {
 		switch (value) {
 			case 'inline-block':
 				return inlineBlock()(config);

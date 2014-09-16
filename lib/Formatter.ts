@@ -1,7 +1,5 @@
-﻿import Configuration = require('./Configuration');
-import IRuleBody = require('./interfaces/IRuleBody');
+﻿import Configuration = require('./browser/Configuration');
 import s = require('./helpers/string');
-
 
 class Formatter {
 

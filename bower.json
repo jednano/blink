@@ -10,8 +10,7 @@
   ],
   "description": "Blink converts Node.js modules into CSS and provides a CSS Authoring Framework, with BEM support.",
   "main": [
-    "dist/blink.js",
-    "blink.d.ts"
+    "dist/blink.js"
   ],
   "keywords": [
     "blink",
@@ -36,7 +35,8 @@
     "test"
   ],
   "dependencies": {
-    "dt-node": "https://github.com/jedmao/dt-node.git"
+    "dt-node": "https://github.com/jedmao/dt-node.git",
+    "dt-vinyl": "~0.3.1"
   },
   "devDependencies": {
     "dt-mocha": "~1.9.0",

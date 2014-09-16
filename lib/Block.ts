@@ -1,6 +1,6 @@
-﻿import Configuration = require('./Configuration');
+﻿import BlockBody = require('./interfaces/BlockBody');
+import Configuration = require('./Configuration');
 import Element = require('./Element');
-import IBlockBody = require('./interfaces/IBlockBody');
 import Modifier = require('./Modifier');
 import Rule = require('./Rule');
 
@@ -23,7 +23,7 @@ class Block {
 		this.body.modifiers = value;
 	}
 
-	constructor(public name: string, public body?: IBlockBody) {
+	constructor(public name: string, public body?: BlockBody) {
 	}
 
 	public resolve(config: Configuration) {

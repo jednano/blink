@@ -1,4 +1,4 @@
-﻿import IExtender = require('../interfaces/IExtender');
+﻿import Extender = require('../interfaces/Extender');
 
 // ReSharper disable once UnusedLocals
 function background(options?: {
@@ -11,7 +11,7 @@ function background(options?: {
 
 	options = options || {};
 
-	var extender = <IExtender>(() => {
+	var extender = <Extender>(() => {
 
 		var values = [];
 

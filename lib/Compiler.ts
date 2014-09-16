@@ -1,258 +1,89 @@
-﻿import fs = require('fs');
+﻿///<reference path="../bower_components/dt-vinyl/vinyl.d.ts" />
+var concat = require('concat-stream');
 var mod = require('module');
 import path = require('path');
-import _stream = require('stream');
-var stripBOM = require('strip-bom');
+var through = require('through2');
 
 import a = require('./helpers/array');
+import CompilerForBrowser = require('./browser/Compiler');
 import Configuration = require('./Configuration');
-import ExtenderRegistry = require('./ExtenderRegistry');
-import Formatter = require('./Formatter');
-import IConfigurationOptions = require('./interfaces/IConfigurationOptions');
-import IFile = require('./interfaces/IFile');
-import IFiles = require('./interfaces/IFiles');
-import IHashTable = require('./interfaces/IHashTable');
-import MediaAtRule = require('./MediaAtRule');
-import Rule = require('./Rule');
-import s = require('./helpers/string');
+import ConfigurationForBrowser = require('./browser/Configuration');
 
 
-class Compiler {
+var PluginError = require('gulp-util').PluginError;
+var PLUGIN_NAME = 'blink';
 
-	constructor(public config?: Configuration) {
-		this.config = config || new Configuration();
+class Compiler extends CompilerForBrowser {
+
+	constructor(public config?: ConfigurationForBrowser) {
+		super(config || new Configuration());
 	}
 
-	public compile(files: IFiles, callback: (err: Error, file?: IFile) => void) {
+	public compile(): NodeJS.ReadWriteStream {
 
-		if (!files) {
-			return;
-		}
+		var compiler = this;
 
-		if (!files.src) {
-			callback(new Error('Missing `src` property'));
-			return;
-		}
+		// ReSharper disable once JsFunctionCanBeConvertedToLambda
+		var stream = through.obj(function(file: Vinyl.IFile, enc, done: Function) {
 
-		if (typeof files.dest === 'undefined') {
-			callback(new Error('Missing `dest` property'));
-			return;
-		}
-
-		files.src.forEach(src => {
-			this.compileFile({ src: src, dest: files.dest }, (err, file) => {
-				if (!err) {
-					var folder = (files.dest === '') ? path.dirname(src) : files.dest;
-					var filename = path.basename(src, path.extname(src)) + '.css';
-					file.dest = path.join(folder, filename);
+			var onSuccess: Function;
+			var onBufferCompiled = function(err: Error, css: string) {
+				if (err) {
+					this.emit('error', new PluginError(PLUGIN_NAME, err.message));
+				} else {
+					onSuccess(css);
+					file.path = compiler.renameExtToCss(file);
 				}
-				callback(err, file);
-			});
-		});
-	}
+				this.push(file);
+				done();
+			}.bind(this);
 
-	private tryCompileRule(rule: Rule,
-		callback: (err: Error, contents?: string) => void) {
-		try {
-			callback(null, this.compileRules([rule]));
-		} catch (err) {
-			callback(err);
-		}
-	}
-
-	private compileFile(file: IFile, callback: (err: Error, file?: IFile) => void) {
-		var stream = fs.createReadStream(path.resolve(file.src));
-		this.compileStream(stream, (err, file2) => {
-			if (err) {
-				callback(err, file);
+			if (file.isStream()) {
+				file.pipe(concat(data => {
+					compiler.compileBuffer(data, file.path, onBufferCompiled);
+				}));
+				onSuccess = css => {
+					file.contents = through();
+					file.contents.write(css);
+				};
 				return;
 			}
-			callback(err, file2);
-		});
-	}
 
-	public compileStream(stream: NodeJS.ReadableStream,
-		callback: (err: Error, file?: IFile) => void) {
-
-		this.readStream(stream, (err, contents) => {
-			if (err) {
-				callback(err);
+			if (file.isBuffer()) {
+				onSuccess = css => {
+					file.contents = new Buffer(css);
+				};
+				compiler.compileBuffer(file.contents, file.path, onBufferCompiled);
 				return;
 			}
-			this.tryCompileContents({
-				src: (<any>stream).path,
-				contents: contents
-			}, callback);
+
+			this.emit('error', new PluginError(PLUGIN_NAME,
+				'Unexpected file mode. Expected stream or buffer.'));
+
+			this.push(file);
+			done();
+
 		});
+
+		return stream;
 	}
 
-	private readStream(stream: NodeJS.ReadableStream,
-		callback: (err: Error, contents?: string) => void) {
-		var contents = '';
-		stream.setEncoding('utf8');
-		stream.on('readable', () => {
-			contents += stream.read() || '';
-		});
-		stream.on('error', (err: Error) => {
-			callback(err);
-		});
-		stream.on('end', () => {
-			callback(null, contents);
-		});
+	private renameExtToCss(file: Vinyl.IFile) {
+		var dir = path.dirname(file.path);
+		var basename = path.basename(file.path, path.extname(file.path));
+		return path.join(dir, basename + '.css');
 	}
 
-	public tryCompileContents(file: IFile,
-		callback: (err: Error, file?: IFile) => void) {
-
-		try {
-			var compiled = this.compileModule(
-				stripBOM(file.contents),
-				path.dirname(file.src)
-			);
-			callback(null, {
-				src: file.src,
-				dest: this.renameExtToCss(file),
-				contents: this.compileRules(compiled instanceof Array ?
-					compiled : [compiled])
-			});
-		} catch (err) {
-			callback(err);
-		}
+	private compileBuffer(data: Buffer, filepath: string,
+		callback: (err: Error, css: string) => void) {
+		var rules = (filepath) ? mod._load(filepath) : this.compileModule(data);
+		super.compileRules(a.flatten([rules]), callback);
 	}
 
-	private renameExtToCss(file: IFile) {
-		if (typeof file.dest === 'undefined' && file.src) {
-			return path.join(path.dirname(file.src),
-				path.basename(file.src, path.extname(file.src)) + '.css');
-		}
-		return file.dest;
-	}
-
-	private compileModule(contents: string, folder: string) {
+	public compileModule(contents: Buffer) {
 		var m = new mod();
-		m.paths = mod._nodeModulePaths(folder);
 		m._compile(contents);
 		return m.exports;
-	}
-
-	public compileRules(rules: Rule[]) {
-		return new Formatter().format(this.config, this.resolveRules(rules));
-	}
-
-	public resolveRules(rules: Rule[]) {
-		var resolved = [];
-
-		this.resolveExtenders(rules).forEach(extended => {
-			if (typeof extended[0] !== 'undefined') {
-				resolved.push(extended[0]);
-			}
-		});
-		rules.forEach(rule => {
-			push(rule.resolve(this.config));
-		});
-		push(this.resolveResponders(rules));
-
-		function push(val) {
-			if (val && val.length) {
-				resolved.push(val[0]);
-			}
-		}
-
-		return resolved;
-	}
-
-	private format(rules: any[][]) {
-		return new Formatter().format(this.config, rules);
-	}
-
-	private resolveExtenders(rules: Rule[]) {
-		var extenders = new ExtenderRegistry();
-		this.registerExtenders(extenders, rules);
-		return extenders.map((extender, selectors) => {
-			var body: any = {};
-			if (extender.selectors) {
-				extender.selectors.forEach(selector => {
-					body[selector] = { include: [extender] };
-				});
-			} else {
-				body.include = [extender];
-			}
-			var r = new Rule(selectors, body);
-			return r.resolve(this.config);
-		});
-	}
-
-	private registerExtenders(extenders: ExtenderRegistry, rules: Rule[]) {
-		if (!rules) {
-			return;
-		}
-		rules.forEach(rule => {
-			(rule.extenders || []).forEach(extender => {
-				if (!extender.hasOwnProperty('args')) {
-					extender = extender();
-				}
-				extenders.add(extender, rule.selectors);
-			});
-			var overrides = this.config.overrides;
-			var body = rule.body;
-			Object.keys(body).forEach(property => {
-				var override = overrides[s.camelize(property)];
-				if (override) {
-					override = override(body[property]);
-					extenders.add(override, rule.selectors);
-					delete body[property];
-				}
-			});
-		});
-	}
-
-	private resolveResponders(responders: Rule[]) {
-		var registry: any = {};
-		responders.forEach(responder => {
-			this.registerResponders(registry, responder.selectors, responder.responders);
-		});
-		return this.resolveTree(registry);
-	}
-
-	private registerResponders(registry: {}, selectors: string[],
-		responders: MediaAtRule[]) {
-
-		(responders || []).forEach(responder => {
-			var condition = responder.condition;
-			var scope = registry[condition] = registry[condition] || {};
-			responder.selectors = selectors;
-			scope.__extended = scope.__extended || new ExtenderRegistry();
-			this.registerExtenders(scope.__extended, responders);
-			var resolved = responder.resolve(this.config);
-			if (resolved.length) {
-				resolved = resolved[0];
-				scope[resolved[0].join(',' + this.config.oneSpace)] = resolved[1];
-			}
-			this.registerResponders(scope, selectors, responder.responders);
-		});
-	}
-
-	private resolveTree(tree: any): any[][] {
-		var result = [];
-		Object.keys(tree).forEach(key => {
-			var value = tree[key];
-			if (value instanceof ExtenderRegistry) {
-				value.forEach((extender, selectors) => {
-					var r = new Rule(selectors, { include: [extender] });
-					result.push(r.resolve(this.config)[0]);
-				});
-				delete tree[key];
-			}
-		});
-		Object.keys(tree).forEach(key => {
-			var value = tree[key];
-			if (value instanceof Array) {
-				result.push([[key], value]);
-			} else if (value) {
-				result.push([[key], this.resolveTree(value)]);
-			}
-		});
-		return result;
 	}
 
 }

@@ -1,6 +1,6 @@
 ﻿import sinonChai = require('../../sinon-chai');
 var expect = sinonChai.expect;
-import blink = require('../../../lib/blink');
+import blink = require('../../../lib/browser/blink');
 import Formatter = require('../../../lib/Formatter');
 
 

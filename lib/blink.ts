@@ -1,50 +1,43 @@
-﻿///<reference path="../bower_components/dt-node/node.d.ts" />
-import _Block = require('./Block');
+﻿import _Block = require('./Block');
+import _BlockBody = require('./interfaces/BlockBody');
 import _Compiler = require('./Compiler');
+import _Configuration = require('./Configuration');
+import _ConfigurationOptions = require('./interfaces/ConfigurationOptions');
 import _Element = require('./Element');
-import _IBlockBody = require('./interfaces/IBlockBody');
-import _IConfigurationOptions = require('./interfaces/IConfigurationOptions');
-import _IElementBody = require('./interfaces/IElementBody');
-import _IExtender = require('./interfaces/IExtender');
-import _IModifierBody = require('./interfaces/IModifierBody');
-import _IOverride = require('./interfaces/IOverride');
-import _IRuleBody = require('./interfaces/IRuleBody');
+import _ElementBody = require('./interfaces/ElementBody');
+import _Extender = require('./interfaces/Extender');
 import _MediaAtRule = require('./MediaAtRule');
 import _Modifier = require('./Modifier');
+import _ModifierBody = require('./interfaces/ModifierBody');
+import _Override = require('./interfaces/Override');
 import _Rule = require('./Rule');
-import Configuration = require('./Configuration');
-import IFile = require('./interfaces/IFile');
-import IFiles = require('./interfaces/IFiles');
+import _RuleBody = require('./interfaces/RuleBody');
 
 
 module Blink {
 
+	export class Compiler      extends _Compiler { }
+	export class Configuration extends _Configuration {}
+	export class Rule          extends _Rule {}
+	export class Block         extends _Block {}
+	export class Element       extends _Element {}
+	export class MediaAtRule   extends _MediaAtRule {}
+	export class Modifier      extends _Modifier {}
+
+	export interface ConfigurationOptions extends _ConfigurationOptions {}
+	export interface BlockBody            extends _BlockBody {}
+	export interface ElementBody          extends _ElementBody {}
+	export interface Extender             extends _Extender {}
+	export interface ModifierBody         extends _ModifierBody {}
+	export interface Override             extends _Override {}
+	export interface RuleBody             extends _RuleBody {}
+
 	export var config = new Configuration();
-
-	export function compile(options: IConfigurationOptions, files: IFiles,
-		callback: (err: Error, config: Configuration, file: IFile) => void) {
-
-		var tempConfig = config.clone().set(options);
-		var compiler = new Compiler(tempConfig);
-		compiler.compile(files, (err, file) => {
-			callback(err, tempConfig, file);
-		});
+	export function compile(options?: ConfigurationOptions):
+		NodeJS.ReadWriteStream {
+		var compiler = new Compiler(new Configuration(options || {}));
+		return compiler.compile();
 	}
-
-	export class Compiler    extends _Compiler {}
-	export class Rule        extends _Rule {}
-	export class Block       extends _Block {}
-	export class Element     extends _Element {}
-	export class MediaAtRule extends _MediaAtRule {}
-	export class Modifier    extends _Modifier {}
-
-	export interface IConfigurationOptions extends _IConfigurationOptions {}
-	export interface IBlockBody            extends _IBlockBody {}
-	export interface IElementBody          extends _IElementBody {}
-	export interface IExtender             extends _IExtender {}
-	export interface IModifierBody         extends _IModifierBody {}
-	export interface IOverride             extends _IOverride {}
-	export interface IRuleBody             extends _IRuleBody {}
 
 }
 

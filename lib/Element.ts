@@ -1,5 +1,5 @@
 ﻿import Configuration = require('./Configuration');
-import IElementBody = require('./interfaces/IElementBody');
+import ElementBody = require('./interfaces/ElementBody');
 import Modifier = require('./Modifier');
 import Rule = require('./Rule');
 
@@ -14,7 +14,7 @@ class Element {
 		this.body.modifiers = value;
 	}
 
-	constructor(public name: string, public body?: IElementBody) {
+	constructor(public name: string, public body?: ElementBody) {
 	}
 
 	public resolve(base: string, config: Configuration) {
