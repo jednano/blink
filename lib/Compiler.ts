@@ -69,8 +69,9 @@ class Compiler extends CompilerForBrowser {
 	}
 
 	private renameExtToCss(file: Vinyl.IFile) {
-		return path.join(file.base,
-			path.basename(file.path, path.extname(file.path)) + '.css');
+		var dir = path.dirname(file.path);
+		var basename = path.basename(file.path, path.extname(file.path));
+		return path.join(dir, basename + '.css');
 	}
 
 	private compileBuffer(data: Buffer, filepath: string,

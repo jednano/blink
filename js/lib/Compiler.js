@@ -69,7 +69,9 @@ var Compiler = (function (_super) {
     };
 
     Compiler.prototype.renameExtToCss = function (file) {
-        return path.join(file.base, path.basename(file.path, path.extname(file.path)) + '.css');
+        var dir = path.dirname(file.path);
+        var basename = path.basename(file.path, path.extname(file.path));
+        return path.join(dir, basename + '.css');
     };
 
     Compiler.prototype.compileBuffer = function (data, filepath, callback) {
