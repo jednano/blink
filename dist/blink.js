@@ -8,6 +8,7 @@ var __extends = this.__extends || function (d, b) {
 var _Block = require('../Block');
 
 var _Compiler = require('./Compiler');
+var _Configuration = require('./Configuration');
 
 var _Element = require('../Element');
 
@@ -16,18 +17,8 @@ var _Modifier = require('../Modifier');
 
 var _Rule = require('../Rule');
 
-var Configuration = require('./Configuration');
-
 var Blink;
 (function (Blink) {
-    Blink.config = new Configuration();
-
-    function compile(contents, callback, options) {
-        var compiler = new Compiler(new Configuration(options || {}));
-        compiler.compile(contents, callback);
-    }
-    Blink.compile = compile;
-
     var Compiler = (function (_super) {
         __extends(Compiler, _super);
         function Compiler() {
@@ -36,6 +27,14 @@ var Blink;
         return Compiler;
     })(_Compiler);
     Blink.Compiler = Compiler;
+    var Configuration = (function (_super) {
+        __extends(Configuration, _super);
+        function Configuration() {
+            _super.apply(this, arguments);
+        }
+        return Configuration;
+    })(_Configuration);
+    Blink.Configuration = Configuration;
     var Rule = (function (_super) {
         __extends(Rule, _super);
         function Rule() {
@@ -76,6 +75,14 @@ var Blink;
         return Modifier;
     })(_Modifier);
     Blink.Modifier = Modifier;
+
+    Blink.config = new Configuration();
+
+    function compile(contents, callback, options) {
+        var compiler = new Compiler(new Configuration(options || {}));
+        compiler.compile(contents, callback);
+    }
+    Blink.compile = compile;
 })(Blink || (Blink = {}));
 
 module.exports = Blink;

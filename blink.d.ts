@@ -1,13 +1,18 @@
 /// <reference path="./bower_components/dt-vinyl/vinyl.d.ts" />
 declare module "blink" {
 	var config: Configuration;
-	class Configuration implements ConfigurationOptions {
+	function compile(options?: ConfigurationOptions): NodeJS.ReadWriteStream;
+	class Configuration extends ConfigurationForBrowser implements ConfigurationOptions {
 		constructor(options?: ConfigurationOptions);
-		private loadPlugins(options?);
 		public registerFunctions(configProperty: string, folder: string): any;
+		private loadConfig(filename);
+		public newline: string;
+	}
+	class ConfigurationForBrowser implements ConfigurationOptions {
+		constructor(options?: ConfigurationOptions);
+		public loadPlugins(options?: ConfigurationOptions): Configuration;
 		public clone(): Configuration;
 		public set(options: ConfigurationOptions): Configuration;
-		private loadConfig(filename);
 		public raw: ConfigurationOptions;
 		public toString(): string;
 		public config: string;
