@@ -75,8 +75,8 @@ gulp.task('styles', function() {
 });
 ```
 
-**Note: [gulp-blink](https://github.com/blinkjs/gulp-blink) has been deprecated in favor of
-using the blink module directly.**
+_Note: [gulp-blink](https://github.com/blinkjs/gulp-blink) has been deprecated in favor of
+using the blink module directly._
 
 
 ### Browserified
