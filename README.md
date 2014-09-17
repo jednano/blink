@@ -1,6 +1,6 @@
 <img src="https://github.com/blinkjs/blink/blob/master/artwork/blink_256_nobg.png?raw=true" width="256" height="256" alt="blink" align="right">
 
-> Blink converts [Node.js][] modules into CSS and provides a CSS Authoring Framework, with BEM support.
+> Blink converts [Node.js][] modules into CSS.
 
 [![Build Status](https://secure.travis-ci.org/blinkjs/blink.svg)](http://travis-ci.org/blinkjs/blink)
 [![Dependency Status](https://gemnasium.com/blinkjs/blink.svg)](https://gemnasium.com/blinkjs/blink)
@@ -8,6 +8,17 @@
 [![Views](https://sourcegraph.com/api/repos/github.com/blinkjs/blink/counters/views-24h.png)](https://sourcegraph.com/github.com/blinkjs/blink)
 
 [![NPM](https://nodei.co/npm/blink.svg?downloads=true)](https://nodei.co/npm/blink/)
+
+
+## Introduction
+
+If you landed here, you're probably a front-end web developer of some kind. You know how to write JavaScript. You might even have a favorite CSS preprocessor. Sure, they allow you to write [variables and functions](http://sass-lang.com/guide) in some form or another, but they require you learn their domain-specific language, which often falls short of a full-blown language.  You scour their documentation, struggling to find a solutions to problems you already know how to solve in JavaScript. We keep looking for ways to introduce logic into our CSS, so why not just use JavaScript?
+
+[Compass](http://compass-style.org/) provides some great [cross-browser mixins to takes care of vendor prefixes](http://compass-style.org/reference/compass/css3/), but it falls short in that you have to remember to use them and they add considerable bloat if not implemented properly (i.e., [@extend](http://sass-lang.com/documentation/file.SASS_REFERENCE.html#extend)). Blink aims to solve this problem with [overrides](#overrides) that enforce developers to use them without even knowing it. For example, overriding the `display` property would mean that anyone using `display: inline-block;` would automatically [extend](#extenders) the [inlineBlock extender](https://github.com/blinkjs/blink/blob/master/lib/extenders/inlineBlock.ts). This means you can use the latest and greatest techniques of CSS development without trying to remember when you need vendor prefixes for certain CSS declarations.
+
+With blink, browser support is a configuration setting, so when your browser support requirements change, none of your source code has to change. All you do is update your configuration to support different browser versions by setting the minimum versions you wish to support.
+
+Blink is just getting started, so stay tuned for any updates.
 
 
 ## Requirements
@@ -18,6 +29,10 @@
 ## Features
 
 - [Runs on Node](#runs-on-node)
+- [gulpfriendly](#gulpfriendly)
+- [Grunt plugin](https://github.com/blinkjs/grunt-blink)
+- [Middleware](https://github.com/blinkjs/blink-middleware)
+- [Browserified](#browserified)
 - [OOCSS with BEM Syntax](#oocss-with-bem)
 - [Rules](#rules)
 - [Includes](#includes)
@@ -29,25 +44,76 @@
 - [TypeScript Source](#typescript-source)
 - [CLI](https://github.com/blinkjs/blink-cli)
 - [API](https://github.com/blinkjs/blink/blob/master/blink.d.ts)
-- [gulp.js plugin](https://github.com/blinkjs/gulp-blink)
-- [Grunt plugin](https://github.com/blinkjs/grunt-blink)
 - [Express middleware](https://github.com/blinkjs/blink-middleware)
 - [Spriting](#spriting)
 
 
 ### Runs on Node
 
-Because blink runs on [Node][], you have access to all JavaScript syntax, including
-variables and functions, as well as [file I/O](http://nodejs.org/api/fs.html).
-The possibilities are endless.
+Unlike most CSS preprocessors out there, blink does not transpile a [DSL](http://en.wikipedia.org/wiki/Domain-specific_language) into CSS. Blink code gets compiled directly as a [Node][] module, giving you access to all JavaScript syntax for free. This, of course, includes variables and functions, as well as [file I/O](http://nodejs.org/api/fs.html). The possibilities are endless.
+
+
+### Gulp friendly
+
+The [blink.compile() method](https://github.com/blinkjs/blink/blob/master/lib/Compiler.ts#L22-L69)
+is written exactly like a gulp plugin. As such, blink will never write intermediate files unless
+you want it to do so. Files can be piped to other streams or [gulp plugins](http://gulpjs.com/plugins/)
+before being written to their final destination. This gives blink some performance benefits as well as
+putting it in the [gulpfriendly](https://www.npmjs.org/search?q=gulpfriendly) category. Blink supports [vinyl](https://github.com/wearefractal/vinyl) files in both stream and buffer modes.
+
+```js
+var blink = require('gulp');
+
+gulp.task('styles', function() {
+  return gulp.src('styles/*.js', { buffer: false })
+    .pipe(blink.compile(/* options */))
+    .on('error', function(err) {
+      // handle error
+    })
+    .pipe(gulp.dest('dist/styles'));
+});
+```
+
+**Note: [gulp-blink](https://github.com/blinkjs/gulp-blink) has been deprecated in favor of
+using the blink module directly.**
+
+
+### Browserified
+
+For those wishing to transpile blink files into CSS in the browser, a [Browserified](http://browserify.org/) version of blink is available in the [dist folder](https://github.com/blinkjs/blink/tree/master/dist), also available as a [bower component](http://bower.io/search/?q=blink).
+
+```bash
+$ bower install --save blink
+```
+
+Include the script in your web page:
+
+```html
+<script src="/bower_components/blink/dist/blink.js"/>
+```
+
+Compile your block:
+
+```js
+var foo = new blink.Block('foo', { bar: 'baz' });
+blink.compile(foo, function(err, css) {
+  console.log(css);
+});
+```
+
+You can also compile a string of source code as long as you export the rule with `exports`.
+
+```js
+var foo = "exports = new blink.Block('foo', { bar: 'baz' });";
+blink.compile(foo, function(err, css) {
+  console.log(css);
+});
+```
 
 
 ### OOCSS with BEM
 
-Blink is designed with [BEM syntax][] in mind. You can create blocks, elements and
-modifiers and their CSS selectors will be generated for you. You can configure
-your BEM format however you want, but the default naming convention follows that
-which is defined in [MindBEMding &ndash; getting your head 'round BEM syntax][].
+Blink is designed with [BEM syntax][] in mind. You can create blocks, elements and modifiers and their CSS selectors will be generated for you. You can configure your BEM format however you want, but the default naming convention follows that which is defined in [MindBEMding &ndash; getting your head 'round BEM syntax][].
 
 Here's an example of a block with both an element and a modifier:
 
@@ -98,8 +164,7 @@ This would generate the following CSS:
 
 ### Rules
 
-All BEM classes extend off of the standard Rule class. The Rule class allows you to
-specify a standard CSS rule and can be useful when styling page defaults.
+The [Rule](https://github.com/blinkjs/blink/blob/master/lib/Rule.ts) class allows you to specify a standard CSS rule and can be useful when styling page defaults.
 
 
 ```ts
@@ -129,46 +194,26 @@ var normalize = [
 export = normalize;
 ```
 
-You are encouraged to use BEM blocks for all of your components. There's nothing
-stopping you from using basic rules, but you should avoid them if at all possible.
+You are encouraged to use BEM blocks for all of your components. There's nothing stopping you from using basic rules, but you should avoid them if at all possible.
 
 
 ### Includes
 
-Blink supports includes, but not in the way you might be used to. Includes are
-just functions that return an array of declarations. As such, you should lean
-against using them at all costs. Why? Say your include spits out 10 declarations.
-Every time you include that function you'll add another 10 lines of CSS to your
-file. Instead, use [extenders](#extenders) and [overrides](#overrides) when
-possible.
+Blink supports includes, but not in the way you might think. Includes are just functions that return an array of declarations. As such, you should lean against using them at all costs. Why? Say your include spits out 10 declarations. Every time you include that function you'll add another 10 lines of CSS to your file. Instead, use [extenders](#extenders) and [overrides](#overrides) when possible.
 
-You might be wondering why blink supports includes at all if you aren't supposed
-to use them. This is because blink uses includes in the background to make
-[extenders](#extenders) work. As such, includes may be removed at a future date,
-if they can be worked out of the extender logic.
+You might be wondering why blink supports includes at all if you aren't supposed to use them. This is because blink uses includes in the background to make [extenders](#extenders) work. As such, includes may be removed at a future date, if they can be worked out of the extender logic.
 
-Still, if you find yourself needing an include, refer to
-[the Rule spec](https://github.com/blinkjs/blink/blob/master/test/spec/lib/Rule.spec.ts#L80-L97)
-for a working example.
+Still, if you find yourself needing an include, refer to [the Rule spec](https://github.com/blinkjs/blink/blob/master/test/spec/lib/Rule.spec.ts#L80-L97) for a working example.
 
 
 ### Mixins
 
-If you're coming from [Sass](http://sass-lang.com/), you might be familiar with
-[mixins](http://sass-lang.com/guide). Really, Sass mixins are no different than
-functions in JavaScript; thus, blink supports them. All you have to do is create
-a function that returns an array of declarations. This is, in fact, how
-[extenders](#extenders) and [overrides](#overrides) work.
+If you're coming from [Sass](http://sass-lang.com/), you might be familiar with [mixins](http://sass-lang.com/guide). Really, Sass mixins are no different than functions in JavaScript; thus, blink supports them. All you have to do is create a function that returns an array of declarations. This is, in fact, how [extenders](#extenders) and [overrides](#overrides) work.
 
 
 ### Extenders
 
-Extenders are named functions that return another function, complete with the
-original passed-in arguments as `args` and, optionally, `selectors`, for which
-you can find an example in
-[the clearfix extender](https://github.com/blinkjs/blink/blob/master/lib/extenders/clearfix.ts).
-An extender with no parameters always returns the same output. For example,
-here's an extender named fill that fills its container:
+Extenders are named functions that return another function, complete with the original passed-in arguments as `args` and, optionally, `selectors`, for which you can find an example in [the clearfix extender](https://github.com/blinkjs/blink/blob/master/lib/extenders/clearfix.ts). An extender with no parameters always returns the same output. For example, here's an extender named `fill` that fills its container:
 
 ```ts
 import blink = require('blink');
@@ -209,8 +254,7 @@ var rules = [
 export = rules;
 ```
 
-These two blocks share the same extender, so there's no reason to generate the
-same CSS twice. The above code would output the following:
+These two blocks share the same extender, so there's no reason to generate the same CSS twice. The above code would output the following:
 
 ```css
 .foo, .bar {
@@ -222,13 +266,10 @@ same CSS twice. The above code would output the following:
 }
 ```
 
-This is very powerful, especially when you want to spit-out multiple declarations.
-Why, you ask? Because you only have to spit-out those declarations once! You can
-extend it from hundreds of blocks, but those lines never get written more than
+This is very powerful, especially when you want to spit-out multiple declarations. Why, you ask? Because you only have to spit-out those declarations once! You can extend it from hundreds of blocks, but those lines never get written more than
 once. This keeps your CSS as lean as possible.
 
-Now, let's talk about building your own extenders. The basic structure of an
-extender is thus:
+Now, let's talk about building your own extenders. The basic structure of an extender is thus:
 
 ```ts
 import blink = require('blink');
@@ -246,10 +287,9 @@ export = noop;
 This extender, [as its name suggests, does nothing](http://www.urbandictionary.com/define.php?term=noop&defid=1183981).
 The name, however, must be provided and must be unique.
 
-In this case, the extender has no arguments; yet, they must also be returned for
-unique registration purposes.
+In this case, the extender has no arguments; yet, they must also be returned for unique registration purposes.
 
-Let's see what a more complicated, inlineBlock extender would look like.
+Let's see what a more complicated, `inlineBlock` extender would look like.
 
 ```ts
 import blink = require('blink');
@@ -264,8 +304,7 @@ function inlineBlock() {
 export = inlineBlock;
 ```
 
-This is all fine and good, but it's pretty useless. We can add a verticalAlign
-option to make it more dynamic.
+This is all fine and good, but it's pretty useless. We can add a `verticalAlign` option to make it more dynamic.
 
 ```ts
 import blink = require('blink');
@@ -296,8 +335,7 @@ function inlineBlock(options?: {
 export = inlineBlock;
 ```
 
-Great, but what about inline-block CSS hacks? Glad you asked! You can gain access
-to the configuration for a case like this.
+Great, but what about inline-block CSS hacks? Glad you asked! You can gain access to the configuration for a case like this.
 
 ```ts
 import blink = require('blink');
@@ -338,26 +376,17 @@ function inlineBlock(options?: {
 export = inlineBlock;
 ```
 
-Now, that's a nice extender! Once you change your configuration to support newer
-browsers, the CSS hacks disappear. No need to change any of your source code. It's
-all about the configuration.
+Now, that's a nice extender! Once you change your configuration to support newer browsers, the CSS hacks disappear. No need to change any of your source code. It's all about the configuration.
 
 
 #### Extender registration
 
-It's important for you to know that, behind the scenes, blink is really smart
-about extender registration. It doesn't just register your extender by function
-name, but also by the arguments you pass in. This means if you extend
-`inlineBlock({ verticalAlign: 'top' })` 50 times and
-`inlineBlock({ verticalAlign: 'bottom' })` 20 times, only two rules will be
-generated. Different input yields different output, so it has to generate two
-rules for this scenario.
+It's important for you to know that, behind the scenes, blink is really smart about extender registration. It doesn't just register your extender by function name, but also by the arguments you pass in. This means if you extend `inlineBlock({ verticalAlign: 'top' })` 50 times and `inlineBlock({ verticalAlign: 'bottom' })` 20 times, only two rules will be generated. Different input yields different output, so it has to generate two rules for this scenario.
 
 
 #### Extenders calling other extenders
 
-Extenders can call other extenders directly, but you must provide the extender
-with the configuration.
+Extenders can call other extenders directly, but you must provide the extender with the configuration object.
 
 ```ts
 import blink = require('blink');
@@ -378,16 +407,13 @@ function boxSizing(value: string) {
 }
 ```
 
-In this particular case, however, `box-sizing` would be better suited as an
-[Override](#overrides).
+In this particular case, however, `box-sizing` would be better suited as an [Override](#overrides).
 
 
 ### Overrides
 
-Overrides are functions &ndash; no different than extenders &ndash; that allow you
-to override a single CSS declaration with any number of declarations. In fact, you
-can and often will register extenders _as_ overrides. Here's an example of the
-box-sizing extender above as an override:
+Overrides are functions &ndash; no different than extenders &ndash; that allow you to override a single CSS declaration with any number of declarations. In fact, you can and often will register extenders _as_ overrides. Here's an example of the
+`box-sizing` extender above as an override:
 
 ```ts
 import blink = require('blink');
@@ -413,18 +439,14 @@ function boxSizing(value: string) {
 export = boxSizing;
 ```
 
-Overrides are registered on the configuration object. If you wish to extend the
-configuration, you can do so by providing [a plugin module](#plugins).
+Overrides are registered on the configuration object. If you wish to extend the configuration, you can do so by providing [a plugin module](#plugins).
 
-_Note: override names are dasherized for you. boxSizing becomes box-sizing._
+_Note: override names are dasherized for you (e.g., boxSizing becomes box-sizing)._
 
 
 ### Responders
 
-Responders currently only support
-[MediaAtRules](https://github.com/blinkjs/blink/blob/master/lib/MediaAtRule.ts),
-which allow you to create responsive websites. Here's an example of a basic
-responder:
+Responders currently only support [MediaAtRules](https://github.com/blinkjs/blink/blob/master/lib/MediaAtRule.ts), which allow you to create responsive websites. Here's an example of a basic responder:
 
 ```ts
 ///<reference path="./node_modules/blink/blink.d.ts"/>
@@ -452,10 +474,7 @@ This generates the following CSS:
 }
 ```
 
-[Unlike Sass](http://thesassway.com/intermediate/responsive-web-design-in-sass-using-media-queries-in-sass-32),
-at the time of this writing, blink supports extenders inside of media queries.
-Blink also merges similar media queries for you. So feel free to go to town with
-some complicated responders!
+[Unlike Sass](http://thesassway.com/intermediate/responsive-web-design-in-sass-using-media-queries-in-sass-32), at the time of this writing, blink supports extenders inside of media queries. Blink also merges similar media queries for you. So feel free to go crazy with some complicated responders!
 
 
 ### Plugins
@@ -468,9 +487,7 @@ Plugins can be defined in the configuration like so:
 }
 ```
 
-If you were to publish an npm package under the name `yourname.overrides` and if
-you wanted to override the boxSizing override that blink already provides, you
-could do it like so:
+If you were to publish an npm package under the name `yourname.overrides` and if you wanted to override the boxSizing override that blink already provides, you could do it like so:
 
 ```ts
 function plugin() {
@@ -479,29 +496,19 @@ function plugin() {
 }
 ```
 
-Now, every time someone declares `box-sizing: whatever` your override will be
-called with `whatever` as the first and only argument. The returned set of
-declarations will replace the original one. In this case, however, box-sizing
-does nothing with arguments.
+Now, every time someone declares `box-sizing: whatever` your override will be called with `whatever` as the first and only argument. The returned set of declarations will replace the original one. In this case, however, `box-sizing` does nothing with arguments.
 
 
 ### Node API
 
-With all the new build tools and taks runners springing up, blink was built with
-that in mind, that various tools would need access to the compiled results without
-writing any files to the disk.
+With all the new build tools and taks runners springing up, blink was built with that in mind, that various tools would need access to the compiled results without writing any files to the disk.
 
 
 ### TypeScript Source
 
-Since blink source code is written in [TypeScript][], you don't need to constantly
-look-up documentation to gain insight as to how you can use the blink API.
-Unfortunately, although there is [TypeScript][] support for [other editors][], you
-won't get the powerful feature of Intellisense unless you are using
-[Visual Studio][].
+Since blink source code is written in [TypeScript][], you don't need to constantly look-up documentation to gain insight as to how you can use the blink API. Unfortunately, although there is [TypeScript][] support for [other editors][], you won't get the powerful feature of Intellisense unless you are using [Visual Studio][].
 
-BTW, you can write your blink files in [TypeScript][] or JavaScript. It really
-doesn't matter as long as it ends up in JavaScript.
+BTW, you can write your blink files in [TypeScript][] or JavaScript. It really doesn't matter as long as it ends up in JavaScript.
 
 
 ## Getting Started
@@ -509,9 +516,7 @@ doesn't matter as long as it ends up in JavaScript.
 
 ### CLI Usage
 
-```bash
-$ npm install -g blink-cli
-```
+See [blink-cli](https://github.com/blinkjs/blink-cli)
 
 
 ### Library Usage
@@ -525,44 +530,13 @@ $ npm install --save-dev blink
 import blink = require('blink');
 ```
 
-### In the browser
 
-```bash
-$ bower install --save blink
-```
-
-```html
-<script src="/bower_components/blink/dist/blink.js"/>
-```
-
-```js
-var foo = "exports = new blink.Block('foo', { bar: 'baz' });";
-blink.compile(foo, function(err, css) {
-  console.log(css);
-});
-```
-
-Refer to the [blink module](https://github.com/blinkjs/blink/blob/master/blink.d.ts)
-for a list of available public methods. Of particular interest are the compile
-methods:
-
-- compile([options][], sources, callback)
-	- sources can be any of string, [file][] array, [stream][] or [Rule][].
-- compileStream([options][], [stream][], callback)
-- compileContents([options][], [file][], callback)
-
-All callbacks have the following function signature:
-- callback([err][], [config][], [file][])
+Refer to the [blink TypeScript definition](https://github.com/blinkjs/blink/blob/master/blink.d.ts) for a list of available public methods.
 
 
 ### Spriting
 
-As blink is built on Node.js, any spriting tools available for Node.js can be
-implemented quite easily. Some of these tools, like [Spritesmith][] allow you to
-not only generate sprites, but to compute off the dimensions of the source images
-that build the sprites. This makes your CSS highly maintainable. For example, when
-design gives you replacement images all you should have to do is drop them in the
-sprites folder without changing a single line of your blink source.
+As blink is built on Node.js, any spriting tools available for Node.js can be implemented quite easily. Some of these tools, like [Spritesmith][] allow you to not only generate sprites, but compute off the dimensions of the source images that build the sprites. This makes your CSS highly maintainable. For example, when Design gives you replacement images all you should have to do is drop them in the sprites folder without changing a single line of your blink source.
 
 
 ## License
