@@ -29,7 +29,7 @@ Blink is just getting started, so stay tuned for any updates.
 ## Features
 
 - [Runs on Node](#runs-on-node)
-- [gulpfriendly](#gulpfriendly)
+- [gulpfriendly](#gulp-friendly)
 - [Grunt plugin](https://github.com/blinkjs/grunt-blink)
 - [Middleware](https://github.com/blinkjs/blink-middleware)
 - [Browserified](#browserified)
