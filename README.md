@@ -62,7 +62,8 @@ before being written to their final destination. This gives blink some performan
 putting it in the [gulpfriendly](https://www.npmjs.org/search?q=gulpfriendly) category. Blink supports [vinyl](https://github.com/wearefractal/vinyl) files in both stream and buffer modes.
 
 ```js
-var blink = require('gulp');
+var blink = require('blink');
+var gulp = require('gulp');
 
 gulp.task('styles', function() {
   return gulp.src('styles/*.js', { buffer: false })
