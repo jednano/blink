@@ -31,27 +31,7 @@ class Configuration implements ConfigurationOptions {
 
 	constructor(options?: ConfigurationOptions) {
 		this.set(require('../../defaults.browser.json'));
-		var extended = this.loadPlugins(options);
-		var clonedOptions = extend({}, options || {});
-		delete clonedOptions.plugins;
-		extended.set(clonedOptions);
-		return extended;
-	}
-
-	public loadPlugins(options?: ConfigurationOptions) {
-		if (!options) {
-			return this;
-		}
-		var result = this;
-		(options.plugins || []).forEach(pluginName => {
-			try {
-				var plugin = require(pluginName);
-			} catch (err) {
-				throw new Error('Invalid plugin. Node module not found: ' + pluginName);
-			}
-			result = plugin(this);
-		});
-		return result;
+		this.set(options);
 	}
 
 	public clone() {

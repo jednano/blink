@@ -34,6 +34,22 @@ class Configuration
 		return <Configuration>extended;
 	}
 
+	public loadPlugins(options?: ConfigurationOptions) {
+		if (!options) {
+			return this;
+		}
+		var result = this;
+		(options.plugins || []).forEach(function(pluginName) {
+			try {
+				var plugin = require(pluginName);
+			} catch (err) {
+				throw new Error('Invalid plugin. Node module not found: ' + pluginName);
+			}
+			result = plugin(this);
+		}.bind(this));
+		return result;
+	}
+
 	public registerFunctions(configProperty: string, folder: string) {
 		var overrides: any = {};
 		fs.readdir(folder, (err, files) => {

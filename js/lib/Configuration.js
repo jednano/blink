@@ -32,6 +32,22 @@ var Configuration = (function (_super) {
         extended.set(clonedOptions);
         return extended;
     }
+    Configuration.prototype.loadPlugins = function (options) {
+        if (!options) {
+            return this;
+        }
+        var result = this;
+        (options.plugins || []).forEach(function (pluginName) {
+            try  {
+                var plugin = require(pluginName);
+            } catch (err) {
+                throw new Error('Invalid plugin. Node module not found: ' + pluginName);
+            }
+            result = plugin(this);
+        }.bind(this));
+        return result;
+    };
+
     Configuration.prototype.registerFunctions = function (configProperty, folder) {
         var overrides = {};
         fs.readdir(folder, function (err, files) {

@@ -785,29 +785,8 @@ var Configuration = (function () {
     function Configuration(options) {
         this.raw = {};
         this.set(require('../../defaults.browser.json'));
-        var extended = this.loadPlugins(options);
-        var clonedOptions = extend({}, options || {});
-        delete clonedOptions.plugins;
-        extended.set(clonedOptions);
-        return extended;
+        this.set(options);
     }
-    Configuration.prototype.loadPlugins = function (options) {
-        var _this = this;
-        if (!options) {
-            return this;
-        }
-        var result = this;
-        (options.plugins || []).forEach(function (pluginName) {
-            try  {
-                var plugin = require(pluginName);
-            } catch (err) {
-                throw new Error('Invalid plugin. Node module not found: ' + pluginName);
-            }
-            result = plugin(_this);
-        });
-        return result;
-    };
-
     Configuration.prototype.clone = function () {
         var clone = new Configuration(this.raw);
         clone.overrides = this.overrides;

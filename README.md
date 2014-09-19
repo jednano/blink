@@ -394,7 +394,7 @@ import blink = require('blink');
 
 function boxSizing(value: string) {
 
-	var extender = <blink.IExtender>(() => {
+	var extender = <blink.Extender>(() => {
 		return blink.extenders.experimental('box-sizing', value, {
 			official: true,  // Opera/IE 8+
 			  webkit: true,  // Safari/Chrome, other WebKit
