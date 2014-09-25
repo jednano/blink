@@ -37,11 +37,11 @@ var Configuration = (function (_super) {
             return this;
         }
         var result = this;
-        (options.plugins || []).forEach(function (pluginName) {
+        (options.plugins || []).forEach(function (pluginPath) {
             try  {
-                var plugin = require(pluginName);
+                var plugin = require(pluginPath);
             } catch (err) {
-                throw new Error('Invalid plugin. Node module not found: ' + pluginName);
+                throw new Error('Invalid plugin. Path not found: ' + pluginPath);
             }
             result = plugin(this);
         }.bind(this));

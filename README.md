@@ -419,12 +419,10 @@ Overrides are functions &ndash; no different than extenders &ndash; that allow y
 ```ts
 import blink = require('blink');
 
-// http://css-tricks.com/box-sizing/
-
 // ReSharper disable once UnusedLocals
 function boxSizing(value: string) {
 
-	var override = <blink.IOverride>((config: blink.Configuration) => {
+	var override = <blink.Override>((config: blink.Configuration) => {
 		return blink.config.extenders.experimental('box-sizing', value, {
 			official: true,  // Opera/IE 8+
 			  webkit: true,  // Safari/Chrome, other WebKit
@@ -440,9 +438,40 @@ function boxSizing(value: string) {
 export = boxSizing;
 ```
 
+This is all fine and good, but it doesn't say when certain browser versions began to support this property without vendor prefixes. To do so, lookup the [box-sizing compatibility table on MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/box-sizing#Browser_compatibility) to locate the supported desktop and mobile versions. Here's how you implement them in the override:
+
+```ts
+import blink = require('blink');
+
+// ReSharper disable once UnusedLocals
+function boxSizing(value: string) {
+
+	var override = <blink.Override>((config: blink.Configuration) => {
+		return blink.config.extenders.experimental('box-sizing', value, {
+			official: true,
+			webkit: !(
+				config.chrome >= 10 &&
+				config.safari >= 5.1 &&
+				config.android >= 4
+			),
+			moz: !(
+				config.firefox >= 29 &&
+				config.firefoxMobile >= 29
+			)
+		})(config);
+	});
+
+	override.args = arguments;
+	return override;
+
+}
+
+export = boxSizing;
+```
+
 Overrides are registered on the configuration object. If you wish to extend the configuration, you can do so by providing [a plugin module](#plugins).
 
-_Note: override names are dasherized for you (e.g., boxSizing becomes box-sizing)._
+_Note: override names are dasherized for you (e.g., boxSizing overrides the `box-sizing` property)._
 
 
 ### Responders

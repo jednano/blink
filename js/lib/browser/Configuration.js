@@ -332,6 +332,96 @@ var Configuration = (function () {
     });
 
 
+    Object.defineProperty(Configuration.prototype, "safari", {
+        get: function () {
+            return this.raw.safari;
+        },
+        set: function (value) {
+            if (typeof value !== 'number') {
+                throw new Error('Invalid Safari version. Expected number.');
+            }
+            this.raw.safari = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+
+
+    Object.defineProperty(Configuration.prototype, "android", {
+        get: function () {
+            return this.raw.android;
+        },
+        set: function (value) {
+            if (typeof value !== 'number') {
+                throw new Error('Invalid Android version. Expected number.');
+            }
+            this.raw.android = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+
+
+    Object.defineProperty(Configuration.prototype, "firefoxMobile", {
+        get: function () {
+            return this.raw.firefoxMobile;
+        },
+        set: function (value) {
+            if (typeof value !== 'number') {
+                throw new Error('Invalid Firefox Mobile version. Expected number.');
+            }
+            this.raw.firefoxMobile = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+
+
+    Object.defineProperty(Configuration.prototype, "iePhone", {
+        get: function () {
+            return this.raw.iePhone;
+        },
+        set: function (value) {
+            if (typeof value !== 'number') {
+                throw new Error('Invalid IE Phone version. Expected number.');
+            }
+            this.raw.iePhone = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+
+
+    Object.defineProperty(Configuration.prototype, "operaMobile", {
+        get: function () {
+            return this.raw.operaMobile;
+        },
+        set: function (value) {
+            if (typeof value !== 'number') {
+                throw new Error('Invalid Opera Mobile version. Expected number.');
+            }
+            this.raw.operaMobile = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+
+
+    Object.defineProperty(Configuration.prototype, "safariMobile", {
+        get: function () {
+            return this.raw.safariMobile;
+        },
+        set: function (value) {
+            if (typeof value !== 'number') {
+                throw new Error('Invalid Safari Mobile version. Expected number.');
+            }
+            this.raw.safariMobile = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+
+
     Object.defineProperty(Configuration.prototype, "webkitPrefix", {
         get: function () {
             return this.raw.webkitPrefix;

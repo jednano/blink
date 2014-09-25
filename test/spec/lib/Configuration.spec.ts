@@ -9,10 +9,12 @@ import Configuration = require('../../../lib/Configuration');
 describe('Configuration', () => {
 
 	var config: Configuration;
-	var defaults: Configuration;
 	before(() => {
 		config = new Configuration();
-		defaults = require('../../../../defaults.json');
+	});
+
+	it.skip('loads plugins', () => {
+
 	});
 
 	describe('newline setting', () => {
