@@ -107,6 +107,13 @@ module.exports={
   "firefox": 0,
   "ie": 0,
   "opera": 0,
+  "safari": 0,
+
+  "android": 0,
+  "firefoxMobile": 0,
+  "iePhone": 0,
+  "operaMobile": 0,
+  "safariMobile": 0,
 
   "webkitPrefix": true,
   "khtmlPrefix": false,
@@ -592,7 +599,7 @@ var Rule = (function () {
 
 module.exports = Rule;
 
-},{"./Formatter":6,"./helpers/string":20,"node.extend":27}],10:[function(require,module,exports){
+},{"./Formatter":6,"./helpers/string":20,"node.extend":31}],10:[function(require,module,exports){
 var a = require('../helpers/array');
 
 var Configuration = require('./Configuration');
@@ -785,29 +792,8 @@ var Configuration = (function () {
     function Configuration(options) {
         this.raw = {};
         this.set(require('../../defaults.browser.json'));
-        var extended = this.loadPlugins(options);
-        var clonedOptions = extend({}, options || {});
-        delete clonedOptions.plugins;
-        extended.set(clonedOptions);
-        return extended;
+        this.set(options);
     }
-    Configuration.prototype.loadPlugins = function (options) {
-        var _this = this;
-        if (!options) {
-            return this;
-        }
-        var result = this;
-        (options.plugins || []).forEach(function (pluginName) {
-            try  {
-                var plugin = require(pluginName);
-            } catch (err) {
-                throw new Error('Invalid plugin. Node module not found: ' + pluginName);
-            }
-            result = plugin(_this);
-        });
-        return result;
-    };
-
     Configuration.prototype.clone = function () {
         var clone = new Configuration(this.raw);
         clone.overrides = this.overrides;
@@ -1110,6 +1096,96 @@ var Configuration = (function () {
     });
 
 
+    Object.defineProperty(Configuration.prototype, "safari", {
+        get: function () {
+            return this.raw.safari;
+        },
+        set: function (value) {
+            if (typeof value !== 'number') {
+                throw new Error('Invalid Safari version. Expected number.');
+            }
+            this.raw.safari = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+
+
+    Object.defineProperty(Configuration.prototype, "android", {
+        get: function () {
+            return this.raw.android;
+        },
+        set: function (value) {
+            if (typeof value !== 'number') {
+                throw new Error('Invalid Android version. Expected number.');
+            }
+            this.raw.android = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+
+
+    Object.defineProperty(Configuration.prototype, "firefoxMobile", {
+        get: function () {
+            return this.raw.firefoxMobile;
+        },
+        set: function (value) {
+            if (typeof value !== 'number') {
+                throw new Error('Invalid Firefox Mobile version. Expected number.');
+            }
+            this.raw.firefoxMobile = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+
+
+    Object.defineProperty(Configuration.prototype, "iePhone", {
+        get: function () {
+            return this.raw.iePhone;
+        },
+        set: function (value) {
+            if (typeof value !== 'number') {
+                throw new Error('Invalid IE Phone version. Expected number.');
+            }
+            this.raw.iePhone = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+
+
+    Object.defineProperty(Configuration.prototype, "operaMobile", {
+        get: function () {
+            return this.raw.operaMobile;
+        },
+        set: function (value) {
+            if (typeof value !== 'number') {
+                throw new Error('Invalid Opera Mobile version. Expected number.');
+            }
+            this.raw.operaMobile = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+
+
+    Object.defineProperty(Configuration.prototype, "safariMobile", {
+        get: function () {
+            return this.raw.safariMobile;
+        },
+        set: function (value) {
+            if (typeof value !== 'number') {
+                throw new Error('Invalid Safari Mobile version. Expected number.');
+            }
+            this.raw.safariMobile = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+
+
     Object.defineProperty(Configuration.prototype, "webkitPrefix", {
         get: function () {
             return this.raw.webkitPrefix;
@@ -1190,9 +1266,9 @@ var Configuration = (function () {
 
 module.exports = Configuration;
 
-},{"../../defaults.browser.json":2,"../extenders/all":12,"../helpers/string":20,"../overrides/all":21,"node.extend":27}],12:[function(require,module,exports){
+},{"../../defaults.browser.json":2,"../extenders/all":12,"../helpers/string":20,"../overrides/all":21,"node.extend":31}],12:[function(require,module,exports){
 var background = require('./background');
-var clearfix = require('./clearfix');
+var border = require('./border');
 var experimental = require('./experimental');
 var font = require('./font');
 var inlineBlock = require('./inlineBlock');
@@ -1200,7 +1276,7 @@ var inlineBlock = require('./inlineBlock');
 // ReSharper disable once UnusedLocals
 var extenders = {
     background: background,
-    clearfix: clearfix,
+    border: border,
     experimental: experimental,
     font: font,
     inlineBlock: inlineBlock
@@ -1208,7 +1284,7 @@ var extenders = {
 
 module.exports = extenders;
 
-},{"./background":13,"./clearfix":14,"./experimental":15,"./font":16,"./inlineBlock":17}],13:[function(require,module,exports){
+},{"./background":13,"./border":14,"./experimental":15,"./font":16,"./inlineBlock":17}],13:[function(require,module,exports){
 // ReSharper disable once UnusedLocals
 function background(options) {
     options = options || {};
@@ -1237,22 +1313,19 @@ module.exports = background;
 
 },{}],14:[function(require,module,exports){
 // ReSharper disable once UnusedLocals
-function clearfix() {
-    var extender = (function () {
-        return [
-            ['content', ''],
-            ['display', 'table'],
-            ['clear', 'both']
-        ];
+function border(options) {
+    options = options || {};
+
+    var extender = (function (config) {
+        var decs = [];
+        return decs;
     });
 
     extender.args = arguments;
-    extender.selectors = [':after'];
-
     return extender;
 }
 
-module.exports = clearfix;
+module.exports = border;
 
 },{}],15:[function(require,module,exports){
 // ReSharper disable once UnusedLocals
@@ -1429,24 +1502,49 @@ function decamelize(s) {
 exports.decamelize = decamelize;
 
 },{}],21:[function(require,module,exports){
+var appearance = require('./appearance');
 var background = require('./background');
+var box = require('./box');
 var boxSizing = require('./boxSizing');
 var clearfix = require('./clearfix');
 var display = require('./display');
 var font = require('./font');
+var text = require('./text');
+var textSizeAdjust = require('./textSizeAdjust');
 
 // ReSharper disable once UnusedLocals
 var overrides = {
+    appearance: appearance,
     background: background,
+    box: box,
     boxSizing: boxSizing,
     clearfix: clearfix,
     display: display,
-    font: font
+    font: font,
+    text: text,
+    textSizeAdjust: textSizeAdjust
 };
 
 module.exports = overrides;
 
-},{"./background":22,"./boxSizing":23,"./clearfix":24,"./display":25,"./font":26}],22:[function(require,module,exports){
+},{"./appearance":22,"./background":23,"./box":24,"./boxSizing":25,"./clearfix":26,"./display":27,"./font":28,"./text":29,"./textSizeAdjust":30}],22:[function(require,module,exports){
+var experimental = require('../extenders/experimental');
+
+function appearance(value) {
+    var override = (function (config) {
+        return experimental('appearance', value, {
+            webkit: true,
+            moz: true
+        })(config);
+    });
+
+    override.args = arguments;
+    return override;
+}
+
+module.exports = appearance;
+
+},{"../extenders/experimental":15}],23:[function(require,module,exports){
 var _background = require('../extenders/background');
 
 // ReSharper disable once UnusedLocals
@@ -1461,17 +1559,35 @@ function background(value) {
 
 module.exports = background;
 
-},{"../extenders/background":13}],23:[function(require,module,exports){
+},{"../extenders/background":13}],24:[function(require,module,exports){
+var boxSizing = require('./boxSizing');
+
+// ReSharper disable once UnusedLocals
+function box(value) {
+    if (value.hasOwnProperty('sizing')) {
+        return boxSizing(value.sizing);
+    }
+
+    var override = (function () {
+        return [['box', value]];
+    });
+
+    override.args = arguments;
+    return override;
+}
+
+module.exports = box;
+
+},{"./boxSizing":25}],25:[function(require,module,exports){
 var experimental = require('../extenders/experimental');
 
-// http://css-tricks.com/box-sizing/
 // ReSharper disable once UnusedLocals
 function boxSizing(value) {
     var override = (function (config) {
         return experimental('box-sizing', value, {
             official: true,
-            webkit: true,
-            moz: true
+            webkit: !(config.chrome >= 10 && config.safari >= 5.1 && config.android >= 4),
+            moz: !(config.firefox >= 29 && config.firefoxMobile >= 29)
         })(config);
     });
 
@@ -1481,18 +1597,32 @@ function boxSizing(value) {
 
 module.exports = boxSizing;
 
-},{"../extenders/experimental":15}],24:[function(require,module,exports){
-var _clearfix = require('../extenders/clearfix');
+},{"../extenders/experimental":15}],26:[function(require,module,exports){
 var noop = require('../extenders/noop');
 
 // ReSharper disable once UnusedLocals
 function clearfix(value) {
-    return value ? _clearfix() : noop();
+    if (!value) {
+        return noop();
+    }
+
+    var override = (function () {
+        return [
+            ['content', ''],
+            ['display', 'table'],
+            ['clear', 'both']
+        ];
+    });
+
+    override.args = arguments;
+    override.selectors = [':after'];
+
+    return override;
 }
 
 module.exports = clearfix;
 
-},{"../extenders/clearfix":14,"../extenders/noop":18}],25:[function(require,module,exports){
+},{"../extenders/noop":18}],27:[function(require,module,exports){
 var inlineBlock = require('../extenders/inlineBlock');
 
 // ReSharper disable once UnusedLocals
@@ -1512,7 +1642,7 @@ function display(value) {
 
 module.exports = display;
 
-},{"../extenders/inlineBlock":17}],26:[function(require,module,exports){
+},{"../extenders/inlineBlock":17}],28:[function(require,module,exports){
 var _font = require('../extenders/font');
 
 // ReSharper disable once UnusedLocals
@@ -1530,11 +1660,52 @@ function font(value) {
 
 module.exports = font;
 
-},{"../extenders/font":16}],27:[function(require,module,exports){
+},{"../extenders/font":16}],29:[function(require,module,exports){
+var textSizeAdjust = require('./textSizeAdjust');
+
+// ReSharper disable once UnusedLocals
+function text(value) {
+    if (value.hasOwnProperty('size')) {
+        var size = value.size;
+        if (size.hasOwnProperty('adjust')) {
+            return textSizeAdjust(size.adjust);
+        }
+    }
+
+    var override = (function () {
+        return [['text', value]];
+    });
+
+    override.args = arguments;
+    return override;
+}
+
+module.exports = text;
+
+},{"./textSizeAdjust":30}],30:[function(require,module,exports){
+var experimental = require('../extenders/experimental');
+
+// ReSharper disable once UnusedLocals
+function textSizeAdjust(value) {
+    var override = (function (config) {
+        return experimental('text-size-adjust', value, {
+            webkit: true,
+            moz: true,
+            ms: true
+        })(config);
+    });
+
+    override.args = arguments;
+    return override;
+}
+
+module.exports = textSizeAdjust;
+
+},{"../extenders/experimental":15}],31:[function(require,module,exports){
 module.exports = require('./lib/extend');
 
 
-},{"./lib/extend":28}],28:[function(require,module,exports){
+},{"./lib/extend":32}],32:[function(require,module,exports){
 /*!
  * node.extend
  * Copyright 2011, John Resig
@@ -1618,7 +1789,7 @@ extend.version = '1.0.8';
 module.exports = extend;
 
 
-},{"is":29}],29:[function(require,module,exports){
+},{"is":33}],33:[function(require,module,exports){
 
 /**!
  * is

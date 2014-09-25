@@ -1,13 +1,12 @@
 var experimental = require('../extenders/experimental');
 
-// http://css-tricks.com/box-sizing/
 // ReSharper disable once UnusedLocals
 function boxSizing(value) {
     var override = (function (config) {
         return experimental('box-sizing', value, {
             official: true,
-            webkit: true,
-            moz: true
+            webkit: !(config.chrome >= 10 && config.safari >= 5.1 && config.android >= 4),
+            moz: !(config.firefox >= 29 && config.firefoxMobile >= 29)
         })(config);
     });
 

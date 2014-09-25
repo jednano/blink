@@ -17,6 +17,13 @@
   "firefox": 0,
   "ie": 0,
   "opera": 0,
+  "safari": 0,
+
+  "android": 0,
+  "firefoxMobile": 0,
+  "iePhone": 0,
+  "operaMobile": 0,
+  "safariMobile": 0,
 
   "webkitPrefix": true,
   "khtmlPrefix": false,

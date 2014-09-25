@@ -9,13 +9,12 @@ import Configuration = require('../../../../lib/browser/Configuration');
 describe('Configuration for browser', () => {
 
 	var config: Configuration;
-	var defaults: Configuration;
 	before(() => {
 		config = new Configuration();
-		defaults = require('../../../../defaults.browser.json');
 	});
 
 	it('initializes default values from defaults.json file', () => {
+		var defaults = require('../../../../defaults.browser.json');
 		expect(config.raw.style).to.eq(defaults.style);
 		expect(config.raw.oneIndent).to.eq(defaults.oneIndent);
 		expect(config.raw.newline).to.eq(defaults.newline);

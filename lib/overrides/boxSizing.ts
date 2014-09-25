@@ -2,17 +2,21 @@
 import experimental = require('../extenders/experimental');
 import Override = require('../interfaces/Override');
 
-
-// http://css-tricks.com/box-sizing/
-
 // ReSharper disable once UnusedLocals
 function boxSizing(value: string) {
 
 	var override = <Override>((config: Configuration) => {
 		return experimental('box-sizing', value, {
-			official: true,  // Opera/IE 8+
-			  webkit: true,  // Safari/Chrome, other WebKit
-			     moz: true   // Firefox, other Gecko
+			official: true,
+			webkit: !(
+				config.chrome >= 10 &&
+				config.safari >= 5.1 &&
+				config.android >= 4
+			),
+			moz: !(
+				config.firefox >= 29 &&
+				config.firefoxMobile >= 29
+			)
 		})(config);
 	});
 

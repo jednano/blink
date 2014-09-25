@@ -28,29 +28,8 @@ var Configuration = (function () {
     function Configuration(options) {
         this.raw = {};
         this.set(require('../../defaults.browser.json'));
-        var extended = this.loadPlugins(options);
-        var clonedOptions = extend({}, options || {});
-        delete clonedOptions.plugins;
-        extended.set(clonedOptions);
-        return extended;
+        this.set(options);
     }
-    Configuration.prototype.loadPlugins = function (options) {
-        var _this = this;
-        if (!options) {
-            return this;
-        }
-        var result = this;
-        (options.plugins || []).forEach(function (pluginName) {
-            try  {
-                var plugin = require(pluginName);
-            } catch (err) {
-                throw new Error('Invalid plugin. Node module not found: ' + pluginName);
-            }
-            result = plugin(_this);
-        });
-        return result;
-    };
-
     Configuration.prototype.clone = function () {
         var clone = new Configuration(this.raw);
         clone.overrides = this.overrides;
@@ -347,6 +326,96 @@ var Configuration = (function () {
                 throw new Error('Invalid Opera version. Expected number.');
             }
             this.raw.opera = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+
+
+    Object.defineProperty(Configuration.prototype, "safari", {
+        get: function () {
+            return this.raw.safari;
+        },
+        set: function (value) {
+            if (typeof value !== 'number') {
+                throw new Error('Invalid Safari version. Expected number.');
+            }
+            this.raw.safari = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+
+
+    Object.defineProperty(Configuration.prototype, "android", {
+        get: function () {
+            return this.raw.android;
+        },
+        set: function (value) {
+            if (typeof value !== 'number') {
+                throw new Error('Invalid Android version. Expected number.');
+            }
+            this.raw.android = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+
+
+    Object.defineProperty(Configuration.prototype, "firefoxMobile", {
+        get: function () {
+            return this.raw.firefoxMobile;
+        },
+        set: function (value) {
+            if (typeof value !== 'number') {
+                throw new Error('Invalid Firefox Mobile version. Expected number.');
+            }
+            this.raw.firefoxMobile = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+
+
+    Object.defineProperty(Configuration.prototype, "iePhone", {
+        get: function () {
+            return this.raw.iePhone;
+        },
+        set: function (value) {
+            if (typeof value !== 'number') {
+                throw new Error('Invalid IE Phone version. Expected number.');
+            }
+            this.raw.iePhone = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+
+
+    Object.defineProperty(Configuration.prototype, "operaMobile", {
+        get: function () {
+            return this.raw.operaMobile;
+        },
+        set: function (value) {
+            if (typeof value !== 'number') {
+                throw new Error('Invalid Opera Mobile version. Expected number.');
+            }
+            this.raw.operaMobile = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+
+
+    Object.defineProperty(Configuration.prototype, "safariMobile", {
+        get: function () {
+            return this.raw.safariMobile;
+        },
+        set: function (value) {
+            if (typeof value !== 'number') {
+                throw new Error('Invalid Safari Mobile version. Expected number.');
+            }
+            this.raw.safariMobile = value;
         },
         enumerable: true,
         configurable: true

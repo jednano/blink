@@ -1,5 +1,5 @@
 var background = require('./background');
-var clearfix = require('./clearfix');
+var border = require('./border');
 var experimental = require('./experimental');
 var font = require('./font');
 var inlineBlock = require('./inlineBlock');
@@ -7,7 +7,7 @@ var inlineBlock = require('./inlineBlock');
 // ReSharper disable once UnusedLocals
 var extenders = {
     background: background,
-    clearfix: clearfix,
+    border: border,
     experimental: experimental,
     font: font,
     inlineBlock: inlineBlock

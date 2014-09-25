@@ -1,11 +1,25 @@
-﻿import _clearfix = require('../extenders/clearfix');
+﻿import Extender = require('../interfaces/Extender');
 import noop = require('../extenders/noop');
-import Extender = require('../interfaces/Extender');
 import Override = require('../interfaces/Override');
 
 // ReSharper disable once UnusedLocals
 function clearfix(value: boolean) {
-	return value ? _clearfix() : noop();
+
+	if (!value) {
+		return noop();
+	}
+
+	var override = <Override>(() => [
+		['content', ''],
+		['display', 'table'],
+		['clear', 'both']
+	]);
+
+	override.args = arguments;
+	override.selectors = [':after'];
+
+	return override;
+
 }
 
 export = clearfix;

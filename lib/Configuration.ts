@@ -34,6 +34,22 @@ class Configuration
 		return <Configuration>extended;
 	}
 
+	public loadPlugins(options?: ConfigurationOptions) {
+		if (!options) {
+			return this;
+		}
+		var result = this;
+		(options.plugins || []).forEach(function(pluginPath) {
+			try {
+				var plugin = require(pluginPath);
+			} catch (err) {
+				throw new Error('Invalid plugin. Path not found: ' + pluginPath);
+			}
+			result = plugin(this);
+		}.bind(this));
+		return result;
+	}
+
 	public registerFunctions(configProperty: string, folder: string) {
 		var overrides: any = {};
 		fs.readdir(folder, (err, files) => {

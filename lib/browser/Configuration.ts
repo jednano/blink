@@ -31,27 +31,7 @@ class Configuration implements ConfigurationOptions {
 
 	constructor(options?: ConfigurationOptions) {
 		this.set(require('../../defaults.browser.json'));
-		var extended = this.loadPlugins(options);
-		var clonedOptions = extend({}, options || {});
-		delete clonedOptions.plugins;
-		extended.set(clonedOptions);
-		return extended;
-	}
-
-	public loadPlugins(options?: ConfigurationOptions) {
-		if (!options) {
-			return this;
-		}
-		var result = this;
-		(options.plugins || []).forEach(pluginName => {
-			try {
-				var plugin = require(pluginName);
-			} catch (err) {
-				throw new Error('Invalid plugin. Node module not found: ' + pluginName);
-			}
-			result = plugin(this);
-		});
-		return result;
+		this.set(options);
 	}
 
 	public clone() {
@@ -280,6 +260,72 @@ class Configuration implements ConfigurationOptions {
 			throw new Error('Invalid Opera version. Expected number.');
 		}
 		this.raw.opera = value;
+	}
+
+	get safari() {
+		return this.raw.safari;
+	}
+
+	set safari(value: number) {
+		if (typeof value !== 'number') {
+			throw new Error('Invalid Safari version. Expected number.');
+		}
+		this.raw.safari = value;
+	}
+
+	get android() {
+		return this.raw.android;
+	}
+
+	set android(value: number) {
+		if (typeof value !== 'number') {
+			throw new Error('Invalid Android version. Expected number.');
+		}
+		this.raw.android = value;
+	}
+
+	get firefoxMobile() {
+		return this.raw.firefoxMobile;
+	}
+
+	set firefoxMobile(value: number) {
+		if (typeof value !== 'number') {
+			throw new Error('Invalid Firefox Mobile version. Expected number.');
+		}
+		this.raw.firefoxMobile = value;
+	}
+
+	get iePhone() {
+		return this.raw.iePhone;
+	}
+
+	set iePhone(value: number) {
+		if (typeof value !== 'number') {
+			throw new Error('Invalid IE Phone version. Expected number.');
+		}
+		this.raw.iePhone = value;
+	}
+
+	get operaMobile() {
+		return this.raw.operaMobile;
+	}
+
+	set operaMobile(value: number) {
+		if (typeof value !== 'number') {
+			throw new Error('Invalid Opera Mobile version. Expected number.');
+		}
+		this.raw.operaMobile = value;
+	}
+
+	get safariMobile() {
+		return this.raw.safariMobile;
+	}
+
+	set safariMobile(value: number) {
+		if (typeof value !== 'number') {
+			throw new Error('Invalid Safari Mobile version. Expected number.');
+		}
+		this.raw.safariMobile = value;
 	}
 
 	get webkitPrefix() {
