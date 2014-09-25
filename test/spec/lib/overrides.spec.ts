@@ -4,9 +4,21 @@ import blink = require('../../../lib/blink');
 
 var config = blink.config;
 var overrides = config.overrides;
+var compiler = new blink.Compiler(config);
 
 // ReSharper disable WrongExpressionStatement
 describe('overrides', () => {
+
+	describe('appearance', () => {
+
+		it('generates appropriate vendor prefixes', () => {
+			expect(overrides.appearance('bar')(config)).to.deep.equal([
+				['-webkit-appearance', 'bar'],
+				['-moz-appearance', 'bar']
+			]);
+		});
+
+	});
 
 	describe('box', () => {
 
@@ -55,6 +67,39 @@ describe('overrides', () => {
 				['-webkit-box-sizing', 'foo'],
 				['box-sizing', 'foo']
 			]);
+		});
+
+	});
+
+	describe('clearfix', () => {
+
+		it('generates clearfix declarations when value is true', () => {
+			expect(overrides.clearfix(true)(config)).to.deep.equal([
+				['content', ''],
+				['display', 'table'],
+				['clear', 'both']
+			]);
+		});
+
+		it('inserts clearfix declarations inside :after pseudo-selector', () => {
+			var rule = new blink.Rule('foo', {
+				clearfix: true
+			});
+			expect(compiler.resolveRules([rule])).to.deep.equal([
+				[['foo:after'], [
+					['content', ''],
+					['display', 'table'],
+					['clear', 'both']
+				]]
+			]);
+		});
+
+		it('generates nothing when value is false', () => {
+			expect(overrides.clearfix(false)(config)).to.deep.equal([]);
+			var rule = new blink.Rule('foo', {
+				clearfix: false
+			});
+			expect(compiler.resolveRules([rule])).to.deep.equal([]);
 		});
 
 	});

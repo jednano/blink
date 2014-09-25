@@ -1,3 +1,4 @@
+var appearance = require('./appearance');
 var background = require('./background');
 var box = require('./box');
 var boxSizing = require('./boxSizing');
@@ -9,6 +10,7 @@ var textSizeAdjust = require('./textSizeAdjust');
 
 // ReSharper disable once UnusedLocals
 var overrides = {
+    appearance: appearance,
     background: background,
     box: box,
     boxSizing: boxSizing,

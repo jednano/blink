@@ -337,7 +337,7 @@ var Formatter = (function () {
 
 module.exports = Formatter;
 
-},{"./helpers/string":23}],7:[function(require,module,exports){
+},{"./helpers/string":20}],7:[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -599,7 +599,7 @@ var Rule = (function () {
 
 module.exports = Rule;
 
-},{"./Formatter":6,"./helpers/string":23,"node.extend":33}],10:[function(require,module,exports){
+},{"./Formatter":6,"./helpers/string":20,"node.extend":31}],10:[function(require,module,exports){
 var a = require('../helpers/array');
 
 var Configuration = require('./Configuration');
@@ -761,7 +761,7 @@ var Compiler = (function () {
 
 module.exports = Compiler;
 
-},{"../ExtenderRegistry":5,"../Formatter":6,"../Rule":9,"../helpers/array":22,"../helpers/string":23,"./Configuration":11}],11:[function(require,module,exports){
+},{"../ExtenderRegistry":5,"../Formatter":6,"../Rule":9,"../helpers/array":19,"../helpers/string":20,"./Configuration":11}],11:[function(require,module,exports){
 var extend = require('node.extend');
 
 var _extenders = require('../extenders/all');
@@ -1266,23 +1266,17 @@ var Configuration = (function () {
 
 module.exports = Configuration;
 
-},{"../../defaults.browser.json":2,"../extenders/all":12,"../helpers/string":23,"../overrides/all":24,"node.extend":33}],12:[function(require,module,exports){
-var appearance = require('./appearance');
+},{"../../defaults.browser.json":2,"../extenders/all":12,"../helpers/string":20,"../overrides/all":21,"node.extend":31}],12:[function(require,module,exports){
 var background = require('./background');
 var border = require('./border');
-var boxSizing = require('./boxSizing');
-var clearfix = require('./clearfix');
 var experimental = require('./experimental');
 var font = require('./font');
 var inlineBlock = require('./inlineBlock');
 
 // ReSharper disable once UnusedLocals
 var extenders = {
-    appearance: appearance,
     background: background,
     border: border,
-    boxSizing: boxSizing,
-    clearfix: clearfix,
     experimental: experimental,
     font: font,
     inlineBlock: inlineBlock
@@ -1290,23 +1284,7 @@ var extenders = {
 
 module.exports = extenders;
 
-},{"./appearance":13,"./background":14,"./border":15,"./boxSizing":16,"./clearfix":17,"./experimental":18,"./font":19,"./inlineBlock":20}],13:[function(require,module,exports){
-var experimental = require('./experimental');
-
-function appearance(value) {
-    var extender = (function (config) {
-        return experimental('appearance', value, {
-            webkit: true
-        })(config);
-    });
-
-    extender.args = arguments;
-    return extender;
-}
-
-module.exports = appearance;
-
-},{"./experimental":18}],14:[function(require,module,exports){
+},{"./background":13,"./border":14,"./experimental":15,"./font":16,"./inlineBlock":17}],13:[function(require,module,exports){
 // ReSharper disable once UnusedLocals
 function background(options) {
     options = options || {};
@@ -1333,7 +1311,7 @@ function background(options) {
 
 module.exports = background;
 
-},{}],15:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 // ReSharper disable once UnusedLocals
 function border(options) {
     options = options || {};
@@ -1349,44 +1327,7 @@ function border(options) {
 
 module.exports = border;
 
-},{}],16:[function(require,module,exports){
-var experimental = require('./experimental');
-
-function boxSizing(value) {
-    var extender = (function (config) {
-        return experimental('box-sizing', value, {
-            official: true,
-            webkit: true,
-            moz: true
-        })(config);
-    });
-
-    extender.args = arguments;
-    return extender;
-}
-
-module.exports = boxSizing;
-
-},{"./experimental":18}],17:[function(require,module,exports){
-// ReSharper disable once UnusedLocals
-function clearfix() {
-    var extender = (function () {
-        return [
-            ['content', ''],
-            ['display', 'table'],
-            ['clear', 'both']
-        ];
-    });
-
-    extender.args = arguments;
-    extender.selectors = [':after'];
-
-    return extender;
-}
-
-module.exports = clearfix;
-
-},{}],18:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 // ReSharper disable once UnusedLocals
 function experimental(property, value, options) {
     options = options || {};
@@ -1410,7 +1351,7 @@ function experimental(property, value, options) {
 
 module.exports = experimental;
 
-},{}],19:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 // ReSharper disable once UnusedLocals
 function font(options) {
     options = options || {};
@@ -1452,7 +1393,7 @@ function font(options) {
 
 module.exports = font;
 
-},{}],20:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 // ReSharper disable once UnusedLocals
 function inlineBlock(options) {
     options = options || {};
@@ -1485,7 +1426,7 @@ function inlineBlock(options) {
 
 module.exports = inlineBlock;
 
-},{}],21:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 // ReSharper disable once UnusedLocals
 function noop() {
     var extender = (function () {
@@ -1497,7 +1438,7 @@ function noop() {
 
 module.exports = noop;
 
-},{}],22:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 function flatten(arr) {
     var flat = [];
     arr.forEach(function (item) {
@@ -1511,7 +1452,7 @@ function flatten(arr) {
 }
 exports.flatten = flatten;
 
-},{}],23:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 // ReSharper disable InconsistentNaming
 var STRING_CAMELIZE = (/(\-|_|\.|\s)+(.)?/g);
 var STRING_DASHERIZE = /[ _]/g;
@@ -1560,7 +1501,8 @@ function decamelize(s) {
 }
 exports.decamelize = decamelize;
 
-},{}],24:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
+var appearance = require('./appearance');
 var background = require('./background');
 var box = require('./box');
 var boxSizing = require('./boxSizing');
@@ -1572,6 +1514,7 @@ var textSizeAdjust = require('./textSizeAdjust');
 
 // ReSharper disable once UnusedLocals
 var overrides = {
+    appearance: appearance,
     background: background,
     box: box,
     boxSizing: boxSizing,
@@ -1584,7 +1527,24 @@ var overrides = {
 
 module.exports = overrides;
 
-},{"./background":25,"./box":26,"./boxSizing":27,"./clearfix":28,"./display":29,"./font":30,"./text":31,"./textSizeAdjust":32}],25:[function(require,module,exports){
+},{"./appearance":22,"./background":23,"./box":24,"./boxSizing":25,"./clearfix":26,"./display":27,"./font":28,"./text":29,"./textSizeAdjust":30}],22:[function(require,module,exports){
+var experimental = require('../extenders/experimental');
+
+function appearance(value) {
+    var override = (function (config) {
+        return experimental('appearance', value, {
+            webkit: true,
+            moz: true
+        })(config);
+    });
+
+    override.args = arguments;
+    return override;
+}
+
+module.exports = appearance;
+
+},{"../extenders/experimental":15}],23:[function(require,module,exports){
 var _background = require('../extenders/background');
 
 // ReSharper disable once UnusedLocals
@@ -1599,7 +1559,7 @@ function background(value) {
 
 module.exports = background;
 
-},{"../extenders/background":14}],26:[function(require,module,exports){
+},{"../extenders/background":13}],24:[function(require,module,exports){
 var boxSizing = require('./boxSizing');
 
 // ReSharper disable once UnusedLocals
@@ -1618,7 +1578,7 @@ function box(value) {
 
 module.exports = box;
 
-},{"./boxSizing":27}],27:[function(require,module,exports){
+},{"./boxSizing":25}],25:[function(require,module,exports){
 var experimental = require('../extenders/experimental');
 
 // ReSharper disable once UnusedLocals
@@ -1637,18 +1597,32 @@ function boxSizing(value) {
 
 module.exports = boxSizing;
 
-},{"../extenders/experimental":18}],28:[function(require,module,exports){
-var _clearfix = require('../extenders/clearfix');
+},{"../extenders/experimental":15}],26:[function(require,module,exports){
 var noop = require('../extenders/noop');
 
 // ReSharper disable once UnusedLocals
 function clearfix(value) {
-    return value ? _clearfix() : noop();
+    if (!value) {
+        return noop();
+    }
+
+    var override = (function () {
+        return [
+            ['content', ''],
+            ['display', 'table'],
+            ['clear', 'both']
+        ];
+    });
+
+    override.args = arguments;
+    override.selectors = [':after'];
+
+    return override;
 }
 
 module.exports = clearfix;
 
-},{"../extenders/clearfix":17,"../extenders/noop":21}],29:[function(require,module,exports){
+},{"../extenders/noop":18}],27:[function(require,module,exports){
 var inlineBlock = require('../extenders/inlineBlock');
 
 // ReSharper disable once UnusedLocals
@@ -1668,7 +1642,7 @@ function display(value) {
 
 module.exports = display;
 
-},{"../extenders/inlineBlock":20}],30:[function(require,module,exports){
+},{"../extenders/inlineBlock":17}],28:[function(require,module,exports){
 var _font = require('../extenders/font');
 
 // ReSharper disable once UnusedLocals
@@ -1686,7 +1660,7 @@ function font(value) {
 
 module.exports = font;
 
-},{"../extenders/font":19}],31:[function(require,module,exports){
+},{"../extenders/font":16}],29:[function(require,module,exports){
 var textSizeAdjust = require('./textSizeAdjust');
 
 // ReSharper disable once UnusedLocals
@@ -1708,7 +1682,7 @@ function text(value) {
 
 module.exports = text;
 
-},{"./textSizeAdjust":32}],32:[function(require,module,exports){
+},{"./textSizeAdjust":30}],30:[function(require,module,exports){
 var experimental = require('../extenders/experimental');
 
 // ReSharper disable once UnusedLocals
@@ -1727,11 +1701,11 @@ function textSizeAdjust(value) {
 
 module.exports = textSizeAdjust;
 
-},{"../extenders/experimental":18}],33:[function(require,module,exports){
+},{"../extenders/experimental":15}],31:[function(require,module,exports){
 module.exports = require('./lib/extend');
 
 
-},{"./lib/extend":34}],34:[function(require,module,exports){
+},{"./lib/extend":32}],32:[function(require,module,exports){
 /*!
  * node.extend
  * Copyright 2011, John Resig
@@ -1815,7 +1789,7 @@ extend.version = '1.0.8';
 module.exports = extend;
 
 
-},{"is":35}],35:[function(require,module,exports){
+},{"is":33}],33:[function(require,module,exports){
 
 /**!
  * is

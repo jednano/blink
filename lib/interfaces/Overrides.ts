@@ -1,4 +1,5 @@
-﻿import background = require('../overrides/background');
+﻿import appearance = require('../overrides/appearance');
+import background = require('../overrides/background');
 import box = require('../overrides/box');
 import boxSizing = require('../overrides/boxSizing');
 import clearfix = require('../overrides/clearfix');
@@ -9,6 +10,7 @@ import textSizeAdjust = require('../overrides/textSizeAdjust');
 
 
 interface Overrides {
+	appearance: typeof appearance;
 	background: typeof background;
 	box: typeof box;
 	boxSizing: typeof boxSizing;
