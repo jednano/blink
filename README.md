@@ -2,12 +2,10 @@
 
 Blink converts [Node.js][] modules into CSS.
 
+[![Views](https://sourcegraph.com/api/repos/github.com/blinkjs/blink/counters/views-24h.png)](https://sourcegraph.com/github.com/blinkjs/blink)
 [![Build Status](https://secure.travis-ci.org/blinkjs/blink.svg)](http://travis-ci.org/blinkjs/blink)
 [![Dependency Status](https://gemnasium.com/blinkjs/blink.svg)](https://gemnasium.com/blinkjs/blink)
 [![NPM version](https://badge.fury.io/js/blink.svg)](http://badge.fury.io/js/blink)
-
-[![Views](https://sourcegraph.com/api/repos/github.com/blinkjs/blink/counters/views-24h.png)](https://sourcegraph.com/github.com/blinkjs/blink)
-[![Coverage Status](https://coveralls.io/repos/blinkjs/blink/badge.png)](https://coveralls.io/r/blinkjs/blink)
 
 [![NPM](https://nodei.co/npm/blink.svg?downloads=true)](https://nodei.co/npm/blink/)
 
