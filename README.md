@@ -8,6 +8,7 @@ Blink converts [Node.js][] modules into CSS.
 
 [![Views](https://sourcegraph.com/api/repos/github.com/blinkjs/blink/counters/views-24h.png)](https://sourcegraph.com/github.com/blinkjs/blink)
 [![Code Climate](https://codeclimate.com/github/blinkjs/blink/badges/gpa.svg)](https://codeclimate.com/github/blinkjs/blink)
+[![Test Coverage](https://codeclimate.com/github/blinkjs/blink/badges/coverage.svg)](https://codeclimate.com/github/blinkjs/blink)
 
 [![NPM](https://nodei.co/npm/blink.svg?downloads=true)](https://nodei.co/npm/blink/)
 
