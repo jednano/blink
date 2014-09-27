@@ -18,7 +18,7 @@
     <div class="wrapper">
       <header>
         <h1>blink</h1>
-        <p>Blink converts Node.js modules into CSS and provides a CSS Authoring Framework, with BEM support.</p>
+        <p>Blink converts Node.js modules into CSS.</p>
         <p class="view"><a href="https://github.com/blinkjs/blink">View the Project on GitHub <small>blinkjs/blink</small></a></p>
         <ul>
           <li><a href="https://github.com/blinkjs/blink/zipball/master">Download <strong>ZIP File</strong></a></li>
@@ -27,18 +27,32 @@
         </ul>
       </header>
       <section>
-        <p><img src="https://github.com/blinkjs/blink/blob/master/artwork/blink_256_nobg.png?raw=true" width="256" height="256" alt="blink"></p>
+        <p><img src="https://github.com/blinkjs/blink/blob/master/artwork/blink_256_nobg.png?raw=true" width="256" height="256" alt="blink" align="right"></p>
 
 <blockquote>
-<p>Blink converts <a href="http://nodejs.org/">Node.js</a> modules into CSS and provides a CSS Authoring Framework, with BEM support.</p>
+<p>Blink converts <a href="http://nodejs.org/">Node.js</a> modules into CSS.</p>
 </blockquote>
 
-<p><a href="http://travis-ci.org/blinkjs/blink"><img src="https://secure.travis-ci.org/blinkjs/blink.png?branch=master" alt="Build Status"></a>
-<a href="https://gemnasium.com/blinkjs/blink"><img src="https://gemnasium.com/blinkjs/blink.png" alt="Dependency Status"></a>
-<a href="http://badge.fury.io/js/blink"><img src="https://badge.fury.io/js/blink.png" alt="NPM version"></a>
-<a href="https://sourcegraph.com/github.com/blinkjs/blink"><img src="https://sourcegraph.com/api/repos/github.com/blinkjs/blink/counters/views-24h.png" alt="Views"></a></p>
+<p><a href="http://travis-ci.org/blinkjs/blink"><img src="https://secure.travis-ci.org/blinkjs/blink.svg" alt="Build Status"></a>
+<a href="https://gemnasium.com/blinkjs/blink"><img src="https://gemnasium.com/blinkjs/blink.svg" alt="Dependency Status"></a>
+<a href="http://badge.fury.io/js/blink"><img src="https://badge.fury.io/js/blink.svg" alt="NPM version"></a></p>
 
-<p><a href="https://nodei.co/npm/blink/"><img src="https://nodei.co/npm/blink.png?downloads=true" alt="NPM"></a></p>
+<p><a href="https://sourcegraph.com/github.com/blinkjs/blink"><img src="https://sourcegraph.com/api/repos/github.com/blinkjs/blink/counters/views-24h.png" alt="Views"></a>
+<a href="https://codeclimate.com/github/blinkjs/blink"><img src="https://codeclimate.com/github/blinkjs/blink/badges/gpa.svg" alt="Code Climate"></a>
+<a href="https://codeclimate.com/github/blinkjs/blink"><img src="https://codeclimate.com/github/blinkjs/blink/badges/coverage.svg" alt="Test Coverage"></a></p>
+
+<p><a href="https://nodei.co/npm/blink/"><img src="https://nodei.co/npm/blink.svg?downloads=true" alt="NPM"></a></p>
+
+<h2>
+<a name="introduction" class="anchor" href="#introduction"><span class="octicon octicon-link"></span></a>Introduction</h2>
+
+<p>If you landed here, you're probably a front-end web developer of some kind. You know how to write JavaScript. You might even have a favorite CSS preprocessor. Sure, they allow you to write <a href="http://sass-lang.com/guide">variables and functions</a> in some form or another, but they require you learn their domain-specific language, which often falls short of a full-blown language.  You scour their documentation, struggling to find a solutions to problems you already know how to solve in JavaScript. We keep looking for ways to introduce logic into our CSS, so why not just use JavaScript?</p>
+
+<p><a href="http://compass-style.org/">Compass</a> provides some great <a href="http://compass-style.org/reference/compass/css3/">cross-browser mixins to takes care of vendor prefixes</a>, but it falls short in that you have to remember to use them and they add considerable bloat if not implemented properly (i.e., <a href="http://sass-lang.com/documentation/file.SASS_REFERENCE.html#extend">@extend</a>). Blink aims to solve this problem with <a href="#overrides">overrides</a> that enforce developers to use them without even knowing it. For example, overriding the <code>display</code> property would mean that anyone using <code>display: inline-block;</code> would automatically <a href="#extenders">extend</a> the <a href="https://github.com/blinkjs/blink/blob/master/lib/extenders/inlineBlock.ts">inlineBlock extender</a>. This means you can use the latest and greatest techniques of CSS development without trying to remember when you need vendor prefixes for certain CSS declarations.</p>
+
+<p>With blink, browser support is a configuration setting, so when your browser support requirements change, none of your source code has to change. All you do is update your configuration to support different browser versions by setting the minimum versions you wish to support.</p>
+
+<p>Blink is just getting started, so stay tuned for any updates.</p>
 
 <h2>
 <a name="requirements" class="anchor" href="#requirements"><span class="octicon octicon-link"></span></a>Requirements</h2>
@@ -50,6 +64,10 @@
 
 <ul>
 <li><a href="#runs-on-node">Runs on Node</a></li>
+<li><a href="#gulp-friendly">gulpfriendly</a></li>
+<li><a href="https://github.com/blinkjs/grunt-blink">Grunt plugin</a></li>
+<li><a href="https://github.com/blinkjs/blink-middleware">Middleware</a></li>
+<li><a href="#browserified">Browserified</a></li>
 <li><a href="#oocss-with-bem">OOCSS with BEM Syntax</a></li>
 <li><a href="#rules">Rules</a></li>
 <li><a href="#includes">Includes</a></li>
@@ -57,27 +75,75 @@
 <li><a href="#extenders">Extenders</a></li>
 <li><a href="#overrides">Overrides</a></li>
 <li><a href="#responders">Responders</a></li>
+<li><a href="#plugins">Plugins</a></li>
 <li><a href="#typescript-source">TypeScript Source</a></li>
 <li><a href="https://github.com/blinkjs/blink-cli">CLI</a></li>
 <li><a href="https://github.com/blinkjs/blink/blob/master/blink.d.ts">API</a></li>
-<li><a href="https://github.com/blinkjs/gulp-blink">gulp.js plugin</a></li>
-<li><a href="https://github.com/blinkjs/grunt-blink">Grunt plugin</a></li>
 <li><a href="https://github.com/blinkjs/blink-middleware">Express middleware</a></li>
 <li><a href="#spriting">Spriting</a></li>
 </ul><h3>
 <a name="runs-on-node" class="anchor" href="#runs-on-node"><span class="octicon octicon-link"></span></a>Runs on Node</h3>
 
-<p>Because blink runs on <a href="http://nodejs.org/">Node</a>, you have access to all JavaScript syntax, including
-variables and functions, as well as <a href="http://nodejs.org/api/fs.html">file I/O</a>.
-The possibilities are endless.</p>
+<p>Unlike most CSS preprocessors out there, blink does not transpile a <a href="http://en.wikipedia.org/wiki/Domain-specific_language">DSL</a> into CSS. Blink code gets compiled directly as a <a href="http://nodejs.org/">Node</a> module, giving you access to all JavaScript syntax for free. This, of course, includes variables and functions, as well as <a href="http://nodejs.org/api/fs.html">file I/O</a>. The possibilities are endless.</p>
+
+<h3>
+<a name="gulp-friendly" class="anchor" href="#gulp-friendly"><span class="octicon octicon-link"></span></a>Gulp friendly</h3>
+
+<p>The <a href="https://github.com/blinkjs/blink/blob/master/lib/Compiler.ts#L22-L69">blink.compile() method</a>
+is written exactly like a gulp plugin. As such, blink will never write intermediate files unless
+you want it to do so. Files can be piped to other streams or <a href="http://gulpjs.com/plugins/">gulp plugins</a>
+before being written to their final destination. This gives blink some performance benefits as well as
+putting it in the <a href="https://www.npmjs.org/search?q=gulpfriendly">gulpfriendly</a> category. Blink supports <a href="https://github.com/wearefractal/vinyl">vinyl</a> files in both stream and buffer modes.</p>
+
+<div class="highlight highlight-js"><pre><span class="kd">var</span> <span class="nx">blink</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'blink'</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">gulp</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'gulp'</span><span class="p">);</span>
+
+<span class="nx">gulp</span><span class="p">.</span><span class="nx">task</span><span class="p">(</span><span class="s1">'styles'</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">gulp</span><span class="p">.</span><span class="nx">src</span><span class="p">(</span><span class="s1">'styles/*.js'</span><span class="p">,</span> <span class="p">{</span> <span class="nx">buffer</span><span class="o">:</span> <span class="kc">false</span> <span class="p">})</span>
+    <span class="p">.</span><span class="nx">pipe</span><span class="p">(</span><span class="nx">blink</span><span class="p">.</span><span class="nx">compile</span><span class="p">(</span><span class="cm">/* options */</span><span class="p">))</span>
+    <span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'error'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+      <span class="c1">// handle error</span>
+    <span class="p">})</span>
+    <span class="p">.</span><span class="nx">pipe</span><span class="p">(</span><span class="nx">gulp</span><span class="p">.</span><span class="nx">dest</span><span class="p">(</span><span class="s1">'dist/styles'</span><span class="p">));</span>
+<span class="p">});</span>
+</pre></div>
+
+<p><em>Note: <a href="https://github.com/blinkjs/gulp-blink">gulp-blink</a> has been deprecated in favor of
+using the blink module directly.</em></p>
+
+<h3>
+<a name="browserified" class="anchor" href="#browserified"><span class="octicon octicon-link"></span></a>Browserified</h3>
+
+<p>For those wishing to transpile blink files into CSS in the browser, a <a href="http://browserify.org/">Browserified</a> version of blink is available in the <a href="https://github.com/blinkjs/blink/tree/master/dist">dist folder</a>, also available as a <a href="http://bower.io/search/?q=blink">bower component</a>.</p>
+
+<div class="highlight highlight-bash"><pre><span class="nv">$ </span>bower install --save blink
+</pre></div>
+
+<p>Include the script in your web page:</p>
+
+<div class="highlight highlight-html"><pre><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"/bower_components/blink/dist/blink.js"</span><span class="nt">/&gt;</span>
+</pre></div>
+
+<p>Compile your block:</p>
+
+<div class="highlight highlight-js"><pre><span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">blink</span><span class="p">.</span><span class="nx">Block</span><span class="p">(</span><span class="s1">'foo'</span><span class="p">,</span> <span class="p">{</span> <span class="nx">bar</span><span class="o">:</span> <span class="s1">'baz'</span> <span class="p">});</span>
+<span class="nx">blink</span><span class="p">.</span><span class="nx">compile</span><span class="p">(</span><span class="nx">foo</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">css</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">css</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+
+<p>You can also compile a string of source code as long as you export the rule with <code>exports</code>.</p>
+
+<div class="highlight highlight-js"><pre><span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="s2">"exports = new blink.Block('foo', { bar: 'baz' });"</span><span class="p">;</span>
+<span class="nx">blink</span><span class="p">.</span><span class="nx">compile</span><span class="p">(</span><span class="nx">foo</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">css</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">css</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
 
 <h3>
 <a name="oocss-with-bem" class="anchor" href="#oocss-with-bem"><span class="octicon octicon-link"></span></a>OOCSS with BEM</h3>
 
-<p>Blink is designed with <a href="http://csswizardry.com/2013/01/mindbemding-getting-your-head-round-bem-syntax/">BEM syntax</a> in mind. You can create blocks, elements and
-modifiers and their CSS selectors will be generated for you. You can configure
-your BEM format however you want, but the default naming convention follows that
-which is defined in <a href="http://csswizardry.com/2013/01/mindbemding-getting-your-head-round-bem-syntax/">MindBEMding – getting your head 'round BEM syntax</a>.</p>
+<p>Blink is designed with <a href="http://csswizardry.com/2013/01/mindbemding-getting-your-head-round-bem-syntax/">BEM syntax</a> in mind. You can create blocks, elements and modifiers and their CSS selectors will be generated for you. You can configure your BEM format however you want, but the default naming convention follows that which is defined in <a href="http://csswizardry.com/2013/01/mindbemding-getting-your-head-round-bem-syntax/">MindBEMding – getting your head 'round BEM syntax</a>.</p>
 
 <p>Here's an example of a block with both an element and a modifier:</p>
 
@@ -126,8 +192,7 @@ which is defined in <a href="http://csswizardry.com/2013/01/mindbemding-getting-
 <h3>
 <a name="rules" class="anchor" href="#rules"><span class="octicon octicon-link"></span></a>Rules</h3>
 
-<p>All BEM classes extend off of the standard Rule class. The Rule class allows you to
-specify a standard CSS rule and can be useful when styling page defaults.</p>
+<p>The <a href="https://github.com/blinkjs/blink/blob/master/lib/Rule.ts">Rule</a> class allows you to specify a standard CSS rule and can be useful when styling page defaults.</p>
 
 <div class="highlight highlight-ts"><pre><span class="c1">///&lt;reference path="./node_modules/blink/blink.d.ts"/&gt;</span>
 <span class="kr">import</span> <span class="nx">blink</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'blink'</span><span class="p">);</span>
@@ -155,46 +220,33 @@ specify a standard CSS rule and can be useful when styling page defaults.</p>
 <span class="kr">export</span> <span class="o">=</span> <span class="nx">normalize</span><span class="p">;</span>
 </pre></div>
 
-<p>You are encouraged to use BEM blocks for all of your components. There's nothing
-stopping you from using basic rules, but you should avoid them if at all possible.</p>
+<p>You are encouraged to use BEM blocks for all of your components. There's nothing stopping you from using basic rules, but you should avoid them if at all possible.</p>
 
 <h3>
 <a name="includes" class="anchor" href="#includes"><span class="octicon octicon-link"></span></a>Includes</h3>
 
-<p>Blink supports includes, but not in the way you might be used to. Includes are
-just functions that return an array of declarations. As such, you should lean
-against using them at all costs. Why? Say your include spits out 10 declarations.
-Every time you include that function you'll add another 10 lines of CSS to your
-file. Instead, use <a href="#extenders">extenders</a> and <a href="#overrides">overrides</a> when
-possible.</p>
+<p>Blink supports includes, but not in the way you might think. Includes are just functions that return an array of declarations. As such, you should lean against using them at all costs. Why? Say your include spits out 10 declarations. Every time you include that function you'll add another 10 lines of CSS to your file. Instead, use <a href="#extenders">extenders</a> and <a href="#overrides">overrides</a> when possible.</p>
 
-<p>You might be wondering why blink supports includes at all if you aren't supposed
-to use them. This is because blink uses includes in the background to make
-<a href="#extenders">extenders</a> work. As such, includes may be removed at a future date,
-if they can be worked out of the extender logic.</p>
+<p>You might be wondering why blink supports includes at all if you aren't supposed to use them. This is because blink uses includes in the background to make <a href="#extenders">extenders</a> work. As such, includes may be removed at a future date, if they can be worked out of the extender logic.</p>
 
-<p>Still, if you find yourself needing an include, refer to
-<a href="https://github.com/blinkjs/blink/blob/master/test/spec/lib/Rule.spec.ts#L80-L97">the Rule spec</a>
-for a working example.</p>
+<p>Still, if you find yourself needing an include, refer to <a href="https://github.com/blinkjs/blink/blob/master/test/spec/lib/Rule.spec.ts#L80-L97">the Rule spec</a> for a working example.</p>
 
 <h3>
 <a name="mixins" class="anchor" href="#mixins"><span class="octicon octicon-link"></span></a>Mixins</h3>
 
-<p>If you're coming from <a href="http://sass-lang.com/">Sass</a>, you might be familiar with
-<a href="http://sass-lang.com/guide">mixins</a>. Really, Sass mixins are no different than
-functions in JavaScript; thus, blink supports them. All you have to do is create
-a function that returns an array of declarations. This is, in fact, how
-<a href="#extenders">extenders</a> and <a href="#overrides">overrides</a> work.</p>
+<p>If you're coming from <a href="http://sass-lang.com/">Sass</a>, you might be familiar with <a href="http://sass-lang.com/guide">mixins</a>. Really, Sass mixins are no different than functions in JavaScript; thus, blink supports them. All you have to do is create a function that returns an array of declarations. This is, in fact, how <a href="#extenders">extenders</a> and <a href="#overrides">overrides</a> work.</p>
 
 <h3>
 <a name="extenders" class="anchor" href="#extenders"><span class="octicon octicon-link"></span></a>Extenders</h3>
 
-<p>Extenders are named functions that return an array that is described in more detail
-below. An extender with no parameters always returns the same output. For example,
-here's an extender named fill that fills its container:</p>
+<p>Extenders are named functions that return another function, complete with the original passed-in arguments as <code>args</code> and, optionally, <code>selectors</code>, for which you can find an example in <a href="https://github.com/blinkjs/blink/blob/master/lib/extenders/clearfix.ts">the clearfix extender</a>. An extender with no parameters always returns the same output. For example, here's an extender named <code>fill</code> that fills its container:</p>
 
-<div class="highlight highlight-ts"><pre><span class="kr">export</span> <span class="kd">function</span> <span class="nx">fill</span><span class="p">()</span><span class="o">:</span> <span class="nx">any</span><span class="p">[]</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="p">[</span><span class="nx">arguments</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<div class="highlight highlight-ts"><pre><span class="kr">import</span> <span class="nx">blink</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'blink'</span><span class="p">);</span>
+
+<span class="c1">// ReSharper disable once UnusedLocals</span>
+<span class="kd">function</span> <span class="nx">fill() {</span>
+
+    <span class="kd">var</span> <span class="nx">extender</span> <span class="o">=</span> <span class="o">&lt;</span><span class="nx">blink</span><span class="p">.</span><span class="nx">IExtender</span><span class="o">&gt;</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
         <span class="k">return</span> <span class="p">[</span>
             <span class="p">[</span><span class="s1">'position'</span><span class="p">,</span> <span class="s1">'absolute'</span><span class="p">],</span>
             <span class="p">[</span><span class="s1">'top'</span><span class="p">,</span> <span class="s1">'0'</span><span class="p">],</span>
@@ -202,24 +254,31 @@ here's an extender named fill that fills its container:</p>
             <span class="p">[</span><span class="s1">'bottom'</span><span class="p">,</span> <span class="s1">'0'</span><span class="p">],</span>
             <span class="p">[</span><span class="s1">'left'</span><span class="p">,</span> <span class="s1">'0'</span><span class="p">]</span>
         <span class="p">];</span>
-    <span class="p">}];</span>
+    <span class="p">});</span>
+
+    <span class="nx">extender</span><span class="p">.</span><span class="nx">args</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">;</span>
+    <span class="k">return</span> <span class="nx">extender</span><span class="p">;</span>
+
 <span class="p">}</span>
+
+<span class="kr">export</span> <span class="o">=</span> <span class="nx">fill</span><span class="p">;</span>
 </pre></div>
 
 <p>Let's create two blocks named <code>.foo</code> and <code>bar</code> that both extend fill.</p>
 
-<div class="highlight highlight-ts"><pre><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">blink</span><span class="p">.</span><span class="nx">compileRules</span><span class="p">([</span>
+<div class="highlight highlight-ts"><pre><span class="kd">var</span> <span class="nx">rules</span> <span class="o">=</span> <span class="p">[</span>
     <span class="k">new</span> <span class="nx">blink</span><span class="p">.</span><span class="nx">Block</span><span class="p">(</span><span class="s1">'foo'</span><span class="p">,</span> <span class="p">{</span>
         <span class="nx">extend</span><span class="o">:</span> <span class="p">[</span> <span class="nx">fill</span> <span class="p">]</span>
     <span class="p">}),</span>
     <span class="k">new</span> <span class="nx">blink</span><span class="p">.</span><span class="nx">Block</span><span class="p">(</span><span class="s1">'bar'</span><span class="p">,</span> <span class="p">{</span>
         <span class="nx">extend</span><span class="o">:</span> <span class="p">[</span> <span class="nx">fill</span> <span class="p">]</span>
     <span class="p">})</span>
-<span class="p">]));</span>
+<span class="p">];</span>
+
+<span class="kr">export</span> <span class="o">=</span> <span class="nx">rules</span><span class="p">;</span>
 </pre></div>
 
-<p>These two blocks share the same extender, so there's no reason to generate the
-same CSS twice. The above code would output the following:</p>
+<p>These two blocks share the same extender, so there's no reason to generate the same CSS twice. The above code would output the following:</p>
 
 <div class="highlight highlight-css"><pre><span class="nc">.foo</span><span class="o">,</span> <span class="nc">.bar</span> <span class="p">{</span>
     <span class="k">position</span><span class="o">:</span> <span class="k">absolute</span><span class="p">;</span>
@@ -230,45 +289,56 @@ same CSS twice. The above code would output the following:</p>
 <span class="p">}</span>
 </pre></div>
 
-<p>This is very powerful, especially when you want to spit-out multiple declarations.
-Why, you ask? Because you only have to spit-out those declarations once! You can
-extend it from hundreds of blocks, but those lines never get written more than
+<p>This is very powerful, especially when you want to spit-out multiple declarations. Why, you ask? Because you only have to spit-out those declarations once! You can extend it from hundreds of blocks, but those lines never get written more than
 once. This keeps your CSS as lean as possible.</p>
 
-<p>Now, let's talk about building your own extenders. The basic structure of an
-extender is thus:</p>
+<p>Now, let's talk about building your own extenders. The basic structure of an extender is thus:</p>
 
-<div class="highlight highlight-ts"><pre><span class="kr">export</span> <span class="kd">function</span> <span class="nx">nothing</span><span class="p">()</span><span class="o">:</span> <span class="nx">any</span><span class="p">[]</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="p">[</span><span class="nx">arguments</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="p">[];</span>
-    <span class="p">}];</span>
+<div class="highlight highlight-ts"><pre><span class="kr">import</span> <span class="nx">blink</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'blink'</span><span class="p">);</span>
+
+<span class="c1">// ReSharper disable once UnusedLocals</span>
+<span class="kd">function</span> <span class="nx">noop() {</span>
+    <span class="kd">var</span> <span class="nx">extender</span> <span class="o">=</span> <span class="o">&lt;</span><span class="nx">blink</span><span class="p">.</span><span class="nx">IExtender</span><span class="o">&gt;</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">[]);</span>
+    <span class="nx">extender</span><span class="p">.</span><span class="nx">args</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">;</span>
+    <span class="k">return</span> <span class="nx">extender</span><span class="p">;</span>
 <span class="p">}</span>
+
+<span class="kr">export</span> <span class="o">=</span> <span class="nx">noop</span><span class="p">;</span>
 </pre></div>
 
-<p>This extender, as its name suggests, does nothing. The name, however, must be
-provided and must be unique.</p>
+<p>This extender, <a href="http://www.urbandictionary.com/define.php?term=noop&amp;defid=1183981">as its name suggests, does nothing</a>.
+The name, however, must be provided and must be unique.</p>
 
-<p>In this case, the extender has no arguments; yet, they must also be returned for
-unique registration purposes.</p>
+<p>In this case, the extender has no arguments; yet, they must also be returned for unique registration purposes.</p>
 
-<p>Let's see what a more complicated, inlineBlock extender would look like.</p>
+<p>Let's see what a more complicated, <code>inlineBlock</code> extender would look like.</p>
 
-<div class="highlight highlight-ts"><pre><span class="kr">export</span> <span class="kd">function</span> <span class="nx">inlineBlock</span><span class="p">()</span><span class="o">:</span> <span class="nx">any</span><span class="p">[]</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="p">[</span><span class="nx">arguments</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<div class="highlight highlight-ts"><pre><span class="kr">import</span> <span class="nx">blink</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'blink'</span><span class="p">);</span>
+
+<span class="c1">// ReSharper disable once UnusedLocals</span>
+<span class="kd">function</span> <span class="nx">inlineBlock() {</span>
+    <span class="kd">var</span> <span class="nx">extender</span> <span class="o">=</span> <span class="o">&lt;</span><span class="nx">blink</span><span class="p">.</span><span class="nx">IExtender</span><span class="o">&gt;</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
         <span class="k">return</span> <span class="p">[</span><span class="s1">'display'</span><span class="p">,</span> <span class="s1">'inline-block'</span><span class="p">];</span>
-    <span class="p">}];</span>
+    <span class="p">});</span>
 <span class="p">}</span>
+
+<span class="kr">export</span> <span class="o">=</span> <span class="nx">inlineBlock</span><span class="p">;</span>
 </pre></div>
 
-<p>This is all fine and good, but it's pretty useless. We can add a verticalAlign
-option to make it more dynamic.</p>
+<p>This is all fine and good, but it's pretty useless. We can add a <code>verticalAlign</code> option to make it more dynamic.</p>
 
-<div class="highlight highlight-ts"><pre><span class="kr">export</span> <span class="kd">function</span> <span class="nx">inlineBlock</span><span class="p">(</span><span class="nx">options</span><span class="o">?:</span> <span class="p">{</span> <span class="nx">verticalAlign?</span>: <span class="kt">string</span> <span class="p">})</span><span class="o">:</span> <span class="nx">any</span><span class="p">[]</span> <span class="p">{</span>
+<div class="highlight highlight-ts"><pre><span class="kr">import</span> <span class="nx">blink</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'blink'</span><span class="p">);</span>
+
+<span class="c1">// ReSharper disable once UnusedLocals</span>
+<span class="kd">function</span> <span class="nx">inlineBlock</span><span class="p">(</span><span class="nx">options</span><span class="o">?:</span> <span class="p">{</span>
+        <span class="nx">verticalAlign?</span>: <span class="kt">string</span><span class="p">;</span>
+    <span class="p">})</span> <span class="p">{</span>
 
     <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
 
-    <span class="k">return</span> <span class="p">[</span><span class="nx">arguments</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">extender</span> <span class="o">=</span> <span class="o">&lt;</span><span class="nx">blink</span><span class="p">.</span><span class="nx">IExtender</span><span class="o">&gt;</span><span class="p">((</span><span class="nx">config</span>: <span class="kt">blink.Configuration</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">decs</span> <span class="o">=</span> <span class="p">[];</span>
+
         <span class="nx">decs</span><span class="p">.</span><span class="nx">push</span><span class="p">([</span><span class="s1">'display'</span><span class="p">,</span> <span class="s1">'inline-block'</span><span class="p">]);</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">options</span><span class="p">.</span><span class="nx">verticalAlign</span> <span class="o">!==</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
@@ -276,21 +346,27 @@ option to make it more dynamic.</p>
         <span class="p">}</span>
 
         <span class="k">return</span> <span class="nx">decs</span><span class="p">;</span>
-    <span class="p">}];</span>
+    <span class="p">});</span>
+
+    <span class="nx">extender</span><span class="p">.</span><span class="nx">args</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">;</span>
+    <span class="k">return</span> <span class="nx">extender</span><span class="p">;</span>
 <span class="p">}</span>
+
+<span class="kr">export</span> <span class="o">=</span> <span class="nx">inlineBlock</span><span class="p">;</span>
 </pre></div>
 
-<p>Great, but what about inline-block CSS hacks? Glad you asked! You can gain access
-to the configuration for a case like this.</p>
+<p>Great, but what about inline-block CSS hacks? Glad you asked! You can gain access to the configuration for a case like this.</p>
 
-<div class="highlight highlight-ts"><pre><span class="c1">///&lt;reference path="./node_modules/blink/blink.d.ts"/&gt;</span>
-<span class="kr">import</span> <span class="nx">blink</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'blink'</span><span class="p">);</span>
+<div class="highlight highlight-ts"><pre><span class="kr">import</span> <span class="nx">blink</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'blink'</span><span class="p">);</span>
 
-<span class="kd">function</span> <span class="nx">inlineBlock</span><span class="p">(</span><span class="nx">options</span><span class="o">?:</span> <span class="p">{</span> <span class="nx">verticalAlign?</span>: <span class="kt">string</span><span class="p">;</span> <span class="p">})</span><span class="o">:</span> <span class="nx">any</span><span class="p">[]</span> <span class="p">{</span>
+<span class="c1">// ReSharper disable once UnusedLocals</span>
+<span class="kd">function</span> <span class="nx">inlineBlock</span><span class="p">(</span><span class="nx">options</span><span class="o">?:</span> <span class="p">{</span>
+        <span class="nx">verticalAlign?</span>: <span class="kt">string</span><span class="p">;</span>
+    <span class="p">})</span> <span class="p">{</span>
 
     <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
 
-    <span class="k">return</span> <span class="p">[</span><span class="nx">arguments</span><span class="p">,</span> <span class="p">(</span><span class="nx">config</span>: <span class="kt">blink.Configuration</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">extender</span> <span class="o">=</span> <span class="o">&lt;</span><span class="nx">blink</span><span class="p">.</span><span class="nx">IExtender</span><span class="o">&gt;</span><span class="p">((</span><span class="nx">config</span>: <span class="kt">blink.Configuration</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">decs</span> <span class="o">=</span> <span class="p">[];</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">firefox</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">)</span> <span class="p">{</span>
@@ -310,78 +386,112 @@ to the configuration for a case like this.</p>
         <span class="p">}</span>
 
         <span class="k">return</span> <span class="nx">decs</span><span class="p">;</span>
-    <span class="p">}];</span>
+    <span class="p">});</span>
+
+    <span class="nx">extender</span><span class="p">.</span><span class="nx">args</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">;</span>
+    <span class="k">return</span> <span class="nx">extender</span><span class="p">;</span>
 <span class="p">}</span>
+
+<span class="kr">export</span> <span class="o">=</span> <span class="nx">inlineBlock</span><span class="p">;</span>
 </pre></div>
 
-<p>Now, that's a nice extender! Once you change your configuration to support newer
-browsers, the CSS hacks disappear. No need to change any of your source code. It's
-all about the configuration.</p>
+<p>Now, that's a nice extender! Once you change your configuration to support newer browsers, the CSS hacks disappear. No need to change any of your source code. It's all about the configuration.</p>
 
 <h4>
 <a name="extender-registration" class="anchor" href="#extender-registration"><span class="octicon octicon-link"></span></a>Extender registration</h4>
 
-<p>It's important for you to know that, behind the scenes, blink is really smart
-about extender registration. It doesn't just register your extender by function
-name, but also by the arguments you pass in. This means if you extend
-<code>inlineBlock({ verticalAlign: 'top' })</code> 50 times and
-<code>inlineBlock({ verticalAlign: 'bottom' })</code> 20 times, only two rules will be
-generated. Different input yields different output, so it has to generate two
-rules for this scenario.</p>
+<p>It's important for you to know that, behind the scenes, blink is really smart about extender registration. It doesn't just register your extender by function name, but also by the arguments you pass in. This means if you extend <code>inlineBlock({ verticalAlign: 'top' })</code> 50 times and <code>inlineBlock({ verticalAlign: 'bottom' })</code> 20 times, only two rules will be generated. Different input yields different output, so it has to generate two rules for this scenario.</p>
 
 <h4>
 <a name="extenders-calling-other-extenders" class="anchor" href="#extenders-calling-other-extenders"><span class="octicon octicon-link"></span></a>Extenders calling other extenders</h4>
 
-<p>Extenders can call other extenders directly, but you must provide the extender
-with the configuration.</p>
+<p>Extenders can call other extenders directly, but you must provide the extender with the configuration object.</p>
 
 <div class="highlight highlight-ts"><pre><span class="kr">import</span> <span class="nx">blink</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'blink'</span><span class="p">);</span>
 
-<span class="kd">function</span> <span class="nx">boxSizing</span><span class="p">(</span><span class="nx">value</span>: <span class="kt">string</span><span class="p">)</span><span class="o">:</span> <span class="nx">any</span><span class="p">[]</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="p">[</span><span class="nx">arguments</span><span class="p">,</span> <span class="p">(</span><span class="nx">config</span>: <span class="kt">blink.Configuration</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<span class="kd">function</span> <span class="nx">boxSizing</span><span class="p">(</span><span class="nx">value</span>: <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="kd">var</span> <span class="nx">extender</span> <span class="o">=</span> <span class="o">&lt;</span><span class="nx">blink</span><span class="p">.</span><span class="nx">Extender</span><span class="o">&gt;</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
         <span class="k">return</span> <span class="nx">blink</span><span class="p">.</span><span class="nx">extenders</span><span class="p">.</span><span class="nx">experimental</span><span class="p">(</span><span class="s1">'box-sizing'</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="p">{</span>
             <span class="nx">official</span>: <span class="kt">true</span><span class="p">,</span>  <span class="c1">// Opera/IE 8+</span>
-                <span class="nx">webkit</span>: <span class="kt">true</span><span class="p">,</span>  <span class="c1">// Safari/Chrome, other WebKit</span>
-                     <span class="nx">moz</span>: <span class="kt">true</span>   <span class="c1">// Firefox, other Gecko</span>
-        <span class="p">})[</span><span class="mi">1</span><span class="p">](</span><span class="nx">config</span><span class="p">);</span>
-    <span class="p">}];</span>
+              <span class="nx">webkit</span>: <span class="kt">true</span><span class="p">,</span>  <span class="c1">// Safari/Chrome, other WebKit</span>
+                 <span class="nx">moz</span>: <span class="kt">true</span>   <span class="c1">// Firefox, other Gecko</span>
+        <span class="p">})(</span><span class="nx">config</span><span class="p">);</span>
+    <span class="p">});</span>
+
+    <span class="nx">extender</span><span class="p">.</span><span class="nx">args</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">;</span>
+    <span class="k">return</span> <span class="nx">extender</span><span class="p">;</span>
+
 <span class="p">}</span>
 </pre></div>
 
-<p>Notice that index 1 accessed the extender function. When calling an extender
-directly the arguments become useless, so we throw them away.</p>
+<p>In this particular case, however, <code>box-sizing</code> would be better suited as an <a href="#overrides">Override</a>.</p>
 
 <h3>
 <a name="overrides" class="anchor" href="#overrides"><span class="octicon octicon-link"></span></a>Overrides</h3>
 
-<p>Overrides are functions – no different than extenders – that allow you
-to override a single CSS declaration with any number of declarations. In fact, you
-can and often will register extenders <em>as</em> overrides. Overrides are registered on
-the configuration object. For example, say we want the box-sizing extender above
-to be registered as an override:</p>
+<p>Overrides are functions – no different than extenders – that allow you to override a single CSS declaration with any number of declarations. In fact, you can and often will register extenders <em>as</em> overrides. Here's an example of the
+<code>box-sizing</code> extender above as an override:</p>
 
-<div class="highlight highlight-ts"><pre><span class="c1">///&lt;reference path="./node_modules/blink/blink.d.ts"/&gt;</span>
-<span class="kr">import</span> <span class="nx">blink</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'blink'</span><span class="p">);</span>
+<div class="highlight highlight-ts"><pre><span class="kr">import</span> <span class="nx">blink</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'blink'</span><span class="p">);</span>
 
-<span class="kd">var</span> <span class="nx">overrides</span> <span class="o">=</span> <span class="nx">blink</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">overrides</span><span class="p">;</span>
+<span class="c1">// ReSharper disable once UnusedLocals</span>
+<span class="kd">function</span> <span class="nx">boxSizing</span><span class="p">(</span><span class="nx">value</span>: <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
 
-<span class="nx">overrides</span><span class="p">[</span><span class="s1">'box-sizing'</span><span class="p">]</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'./lib/extenders/boxSizing'</span><span class="p">);</span>
-<span class="c1">// Register more overrides here.</span>
+    <span class="kd">var</span> <span class="nx">override</span> <span class="o">=</span> <span class="o">&lt;</span><span class="nx">blink</span><span class="p">.</span><span class="nx">Override</span><span class="o">&gt;</span><span class="p">((</span><span class="nx">config</span>: <span class="kt">blink.Configuration</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">blink</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">extenders</span><span class="p">.</span><span class="nx">experimental</span><span class="p">(</span><span class="s1">'box-sizing'</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="p">{</span>
+            <span class="nx">official</span>: <span class="kt">true</span><span class="p">,</span>  <span class="c1">// Opera/IE 8+</span>
+              <span class="nx">webkit</span>: <span class="kt">true</span><span class="p">,</span>  <span class="c1">// Safari/Chrome, other WebKit</span>
+                 <span class="nx">moz</span>: <span class="kt">true</span>   <span class="c1">// Firefox, other Gecko</span>
+        <span class="p">})(</span><span class="nx">config</span><span class="p">);</span>
+    <span class="p">});</span>
+
+    <span class="nx">override</span><span class="p">.</span><span class="nx">args</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">;</span>
+    <span class="k">return</span> <span class="nx">override</span><span class="p">;</span>
+
+<span class="p">}</span>
+
+<span class="kr">export</span> <span class="o">=</span> <span class="nx">boxSizing</span><span class="p">;</span>
 </pre></div>
 
-<p><em>Note: override keys are not dasherized for you.</em></p>
+<p>This is all fine and good, but it doesn't say when certain browser versions began to support this property without vendor prefixes. To do so, lookup the <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/box-sizing#Browser_compatibility">box-sizing compatibility table on MDN</a> to locate the supported desktop and mobile versions. Here's how you implement them in the override:</p>
 
-<p>Now, every time someone declares <code>box-sizing: whatever</code> your override will be
-called with <code>whatever</code> as the first and only argument. The returned set of
-declarations will replace the original one.</p>
+<div class="highlight highlight-ts"><pre><span class="kr">import</span> <span class="nx">blink</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'blink'</span><span class="p">);</span>
+
+<span class="c1">// ReSharper disable once UnusedLocals</span>
+<span class="kd">function</span> <span class="nx">boxSizing</span><span class="p">(</span><span class="nx">value</span>: <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="kd">var</span> <span class="nx">override</span> <span class="o">=</span> <span class="o">&lt;</span><span class="nx">blink</span><span class="p">.</span><span class="nx">Override</span><span class="o">&gt;</span><span class="p">((</span><span class="nx">config</span>: <span class="kt">blink.Configuration</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">blink</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">extenders</span><span class="p">.</span><span class="nx">experimental</span><span class="p">(</span><span class="s1">'box-sizing'</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="p">{</span>
+            <span class="nx">official</span>: <span class="kt">true</span><span class="p">,</span>
+            <span class="nx">webkit</span><span class="o">:</span> <span class="o">!</span><span class="p">(</span>
+                <span class="nx">config</span><span class="p">.</span><span class="nx">chrome</span> <span class="o">&gt;=</span> <span class="mi">10</span> <span class="o">&amp;&amp;</span>
+                <span class="nx">config</span><span class="p">.</span><span class="nx">safari</span> <span class="o">&gt;=</span> <span class="mf">5.1</span> <span class="o">&amp;&amp;</span>
+                <span class="nx">config</span><span class="p">.</span><span class="nx">android</span> <span class="o">&gt;=</span> <span class="mi">4</span>
+            <span class="p">),</span>
+            <span class="nx">moz</span><span class="o">:</span> <span class="o">!</span><span class="p">(</span>
+                <span class="nx">config</span><span class="p">.</span><span class="nx">firefox</span> <span class="o">&gt;=</span> <span class="mi">29</span> <span class="o">&amp;&amp;</span>
+                <span class="nx">config</span><span class="p">.</span><span class="nx">firefoxMobile</span> <span class="o">&gt;=</span> <span class="mi">29</span>
+            <span class="p">)</span>
+        <span class="p">})(</span><span class="nx">config</span><span class="p">);</span>
+    <span class="p">});</span>
+
+    <span class="nx">override</span><span class="p">.</span><span class="nx">args</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">;</span>
+    <span class="k">return</span> <span class="nx">override</span><span class="p">;</span>
+
+<span class="p">}</span>
+
+<span class="kr">export</span> <span class="o">=</span> <span class="nx">boxSizing</span><span class="p">;</span>
+</pre></div>
+
+<p>Overrides are registered on the configuration object. If you wish to extend the configuration, you can do so by providing <a href="#plugins">a plugin module</a>.</p>
+
+<p><em>Note: override names are dasherized for you (e.g., boxSizing overrides the <code>box-sizing</code> property).</em></p>
 
 <h3>
 <a name="responders" class="anchor" href="#responders"><span class="octicon octicon-link"></span></a>Responders</h3>
 
-<p>Responders currently only support
-<a href="https://github.com/blinkjs/blink/blob/master/lib/MediaAtRule.ts">MediaAtRules</a>,
-which allow you to create responsive websites. Here's an example of a basic
-responder:</p>
+<p>Responders currently only support <a href="https://github.com/blinkjs/blink/blob/master/lib/MediaAtRule.ts">MediaAtRules</a>, which allow you to create responsive websites. Here's an example of a basic responder:</p>
 
 <div class="highlight highlight-ts"><pre><span class="c1">///&lt;reference path="./node_modules/blink/blink.d.ts"/&gt;</span>
 <span class="kr">import</span> <span class="nx">blink</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'blink'</span><span class="p">);</span>
@@ -407,29 +517,39 @@ responder:</p>
 <span class="p">}</span>
 </pre></div>
 
-<p><a href="http://thesassway.com/intermediate/responsive-web-design-in-sass-using-media-queries-in-sass-32">Unlike Sass</a>,
-at the time of this writing, blink supports extenders inside of media queries.
-Blink also merges similar media queries for you. So feel free to go to town with
-some complicated responders!</p>
+<p><a href="http://thesassway.com/intermediate/responsive-web-design-in-sass-using-media-queries-in-sass-32">Unlike Sass</a>, at the time of this writing, blink supports extenders inside of media queries. Blink also merges similar media queries for you. So feel free to go crazy with some complicated responders!</p>
+
+<h3>
+<a name="plugins" class="anchor" href="#plugins"><span class="octicon octicon-link"></span></a>Plugins</h3>
+
+<p>Plugins can be defined in the configuration like so:</p>
+
+<div class="highlight highlight-json"><pre><span class="p">{</span>
+  <span class="nt">"plugins"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"yourname.overrides"</span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>If you were to publish an npm package under the name <code>yourname.overrides</code> and if you wanted to override the boxSizing override that blink already provides, you could do it like so:</p>
+
+<div class="highlight highlight-ts"><pre><span class="kd">function</span> <span class="nx">plugin() {</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">overrides</span><span class="p">.</span><span class="nx">boxSizing</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'./overrides/boxSizing'</span><span class="p">);</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>Now, every time someone declares <code>box-sizing: whatever</code> your override will be called with <code>whatever</code> as the first and only argument. The returned set of declarations will replace the original one. In this case, however, <code>box-sizing</code> does nothing with arguments.</p>
 
 <h3>
 <a name="node-api" class="anchor" href="#node-api"><span class="octicon octicon-link"></span></a>Node API</h3>
 
-<p>With all the new build tools and taks runners springing up, blink was built with
-that in mind, that various tools would need access to the compiled results without
-writing any files to the disk.</p>
+<p>With all the new build tools and taks runners springing up, blink was built with that in mind, that various tools would need access to the compiled results without writing any files to the disk.</p>
 
 <h3>
 <a name="typescript-source" class="anchor" href="#typescript-source"><span class="octicon octicon-link"></span></a>TypeScript Source</h3>
 
-<p>Since blink source code is written in <a href="http://www.typescriptlang.org/">TypeScript</a>, you don't need to constantly
-look-up documentation to gain insight as to how you can use the blink API.
-Unfortunately, although there is <a href="http://www.typescriptlang.org/">TypeScript</a> support for <a href="http://msopentech.com/blog/2012/10/01/sublime-text-vi-emacs-typescript-enabled/">other editors</a>, you
-won't get the powerful feature of Intellisense unless you are using
-<a href="http://www.visualstudio.com/">Visual Studio</a>.</p>
+<p>Since blink source code is written in <a href="http://www.typescriptlang.org/">TypeScript</a>, you don't need to constantly look-up documentation to gain insight as to how you can use the blink API. Unfortunately, although there is <a href="http://www.typescriptlang.org/">TypeScript</a> support for <a href="http://msopentech.com/blog/2012/10/01/sublime-text-vi-emacs-typescript-enabled/">other editors</a>, you won't get the powerful feature of Intellisense unless you are using <a href="http://www.visualstudio.com/">Visual Studio</a>.</p>
 
-<p>BTW, you can write your blink files in <a href="http://www.typescriptlang.org/">TypeScript</a> or JavaScript. It really
-doesn't matter as long as it ends up in JavaScript.</p>
+<p>BTW, you can write your blink files in <a href="http://www.typescriptlang.org/">TypeScript</a> or JavaScript. It really doesn't matter as long as it ends up in JavaScript.</p>
 
 <h2>
 <a name="getting-started" class="anchor" href="#getting-started"><span class="octicon octicon-link"></span></a>Getting Started</h2>
@@ -437,8 +557,7 @@ doesn't matter as long as it ends up in JavaScript.</p>
 <h3>
 <a name="cli-usage" class="anchor" href="#cli-usage"><span class="octicon octicon-link"></span></a>CLI Usage</h3>
 
-<div class="highlight highlight-bash"><pre><span class="nv">$ </span>npm install -g blink
-</pre></div>
+<p>See <a href="https://github.com/blinkjs/blink-cli">blink-cli</a></p>
 
 <h3>
 <a name="library-usage" class="anchor" href="#library-usage"><span class="octicon octicon-link"></span></a>Library Usage</h3>
@@ -450,32 +569,12 @@ doesn't matter as long as it ends up in JavaScript.</p>
 <span class="kr">import</span> <span class="nx">blink</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'blink'</span><span class="p">);</span>
 </pre></div>
 
-<p>Refer to the <a href="https://github.com/blinkjs/blink/blob/master/blink.d.ts">blink module</a>
-for a list of available public methods. Of particular interest are the compile
-methods:</p>
+<p>Refer to the <a href="https://github.com/blinkjs/blink/blob/master/blink.d.ts">blink TypeScript definition</a> for a list of available public methods.</p>
 
-<ul>
-<li>compile(<a href="https://github.com/blinkjs/blink/blob/master/lib/interfaces/IConfigurationOptions.ts">options</a>, sources, callback)
-
-<ul>
-<li>sources can be any of string, <a href="https://github.com/blinkjs/blink/blob/master/lib/interfaces/IFile.ts">file</a> array, <a href="http://nodejs.org/api/stream.html#stream_class_stream_readable">stream</a> or <a href="https://github.com/blinkjs/blink/blob/master/lib/Rule.ts">Rule</a>.</li>
-</ul>
-</li>
-<li>compileStream(<a href="https://github.com/blinkjs/blink/blob/master/lib/interfaces/IConfigurationOptions.ts">options</a>, <a href="http://nodejs.org/api/stream.html#stream_class_stream_readable">stream</a>, callback)</li>
-<li>compileContents(<a href="https://github.com/blinkjs/blink/blob/master/lib/interfaces/IConfigurationOptions.ts">options</a>, <a href="https://github.com/blinkjs/blink/blob/master/lib/interfaces/IFile.ts">file</a>, callback)</li>
-</ul><p>All callbacks have the following function signature:</p>
-
-<ul>
-<li>callback(<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error">err</a>, <a href="https://github.com/blinkjs/blink/blob/master/lib/interfaces/IConfigurationOptions.ts">config</a>, <a href="https://github.com/blinkjs/blink/blob/master/lib/interfaces/IFile.ts">file</a>)</li>
-</ul><h3>
+<h3>
 <a name="spriting" class="anchor" href="#spriting"><span class="octicon octicon-link"></span></a>Spriting</h3>
 
-<p>As blink is built on Node.js, any spriting tools available for Node.js can be
-implemented quite easily. Some of these tools, like <a href="https://github.com/Ensighten/spritesmith">Spritesmith</a> allow you to
-not only generate sprites, but to compute off the dimensions of the source images
-that build the sprites. This makes your CSS highly maintainable. For example, when
-design gives you replacement images all you should have to do is drop them in the
-sprites folder without changing a single line of your blink source.</p>
+<p>As blink is built on Node.js, any spriting tools available for Node.js can be implemented quite easily. Some of these tools, like <a href="https://github.com/Ensighten/spritesmith">Spritesmith</a> allow you to not only generate sprites, but compute off the dimensions of the source images that build the sprites. This makes your CSS highly maintainable. For example, when Design gives you replacement images all you should have to do is drop them in the sprites folder without changing a single line of your blink source.</p>
 
 <h2>
 <a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
