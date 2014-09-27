@@ -3,6 +3,14 @@ language: node_js
 node_js:
   - "0.10"
 
+env:
+  global:
+    - secure: "LMoLtfcB4gw++cvr55xdzPm6ie+YQACUMGzcASRu80uJ+fk9OsqUhG529X1SaP9asr4OZYeEJv0gnmAiu4VJFha80yMwdddASCYVA4TyrwHCK3YcrFoFEIe09xZlkvlYHXb/celtarBacIiDnLWezoGgshggYM3quTlGLnrx5kI="
+
+after_success:
+  - "npm install -g codeclimate-test-reporter"
+  - "codeclimate < ./coverage/lcov.info"
+
 notifications:
   email:
     on_success: change
