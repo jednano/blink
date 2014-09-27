@@ -3,6 +3,19 @@ language: node_js
 node_js:
   - "0.10"
 
+env:
+  global:
+    secure: "bG53Xy/Abzl2eiWxtCfv9zwcFlUXfQA3hjsxQmUltzbvd5wSCsrlqrMuoD52It2eTn47kBVaZzh35MNQD6eTSwdUYmBjX2t3titai9YqIbMhx8BtBFnkqy8QVx9XTOZZ84FwiIq/TaJqsriXF4PgwkrGSd/hhKyLdKfqEqRbTeA=""
+
+addons:
+  code_climate:
+    repo_token:
+      secure: "AGMIeMRp1Qwz4ce7mzynE+VLK3j3bG8octvko4JRoaxVNSkVZwedbByOQibbTIK0/3erg5LhTYnEtqhUPWOwqZg1qdsMjqrcyFIGHuswcCc0Fzcr6+7ISATyJR3QMIgGdQMTv+4NHYGzkONvwEdWt17MmHMdwhLH3NP8s9vsajc="
+
+after_success:
+  - "npm install -g codeclimate-test-reporter"
+  - "codeclimate < ./coverage/lcov.info"
+
 notifications:
   email:
     on_success: change
