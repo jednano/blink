@@ -2,8 +2,6 @@ var gulp = require('gulp');
 var istanbul = require('gulp-istanbul');
 var mocha = require('gulp-mocha');
 
-var gutil = require('gulp-util');
-
 function test() {
 	return gulp.src('js/lib/**/*.js')
 		.pipe(istanbul())

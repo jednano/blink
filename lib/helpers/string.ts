@@ -8,7 +8,7 @@ var STRING_DECAMELIZE = /([a-z\d])([A-Z])/g;
 
 export function repeat(s: string, n: number) {
 	return new Array(n + 1).join(s);
-};
+}
 
 /**
 	Returns the LowerCamelCase form of a string.
@@ -28,11 +28,11 @@ export function dasherize(s: string) {
 	var cache = STRING_DASHERIZE_CACHE;
 	var hit = cache.hasOwnProperty(s);
 
-	if (hit) {
-		return cache[s];
+	if (!hit) {
+		cache[s] = decamelize(s).replace(STRING_DASHERIZE, '-');
 	}
 
-	return cache[s] = decamelize(s).replace(STRING_DASHERIZE, '-');
+	return cache[s];
 }
 
 /**
