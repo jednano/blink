@@ -9,7 +9,6 @@ function repeat(s, n) {
     return new Array(n + 1).join(s);
 }
 exports.repeat = repeat;
-;
 
 /**
 Returns the LowerCamelCase form of a string.
@@ -30,11 +29,11 @@ function dasherize(s) {
     var cache = STRING_DASHERIZE_CACHE;
     var hit = cache.hasOwnProperty(s);
 
-    if (hit) {
-        return cache[s];
+    if (!hit) {
+        cache[s] = exports.decamelize(s).replace(STRING_DASHERIZE, '-');
     }
 
-    return cache[s] = exports.decamelize(s).replace(STRING_DASHERIZE, '-');
+    return cache[s];
 }
 exports.dasherize = dasherize;
 
