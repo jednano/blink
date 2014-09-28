@@ -1,4 +1,5 @@
-﻿import a = require('../helpers/array');
+﻿/* jshint evil: true */
+import a = require('../helpers/array');
 import blink = require('./blink');
 import Configuration = require('./Configuration');
 import ExtenderRegistry = require('../ExtenderRegistry');
