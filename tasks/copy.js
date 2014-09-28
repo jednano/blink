@@ -1,4 +1,4 @@
-﻿var gulp = require('gulp');
+var gulp = require('gulp');
 
 function copy() {
 	gulp.task('copy', ['clean'], function() {

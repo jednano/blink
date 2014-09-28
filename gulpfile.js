@@ -8,7 +8,8 @@ gulp.task('default', ['watch']);
           gulp.task('clean', require('./tasks/clean'));
           gulp.task('copy', require('./tasks/copy'));
 
-gulp.task('dist', ['browserify']);
+gulp.task('dist', ['browserify', 'stripboms']);
   gulp.task('browserify', ['build'], require('./tasks/browserify'));
+  gulp.task('stripboms', require('./tasks/stripboms'));
 
 gulp.task('d.ts', require('./tasks/d.ts'));

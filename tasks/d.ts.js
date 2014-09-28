@@ -1,4 +1,4 @@
-﻿var gulp = require('gulp');
+var gulp = require('gulp');
 var tsc = require('gulp-tsc');
 
 function dts() {
