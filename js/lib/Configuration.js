@@ -38,14 +38,17 @@ var Configuration = (function (_super) {
         }
         var result = this;
         (options.plugins || []).forEach(function (pluginPath) {
-            try  {
-                var plugin = require(pluginPath);
-            } catch (err) {
-                throw new Error('Invalid plugin. Path not found: ' + pluginPath);
-            }
-            result = plugin(this);
+            result = this.tryLoadingPlugin(pluginPath)(this);
         }.bind(this));
         return result;
+    };
+
+    Configuration.prototype.tryLoadingPlugin = function (pluginPath) {
+        try  {
+            return require(pluginPath);
+        } catch (err) {
+            throw new Error('Invalid plugin. Path not found: ' + pluginPath);
+        }
     };
 
     Configuration.prototype.registerFunctions = function (configProperty, folder) {
@@ -68,11 +71,10 @@ var Configuration = (function (_super) {
         }
         var contents = stripBom(fs.readFileSync(filename)).toString();
         try  {
-            var config = JSON.parse(contents);
+            return JSON.parse(contents);
         } catch (e) {
             throw new Error('Invalid JSON format: ' + filename);
         }
-        return config;
     };
 
     Object.defineProperty(Configuration.prototype, "newline", {
