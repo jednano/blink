@@ -40,14 +40,17 @@ class Configuration
 		}
 		var result = this;
 		(options.plugins || []).forEach(function(pluginPath) {
-			try {
-				var plugin = require(pluginPath);
-			} catch (err) {
-				throw new Error('Invalid plugin. Path not found: ' + pluginPath);
-			}
-			result = plugin(this);
+			result = this.tryLoadingPlugin(pluginPath)(this);
 		}.bind(this));
 		return result;
+	}
+
+	private tryLoadingPlugin(pluginPath): Function {
+		try {
+			return require(pluginPath);
+		} catch (err) {
+			throw new Error('Invalid plugin. Path not found: ' + pluginPath);
+		}
 	}
 
 	public registerFunctions(configProperty: string, folder: string) {
@@ -70,11 +73,10 @@ class Configuration
 		}
 		var contents = stripBom(fs.readFileSync(filename)).toString();
 		try {
-			var config = JSON.parse(contents);
+			return JSON.parse(contents);
 		} catch (e) {
 			throw new Error('Invalid JSON format: ' + filename);
 		}
-		return config;
 	}
 
 	public get newline() {

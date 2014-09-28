@@ -10,7 +10,7 @@ function border(options?: {
 
 	options = options || {};
 
-	var extender = <Extender>((config: Configuration) => {
+	var extender = <Extender>(() => {
 		var decs = [];
 		return decs;
 	});
