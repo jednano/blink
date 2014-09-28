@@ -14,7 +14,7 @@ describe('Configuration', () => {
 	});
 
 	it.skip('loads plugins', () => {
-
+		// TODO: write specs
 	});
 
 	describe('newline setting', () => {

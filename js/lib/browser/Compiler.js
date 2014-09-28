@@ -1,4 +1,5 @@
 /* jshint evil: true */
+/* tslint:disable:no-eval */
 var a = require('../helpers/array');
 
 var Configuration = require('./Configuration');

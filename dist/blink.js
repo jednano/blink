@@ -601,6 +601,7 @@ module.exports = Rule;
 
 },{"./Formatter":6,"./helpers/string":19,"node.extend":30}],10:[function(require,module,exports){
 /* jshint evil: true */
+/* tslint:disable:no-eval */
 var a = require('../helpers/array');
 
 var Configuration = require('./Configuration');

@@ -1,4 +1,5 @@
 ﻿/* jshint evil: true */
+/* tslint:disable:no-eval */
 import a = require('../helpers/array');
 import blink = require('./blink');
 import Configuration = require('./Configuration');
