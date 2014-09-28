@@ -1,3 +1,4 @@
+/* jshint evil: true */
 var a = require('../helpers/array');
 
 var Configuration = require('./Configuration');
