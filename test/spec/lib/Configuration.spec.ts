@@ -9,12 +9,37 @@ import Configuration = require('../../../lib/Configuration');
 describe('Configuration', () => {
 
 	var config: Configuration;
-	before(() => {
+	beforeEach(() => {
 		config = new Configuration();
 	});
 
-	it.skip('loads plugins', () => {
-		// TODO: write specs
+	it('loads plugins', () => {
+		config.loadPlugins({
+			plugins: ['../../test/fixtures/myplugin']
+		});
+		var result = <any>config;
+		expect(result.myplugin).to.exist.and.to.deep.equal({
+			foo: 'baz',
+			bar: 'qux',
+			fooCaps: 'BAZ',
+			barCaps: 'QUX'
+		});
+	});
+
+	it('supports overriding plugin settings', () => {
+		config.loadPlugins({
+			myplugin: {
+				bar: 'quux'
+			},
+			plugins: ['../../test/fixtures/myplugin']
+		});
+		var result = <any>config;
+		expect(result.myplugin).to.exist.and.to.deep.equal({
+			foo: 'baz',
+			bar: 'quux',
+			fooCaps: 'BAZ',
+			barCaps: 'QUUX'
+		});
 	});
 
 	describe('newline setting', () => {

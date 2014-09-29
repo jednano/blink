@@ -27,20 +27,16 @@ class Configuration
 	constructor(options?: ConfigurationOptions) {
 		super(options);
 		this.set(require('../../defaults.json'));
-		var extended = this.loadPlugins(options);
-		var clonedOptions = extend({}, options || {});
-		delete clonedOptions.plugins;
-		extended.set(clonedOptions);
-		return <Configuration>extended;
+		this.loadPlugins(options);
 	}
 
 	public loadPlugins(options?: ConfigurationOptions) {
 		if (!options) {
 			return this;
 		}
-		var result = this;
+		var result = extend(true, this, options);
 		(options.plugins || []).forEach(function(pluginPath) {
-			result = this.tryLoadingPlugin(pluginPath)(this);
+			extend(true, result, this.tryLoadingPlugin(pluginPath)(result));
 		}.bind(this));
 		return result;
 	}
