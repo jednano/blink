@@ -10,7 +10,7 @@ declare module "blink" {
 	}
 	class ConfigurationForBrowser implements ConfigurationOptions {
 		constructor(options?: ConfigurationOptions);
-		public loadPlugins(options?: ConfigurationOptions): Configuration;
+		public loadPlugins(options?: ConfigurationOptions): any;
 		public clone(): Configuration;
 		public set(options: ConfigurationOptions): Configuration;
 		public raw: ConfigurationOptions;

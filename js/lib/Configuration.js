@@ -26,19 +26,15 @@ var Configuration = (function (_super) {
     function Configuration(options) {
         _super.call(this, options);
         this.set(require('../../defaults.json'));
-        var extended = this.loadPlugins(options);
-        var clonedOptions = extend({}, options || {});
-        delete clonedOptions.plugins;
-        extended.set(clonedOptions);
-        return extended;
+        this.loadPlugins(options);
     }
     Configuration.prototype.loadPlugins = function (options) {
         if (!options) {
             return this;
         }
-        var result = this;
+        var result = extend(true, this, options);
         (options.plugins || []).forEach(function (pluginPath) {
-            result = this.tryLoadingPlugin(pluginPath)(this);
+            extend(true, result, this.tryLoadingPlugin(pluginPath)(result));
         }.bind(this));
         return result;
     };
