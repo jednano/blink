@@ -1,23 +1,23 @@
-﻿module.exports = function(options) {
+﻿module.exports = function(overrides) {
 
-	options = options || {};
-	options.myplugin = options.myplugin || {};
+	overrides = overrides || {};
+	overrides = overrides.myplugin = overrides.myplugin || {};
 
-	var settings = {
+	var myplugin = {
 
 		// Normal setting
 		foo: 'baz',
 
 		// Overridden setting
-		bar: options.myplugin.bar || 'qux'
+		bar: overrides.bar || 'qux'
 
 	};
 
 	// Modified setting
-	settings.fooCaps = settings.foo.toUpperCase();
-	settings.barCaps = settings.bar.toUpperCase();
+	myplugin.fooCaps = myplugin.foo.toUpperCase();
+	myplugin.barCaps = myplugin.bar.toUpperCase();
 
-	// Return your plugin settings with a namespace (e.g., myplugin)
-	return { myplugin: settings };
+	// Return your plugin myplugin with a namespace (e.g., myplugin)
+	return { myplugin: myplugin };
 
 };
