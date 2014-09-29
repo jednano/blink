@@ -1,6 +1,6 @@
 {
   "name": "blink",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "Blink converts Node.js modules into CSS and provides a CSS Authoring Framework, with BEM support.",
   "main": "./js/lib/blink.js",
   "scripts": {
