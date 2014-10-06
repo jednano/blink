@@ -264,6 +264,9 @@ var Formatter = (function () {
     function Formatter() {
     }
     Formatter.prototype.format = function (config, rules) {
+        if (typeof rules === 'undefined') {
+            throw new Error('No rules provided to the format method');
+        }
         this.config = config;
         return this.formatRules(rules, 0);
     };
@@ -277,13 +280,21 @@ var Formatter = (function () {
 
     Formatter.prototype.formatRule = function (rule, level) {
         var config = this.config;
-        var selectors = rule[0].join(',' + config.oneSpace);
+        var selectors = this.joinSelectors(rule[0]);
         var body = this.formatBody(rule[1], level + 1);
         var indent = s.repeat(config.oneIndent, level);
         var css = indent + selectors + config.oneSpace + '{' + config.newline;
         css += body;
         css += indent + '}' + config.newline;
         return css;
+    };
+
+    Formatter.prototype.joinSelectors = function (selectors) {
+        var joined = selectors.join(',' + this.config.oneSpace);
+        if (joined === '') {
+            throw new Error('Invalid rule selectors');
+        }
+        return joined;
     };
 
     Formatter.prototype.formatBody = function (body, level) {
@@ -294,7 +305,7 @@ var Formatter = (function () {
 
         var firstKey = firstPair[0];
         if (!firstKey) {
-            return '';
+            throw new Error('Invalid declaration property');
         }
 
         var firstVal = firstPair[1];
@@ -318,26 +329,16 @@ var Formatter = (function () {
             var val = dec[1];
             var css = indent;
             css += prop + ':' + _this.config.oneSpace;
-            css += _this.formatValue(val) + ';';
+            css += val + ';';
             return css;
         }).join(this.config.declarationSeparator) + this.config.newline;
-    };
-
-    Formatter.prototype.formatValue = function (value) {
-        if (typeof value === 'string') {
-            if (value === '') {
-                return '""';
-            }
-            return value;
-        }
-        return value.join(' ');
     };
     return Formatter;
 })();
 
 module.exports = Formatter;
 
-},{"./helpers/string":19}],7:[function(require,module,exports){
+},{"./helpers/string":18}],7:[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -511,9 +512,6 @@ var Rule = (function () {
         var result = [];
         includes.forEach(function (fn) {
             var decs = fn(_this.config);
-            if (typeof decs === 'function') {
-                decs = decs(_this.config);
-            }
             if (!decs.length) {
                 return;
             }
@@ -576,18 +574,19 @@ var Rule = (function () {
 
     Rule.prototype.compilePrimitive = function (value) {
         switch (typeof value) {
-            case 'string':
-                if (value.indexOf(' ') > -1) {
-                    var quote = this.config.quote;
-                    return quote + value.replace(new RegExp(quote, 'g'), '\\' + quote) + quote;
-                }
-                return value;
             case 'number':
                 return value ? value + 'px' : value;
             case 'function':
                 return this.compilePrimitive(value(this.config));
             default:
-                throw new Error('Unexpected type: ' + typeof value);
+                if (value === '') {
+                    return s.repeat(this.config.quote, 2);
+                }
+                if (value.indexOf(' ') > -1) {
+                    var quote = this.config.quote;
+                    return quote + value.replace(new RegExp(quote, 'g'), '\\' + quote) + quote;
+                }
+                return value;
         }
     };
 
@@ -599,7 +598,7 @@ var Rule = (function () {
 
 module.exports = Rule;
 
-},{"./Formatter":6,"./helpers/string":19,"node.extend":31}],10:[function(require,module,exports){
+},{"./Formatter":6,"./helpers/string":18,"node.extend":30}],10:[function(require,module,exports){
 /* jshint evil: true */
 /* tslint:disable:no-eval */
 var a = require('../helpers/array');
@@ -763,7 +762,7 @@ var Compiler = (function () {
 
 module.exports = Compiler;
 
-},{"../ExtenderRegistry":5,"../Formatter":6,"../Rule":9,"../helpers/array":18,"../helpers/string":19,"./Configuration":11}],11:[function(require,module,exports){
+},{"../ExtenderRegistry":5,"../Formatter":6,"../Rule":9,"../helpers/array":17,"../helpers/string":18,"./Configuration":11}],11:[function(require,module,exports){
 var extend = require('node.extend');
 
 var _extenders = require('../extenders/all');
@@ -812,6 +811,9 @@ var Configuration = (function () {
     };
 
     Object.defineProperty(Configuration.prototype, "config", {
+        /**
+        * The location of the config file
+        */
         get: function () {
             return this.raw.config;
         },
@@ -1149,7 +1151,7 @@ var Configuration = (function () {
         },
         set: function (value) {
             if (typeof value !== 'number') {
-                throw new Error('Invalid IE Phone version. Expected number.');
+                throw new Error('Invalid IE Mobile version. Expected number.');
             }
             this.raw.ieMobile = value;
         },
@@ -1268,15 +1270,13 @@ var Configuration = (function () {
 
 module.exports = Configuration;
 
-},{"../../defaults.browser.json":2,"../extenders/all":12,"../helpers/string":19,"../overrides/all":20,"node.extend":31}],12:[function(require,module,exports){
-var background = require('./background');
+},{"../../defaults.browser.json":2,"../extenders/all":12,"../helpers/string":18,"../overrides/all":19,"node.extend":30}],12:[function(require,module,exports){
 var experimental = require('./experimental');
 var font = require('./font');
 var inlineBlock = require('./inlineBlock');
 
 // ReSharper disable once UnusedLocals
 var extenders = {
-    background: background,
     experimental: experimental,
     font: font,
     inlineBlock: inlineBlock
@@ -1284,34 +1284,7 @@ var extenders = {
 
 module.exports = extenders;
 
-},{"./background":13,"./experimental":14,"./font":15,"./inlineBlock":16}],13:[function(require,module,exports){
-// ReSharper disable once UnusedLocals
-function background(options) {
-    options = options || {};
-
-    var extender = (function () {
-        var values = [];
-
-        ['color', 'image', 'repeat', 'attachment', 'position'].forEach(function (prop) {
-            if (options.hasOwnProperty(prop)) {
-                values.push(options[prop]);
-            }
-        });
-
-        if (values.length) {
-            return [['background', values]];
-        }
-
-        return [];
-    });
-
-    extender.args = arguments;
-    return extender;
-}
-
-module.exports = background;
-
-},{}],14:[function(require,module,exports){
+},{"./experimental":13,"./font":14,"./inlineBlock":15}],13:[function(require,module,exports){
 // ReSharper disable once UnusedLocals
 function experimental(property, value, options) {
     options = options || {};
@@ -1335,7 +1308,7 @@ function experimental(property, value, options) {
 
 module.exports = experimental;
 
-},{}],15:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 // ReSharper disable once UnusedLocals
 function font(options) {
     options = options || {};
@@ -1377,7 +1350,7 @@ function font(options) {
 
 module.exports = font;
 
-},{}],16:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 // ReSharper disable once UnusedLocals
 function inlineBlock(options) {
     options = options || {};
@@ -1410,7 +1383,7 @@ function inlineBlock(options) {
 
 module.exports = inlineBlock;
 
-},{}],17:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 // ReSharper disable once UnusedLocals
 function noop() {
     var extender = (function () {
@@ -1422,7 +1395,7 @@ function noop() {
 
 module.exports = noop;
 
-},{}],18:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 function flatten(arr) {
     var flat = [];
     arr.forEach(function (item) {
@@ -1436,7 +1409,7 @@ function flatten(arr) {
 }
 exports.flatten = flatten;
 
-},{}],19:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 // ReSharper disable InconsistentNaming
 var STRING_CAMELIZE = (/(\-|_|\.|\s)+(.)?/g);
 var STRING_DASHERIZE = /[ _]/g;
@@ -1484,7 +1457,7 @@ function decamelize(s) {
 }
 exports.decamelize = decamelize;
 
-},{}],20:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 var appearance = require('./appearance');
 var background = require('./background');
 var box = require('./box');
@@ -1512,7 +1485,7 @@ var overrides = {
 
 module.exports = overrides;
 
-},{"./appearance":21,"./background":22,"./box":23,"./boxSizing":24,"./clearfix":25,"./display":26,"./font":27,"./opacity":28,"./text":29,"./textSizeAdjust":30}],21:[function(require,module,exports){
+},{"./appearance":20,"./background":21,"./box":22,"./boxSizing":23,"./clearfix":24,"./display":25,"./font":26,"./opacity":27,"./text":28,"./textSizeAdjust":29}],20:[function(require,module,exports){
 var experimental = require('../extenders/experimental');
 
 function appearance(value) {
@@ -1529,13 +1502,25 @@ function appearance(value) {
 
 module.exports = appearance;
 
-},{"../extenders/experimental":14}],22:[function(require,module,exports){
-var _background = require('../extenders/background');
-
+},{"../extenders/experimental":13}],21:[function(require,module,exports){
 // ReSharper disable once UnusedLocals
-function background(value) {
+function background(options) {
+    options = options || {};
+
     var override = (function () {
-        return _background(value)();
+        var values = [];
+
+        ['color', 'image', 'repeat', 'attachment', 'position'].forEach(function (prop) {
+            if (options.hasOwnProperty(prop)) {
+                values.push(options[prop]);
+            }
+        });
+
+        if (values.length) {
+            return [['background', values]];
+        }
+
+        return [];
     });
 
     override.args = arguments;
@@ -1544,7 +1529,7 @@ function background(value) {
 
 module.exports = background;
 
-},{"../extenders/background":13}],23:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 var boxSizing = require('./boxSizing');
 
 // ReSharper disable once UnusedLocals
@@ -1563,7 +1548,7 @@ function box(value) {
 
 module.exports = box;
 
-},{"./boxSizing":24}],24:[function(require,module,exports){
+},{"./boxSizing":23}],23:[function(require,module,exports){
 var experimental = require('../extenders/experimental');
 
 // ReSharper disable once UnusedLocals
@@ -1582,8 +1567,10 @@ function boxSizing(value) {
 
 module.exports = boxSizing;
 
-},{"../extenders/experimental":14}],25:[function(require,module,exports){
+},{"../extenders/experimental":13}],24:[function(require,module,exports){
 var noop = require('../extenders/noop');
+
+var s = require('../helpers/string');
 
 // ReSharper disable once UnusedLocals
 function clearfix(value) {
@@ -1591,9 +1578,9 @@ function clearfix(value) {
         return noop();
     }
 
-    var override = (function () {
+    var override = (function (config) {
         return [
-            ['content', ''],
+            ['content', s.repeat(config.quote, 2)],
             ['display', 'table'],
             ['clear', 'both']
         ];
@@ -1607,7 +1594,7 @@ function clearfix(value) {
 
 module.exports = clearfix;
 
-},{"../extenders/noop":17}],26:[function(require,module,exports){
+},{"../extenders/noop":16,"../helpers/string":18}],25:[function(require,module,exports){
 var inlineBlock = require('../extenders/inlineBlock');
 
 // ReSharper disable once UnusedLocals
@@ -1627,7 +1614,7 @@ function display(value) {
 
 module.exports = display;
 
-},{"../extenders/inlineBlock":16}],27:[function(require,module,exports){
+},{"../extenders/inlineBlock":15}],26:[function(require,module,exports){
 var _font = require('../extenders/font');
 
 // ReSharper disable once UnusedLocals
@@ -1645,7 +1632,7 @@ function font(value) {
 
 module.exports = font;
 
-},{"../extenders/font":15}],28:[function(require,module,exports){
+},{"../extenders/font":14}],27:[function(require,module,exports){
 var experimental = require('../extenders/experimental');
 
 
@@ -1688,7 +1675,7 @@ function opacity(value) {
 
 module.exports = opacity;
 
-},{"../extenders/experimental":14}],29:[function(require,module,exports){
+},{"../extenders/experimental":13}],28:[function(require,module,exports){
 var textSizeAdjust = require('./textSizeAdjust');
 
 // ReSharper disable once UnusedLocals
@@ -1710,7 +1697,7 @@ function text(value) {
 
 module.exports = text;
 
-},{"./textSizeAdjust":30}],30:[function(require,module,exports){
+},{"./textSizeAdjust":29}],29:[function(require,module,exports){
 var experimental = require('../extenders/experimental');
 
 // ReSharper disable once UnusedLocals
@@ -1729,11 +1716,11 @@ function textSizeAdjust(value) {
 
 module.exports = textSizeAdjust;
 
-},{"../extenders/experimental":14}],31:[function(require,module,exports){
+},{"../extenders/experimental":13}],30:[function(require,module,exports){
 module.exports = require('./lib/extend');
 
 
-},{"./lib/extend":32}],32:[function(require,module,exports){
+},{"./lib/extend":31}],31:[function(require,module,exports){
 /*!
  * node.extend
  * Copyright 2011, John Resig
@@ -1817,7 +1804,7 @@ extend.version = '1.0.8';
 module.exports = extend;
 
 
-},{"is":33}],33:[function(require,module,exports){
+},{"is":32}],32:[function(require,module,exports){
 
 /**!
  * is

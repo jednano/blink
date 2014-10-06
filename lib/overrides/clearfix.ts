@@ -1,6 +1,8 @@
-﻿import Extender = require('../interfaces/Extender');
+﻿import Configuration = require('../Configuration');
+import Extender = require('../interfaces/Extender');
 import noop = require('../extenders/noop');
 import Override = require('../interfaces/Override');
+import s = require('../helpers/string');
 
 // ReSharper disable once UnusedLocals
 function clearfix(value: boolean) {
@@ -9,8 +11,8 @@ function clearfix(value: boolean) {
 		return noop();
 	}
 
-	var override = <Override>(() => [
-		['content', ''],
+	var override = <Override>((config: Configuration) => [
+		['content', s.repeat(config.quote, 2)],
 		['display', 'table'],
 		['clear', 'both']
 	]);

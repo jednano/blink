@@ -111,9 +111,6 @@ var Rule = (function () {
         var result = [];
         includes.forEach(function (fn) {
             var decs = fn(_this.config);
-            if (typeof decs === 'function') {
-                decs = decs(_this.config);
-            }
             if (!decs.length) {
                 return;
             }
@@ -176,18 +173,19 @@ var Rule = (function () {
 
     Rule.prototype.compilePrimitive = function (value) {
         switch (typeof value) {
-            case 'string':
-                if (value.indexOf(' ') > -1) {
-                    var quote = this.config.quote;
-                    return quote + value.replace(new RegExp(quote, 'g'), '\\' + quote) + quote;
-                }
-                return value;
             case 'number':
                 return value ? value + 'px' : value;
             case 'function':
                 return this.compilePrimitive(value(this.config));
             default:
-                throw new Error('Unexpected type: ' + typeof value);
+                if (value === '') {
+                    return s.repeat(this.config.quote, 2);
+                }
+                if (value.indexOf(' ') > -1) {
+                    var quote = this.config.quote;
+                    return quote + value.replace(new RegExp(quote, 'g'), '\\' + quote) + quote;
+                }
+                return value;
         }
     };
 

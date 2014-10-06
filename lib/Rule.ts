@@ -103,9 +103,6 @@ class Rule {
 		var result = [];
 		includes.forEach(fn => {
 			var decs = fn(this.config);
-			if (typeof decs === 'function') {
-				decs = decs(this.config);
-			}
 			if (!decs.length) {
 				return;
 			}
@@ -166,18 +163,19 @@ class Rule {
 
 	private compilePrimitive(value: any) {
 		switch (typeof value) {
-			case 'string':
-				if (value.indexOf(' ') > -1) {
-					var quote = this.config.quote;
-					return quote + value.replace(new RegExp(quote, 'g'), '\\' + quote) + quote;
-				}
-				return value;
 			case 'number':
 				return value ? value + 'px' : value;
 			case 'function':
 				return this.compilePrimitive(value(this.config));
 			default:
-				throw new Error('Unexpected type: ' + typeof value);
+				if (value === '') {
+					return s.repeat(this.config.quote, 2);
+				}
+				if (value.indexOf(' ') > -1) {
+					var quote = this.config.quote;
+					return quote + value.replace(new RegExp(quote, 'g'), '\\' + quote) + quote;
+				}
+				return value;
 		}
 	}
 

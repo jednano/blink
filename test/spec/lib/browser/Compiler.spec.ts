@@ -23,6 +23,27 @@ describe('Compiler for browser', () => {
 		compiler = new blink.Compiler(config);
 	});
 
+	it('compiles a basic rule', (done) => {
+		var rule = new blink.Rule('foo', { bar: 'baz' });
+		compiler.compileRules([rule], (err, css) => {
+			expect(css).to.eq([
+				'foo {',
+				'  bar: baz;',
+				'}'
+			].join(newline) + newline);
+			done();
+		});
+	});
+
+	it('catches errors on compile', (done) => {
+		var rule = new blink.Rule('foo', { '': 'baz' });
+		compiler.compileRules([rule], err => {
+			expect(err).to.exist.and.to.have.property('message',
+				'Invalid declaration property');
+			done();
+		});
+	});
+
 	it('compiles extenders', () => {
 		var extender = <blink.Extender>(() => {
 			return [
@@ -275,6 +296,10 @@ describe('Compiler for browser', () => {
 					'}'
 				].join(newline) + newline);
 			});
+		});
+
+		it('resolves empty rules to an empty array', () => {
+			expect(compiler.resolveRules([])).to.deep.equal([]);
 		});
 
 	});

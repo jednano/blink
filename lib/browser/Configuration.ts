@@ -51,6 +51,9 @@ class Configuration implements ConfigurationOptions {
 		return JSON.stringify(this.raw);
 	}
 
+	/**
+	 * The location of the config file
+	 */
 	public get config() {
 		return this.raw.config;
 	}
@@ -301,7 +304,7 @@ class Configuration implements ConfigurationOptions {
 
 	set ieMobile(value: number) {
 		if (typeof value !== 'number') {
-			throw new Error('Invalid IE Phone version. Expected number.');
+			throw new Error('Invalid IE Mobile version. Expected number.');
 		}
 		this.raw.ieMobile = value;
 	}

@@ -6,6 +6,9 @@ class Formatter {
 	private config: Configuration;
 
 	format(config: Configuration, rules: any[][]) {
+		if (typeof rules === 'undefined') {
+			throw new Error('No rules provided to the format method');
+		}
 		this.config = config;
 		return this.formatRules(rules, 0);
 	}
@@ -18,13 +21,21 @@ class Formatter {
 
 	private formatRule(rule: any[][], level: number) {
 		var config = this.config;
-		var selectors = rule[0].join(',' + config.oneSpace);
+		var selectors = this.joinSelectors(rule[0]);
 		var body = this.formatBody(rule[1], level + 1);
 		var indent = s.repeat(config.oneIndent, level);
 		var css = indent + selectors + config.oneSpace + '{' + config.newline;
 		css += body;
 		css += indent + '}' + config.newline;
 		return css;
+	}
+
+	private joinSelectors(selectors: string[]) {
+		var joined = selectors.join(',' + this.config.oneSpace);
+		if (joined === '') {
+			throw new Error('Invalid rule selectors');
+		}
+		return joined;
 	}
 
 	private formatBody(body: any[][], level: number) {
@@ -36,7 +47,7 @@ class Formatter {
 
 		var firstKey = firstPair[0];
 		if (!firstKey) {
-			return '';
+			throw new Error('Invalid declaration property');
 		}
 
 		var firstVal = firstPair[1];
@@ -59,19 +70,9 @@ class Formatter {
 			var val = dec[1];
 			var css = indent;
 			css += prop + ':' + this.config.oneSpace;
-			css += this.formatValue(val) + ';';
+			css += val + ';';
 			return css;
 		}).join(this.config.declarationSeparator) + this.config.newline;
-	}
-
-	private formatValue(value: any) {
-		if (typeof value === 'string') {
-			if (value === '') {
-				return '""';
-			}
-			return value;
-		}
-		return (<string[]>value).join(' ');
 	}
 
 }

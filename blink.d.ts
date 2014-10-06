@@ -4,7 +4,6 @@ declare module "blink" {
 	function compile(options?: ConfigurationOptions): NodeJS.ReadWriteStream;
 	class Configuration extends ConfigurationForBrowser implements ConfigurationOptions {
 		constructor(options?: ConfigurationOptions);
-		public registerFunctions(configProperty: string, folder: string): any;
 		private loadConfig(filename);
 		public newline: string;
 	}
@@ -15,6 +14,9 @@ declare module "blink" {
 		public set(options: ConfigurationOptions): Configuration;
 		public raw: ConfigurationOptions;
 		public toString(): string;
+		/**
+		 * The location of the config file
+		 */
 		public config: string;
 		public quiet: boolean;
 		public trace: boolean;
@@ -47,6 +49,13 @@ declare module "blink" {
 		public oPrefix: boolean;
 		public extenders: Extenders;
 		public overrides: Overrides;
+	}
+	interface BackgroundOptions {
+		color?: string;
+		image?: string;
+		repeat?: string;
+		attachment?: string;
+		position?: any;
 	}
 	interface ConfigurationOptions {
 		/**
@@ -186,13 +195,11 @@ declare module "blink" {
 		public compile(): NodeJS.ReadWriteStream;
 		private renameExtToCss(file);
 		private compileBuffer(data, filepath, callback);
-		public compileModule(contents: Buffer): any;
 	}
 	class CompilerBrowser {
 		public config: Configuration;
 		constructor(config?: Configuration);
 		public compile(contents: string, callback: (err: Error, css?: string) => void): void;
-		public compileModule(contents: any): any;
 		public compileRules(rules: Rule[], callback: (err: Error, css?: string) => void): void;
 		public resolveRules(rules: Rule[]): any[];
 		private format(rules);

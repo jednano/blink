@@ -108,4 +108,42 @@ describe('Formatter', () => {
 		].join(newline) + newline);
 	});
 
+	it('formats to an empty string when rules to format are empty', () => {
+		var css = f.format(config, []);
+		expect(css).to.eq('');
+	});
+
+	it('throws an error when rules are undefined', () => {
+		var fn = () => {
+			f.format(config, void (0));
+		};
+		expect(fn).to.throw('No rules provided to the format method');
+	});
+
+	it('throws an error on invalid declaration properties', () => {
+		['', null, void (0)].forEach(property => {
+			var fn = () => {
+				f.format(config, [
+					[['foo'], [
+						[property, 'baz']
+					]]
+				]);
+			};
+			expect(fn).to.throw('Invalid declaration property');
+		});
+	});
+
+	it('throws an error on invalid rule selectors', () => {
+		['', null, void (0)].forEach(selector => {
+			var fn = () => {
+				f.format(config, [
+					[[selector], [
+						['bar', 'baz']
+					]]
+				]);
+			};
+			expect(fn).to.throw('Invalid rule selectors');
+		});
+	});
+
 });

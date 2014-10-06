@@ -1,44 +1,60 @@
 ﻿import blink = require('../../../../lib/blink');
 import sinonChai = require('../../../sinon-chai');
+import experimental = require('../../../../lib/extenders/experimental');
 
 var config = new blink.Configuration();
 var expect = sinonChai.expect;
-var experimental = blink.config.extenders.experimental;
 
 // ReSharper disable WrongExpressionStatement
 describe('experimental extender', () => {
 
-	it('generates vendor prefixes for webkit, khtml, moz, ms and o', () => {
-		var rule = new blink.Rule('foo', {
-			extend: [experimental('bar', 'baz', {
-				official: true,
-				  webkit: true,
-				   khtml: true,
-				     moz: true,
-				      ms: true,
-				       o: true
-			})]
-		});
+	before(() => {
 		config.khtmlPrefix = true;
-		var compiler = new blink.Compiler(config);
-		expect(compiler.resolveRules([rule])).to.deep.equal([
-			[['foo'], [
-				['-webkit-bar', 'baz'],
-				 ['-khtml-bar', 'baz'],
-				   ['-moz-bar', 'baz'],
-				    ['-ms-bar', 'baz'],
-				     ['-o-bar', 'baz'],
-				        ['bar', 'baz']
-			]]
+	});
+
+	it('generates no declarations when no options are provided', () => {
+		var result = experimental('foo', 'bar')(config);
+		expect(result).to.deep.equal([]);
+	});
+
+	it('generates all vendor prefixes when their options are set to true', () => {
+		var result = experimental('bar', 'baz', {
+			official: true,
+			  webkit: true,
+			   khtml: true,
+			     moz: true,
+			      ms: true,
+			       o: true
+		})(config);
+		expect(result).to.deep.equal([
+			['-webkit-bar', 'baz'],
+			 ['-khtml-bar', 'baz'],
+			   ['-moz-bar', 'baz'],
+			    ['-ms-bar', 'baz'],
+			     ['-o-bar', 'baz'],
+			        ['bar', 'baz']
 		]);
 	});
 
-	it('generates nothing when no options are provided', () => {
-		var rule = new blink.Rule('foo', {
-			extend: [experimental('foo', 'bar')]
+	it('removes all declarations when the configuration disables them', () => {
+		config.set({
+			webkitPrefix: false,
+			 khtmlPrefix: false,
+			   mozPrefix: false,
+			    msPrefix: false,
+			     oPrefix: false
 		});
-		var compiler = new blink.Compiler(config);
-		expect(compiler.resolveRules([rule])).to.deep.equal([]);
+		var result = experimental('bar', 'baz', {
+			official: true,
+			  webkit: true,
+			   khtml: true,
+			     moz: true,
+			      ms: true,
+			       o: true
+		})(config);
+		expect(result).to.deep.equal([
+			['bar', 'baz']
+		]);
 	});
 
 });

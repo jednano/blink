@@ -9,11 +9,8 @@ var extend = require('node.extend');
 var stripBom = require('strip-bom');
 var fs = require('fs');
 var os = require('os');
-var path = require('path');
 
 var ConfigurationForBrowser = require('./browser/Configuration');
-
-var s = require('./helpers/string');
 
 var newlines = {
     os: os.EOL,
@@ -45,20 +42,6 @@ var Configuration = (function (_super) {
         } catch (err) {
             throw new Error('Invalid plugin. Path not found: ' + pluginPath);
         }
-    };
-
-    Configuration.prototype.registerFunctions = function (configProperty, folder) {
-        var overrides = {};
-        fs.readdir(folder, function (err, files) {
-            if (err) {
-                throw err;
-            }
-            files.forEach(function (file) {
-                var property = s.dasherize(path.basename(file, '.js'));
-                overrides[property] = require(file);
-            });
-        });
-        return overrides;
     };
 
     Configuration.prototype.loadConfig = function (filename) {

@@ -75,14 +75,12 @@ var Compiler = (function (_super) {
     };
 
     Compiler.prototype.compileBuffer = function (data, filepath, callback) {
-        var rules = (filepath) ? mod._load(filepath) : this.compileModule(data);
-        _super.prototype.compileRules.call(this, a.flatten([rules]), callback);
-    };
-
-    Compiler.prototype.compileModule = function (contents) {
-        var m = new mod();
-        m._compile(contents);
-        return m.exports;
+        try  {
+            var rules = a.flatten([mod._load(filepath)]);
+            _super.prototype.compileRules.call(this, rules, callback);
+        } catch (err) {
+            callback(err);
+        }
     };
     return Compiler;
 })(CompilerForBrowser);

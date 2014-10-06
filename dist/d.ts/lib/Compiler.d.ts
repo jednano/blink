@@ -6,6 +6,5 @@ declare class Compiler extends CompilerForBrowser {
     public compile(): NodeJS.ReadWriteStream;
     private renameExtToCss(file);
     private compileBuffer(data, filepath, callback);
-    public compileModule(contents: Buffer): any;
 }
 export = Compiler;

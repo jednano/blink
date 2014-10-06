@@ -2,6 +2,7 @@
 import fs = require('fs');
 import path = require('path');
 var vfs = require('vinyl-fs');
+var through = require('through2');
 
 import blink = require('../../../lib/blink');
 import sinonChai = require('../../sinon-chai');
@@ -55,6 +56,21 @@ describe('Compiler', () => {
 			});
 	});
 
+	it('errors when file.contents is null', done => {
+		vfs.src('test/fixtures/foo.js')
+			.pipe(through.obj(function(file, enc, callback) {
+				file.contents = null;
+				this.push(file);
+				callback();
+			}))
+			.pipe(blink.compile())
+			.on('error', err => {
+				expect(err).to.exist.and.to.have.property('message',
+					'Unexpected file mode. Expected stream or buffer.');
+				done();
+			});
+	});
+
 	it('compiles master files (i.e., files that include other files)', done => {
 		vfs.src('test/fixtures/app.js')
 			.pipe(blink.compile())
@@ -62,6 +78,28 @@ describe('Compiler', () => {
 				var transpiled = readFile(file);
 				var expected = readExpected('app.css');
 				expect(transpiled).to.eq(expected);
+				done();
+			});
+	});
+
+	it('emits errors as plugin errors', done => {
+		vfs.src('test/fixtures/err1.js')
+			.pipe(blink.compile())
+			.on('error', err => {
+				expect(err).to.exist.and.to.have.property('message',
+					'Invalid declaration property');
+				expect(err.constructor.name).to.eq('PluginError');
+				done();
+			});
+	});
+
+	it('emits node module parsing errors as plugin errors', done => {
+		vfs.src('test/fixtures/err2.js')
+			.pipe(blink.compile())
+			.on('error', err => {
+				expect(err).to.exist.and.to.have.property('message',
+					'Unexpected token }');
+				expect(err.constructor.name).to.eq('PluginError');
 				done();
 			});
 	});

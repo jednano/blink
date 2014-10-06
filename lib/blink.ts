@@ -1,4 +1,5 @@
-﻿import _Block = require('./Block');
+﻿import _BackgroundOptions = require('./interfaces/css/BackgroundOptions');
+import _Block = require('./Block');
 import _BlockBody = require('./interfaces/BlockBody');
 import _Compiler = require('./Compiler');
 import _Configuration = require('./Configuration');
@@ -24,6 +25,7 @@ module Blink {
 	export class MediaAtRule   extends _MediaAtRule {}
 	export class Modifier      extends _Modifier {}
 
+	export interface BackgroundOptions    extends _BackgroundOptions {}
 	export interface ConfigurationOptions extends _ConfigurationOptions {}
 	export interface BlockBody            extends _BlockBody {}
 	export interface ElementBody          extends _ElementBody {}

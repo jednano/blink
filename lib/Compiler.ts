@@ -75,15 +75,13 @@ class Compiler extends CompilerForBrowser {
 	}
 
 	private compileBuffer(data: Buffer, filepath: string,
-		callback: (err: Error, css: string) => void) {
-		var rules = (filepath) ? mod._load(filepath) : this.compileModule(data);
-		super.compileRules(a.flatten([rules]), callback);
-	}
-
-	public compileModule(contents: Buffer) {
-		var m = new mod();
-		m._compile(contents);
-		return m.exports;
+		callback: (err: Error, css?: string) => void) {
+		try {
+			var rules = a.flatten([mod._load(filepath)]);
+			super.compileRules(rules, callback);
+		} catch (err) {
+			callback(err);
+		}
 	}
 
 }

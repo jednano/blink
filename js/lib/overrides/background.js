@@ -1,9 +1,21 @@
-var _background = require('../extenders/background');
-
 // ReSharper disable once UnusedLocals
-function background(value) {
+function background(options) {
+    options = options || {};
+
     var override = (function () {
-        return _background(value)();
+        var values = [];
+
+        ['color', 'image', 'repeat', 'attachment', 'position'].forEach(function (prop) {
+            if (options.hasOwnProperty(prop)) {
+                values.push(options[prop]);
+            }
+        });
+
+        if (values.length) {
+            return [['background', values]];
+        }
+
+        return [];
     });
 
     override.args = arguments;

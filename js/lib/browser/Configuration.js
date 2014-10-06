@@ -46,6 +46,9 @@ var Configuration = (function () {
     };
 
     Object.defineProperty(Configuration.prototype, "config", {
+        /**
+        * The location of the config file
+        */
         get: function () {
             return this.raw.config;
         },
@@ -383,7 +386,7 @@ var Configuration = (function () {
         },
         set: function (value) {
             if (typeof value !== 'number') {
-                throw new Error('Invalid IE Phone version. Expected number.');
+                throw new Error('Invalid IE Mobile version. Expected number.');
             }
             this.raw.ieMobile = value;
         },

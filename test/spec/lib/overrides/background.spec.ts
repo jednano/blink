@@ -1,27 +1,29 @@
 ﻿import sinonChai = require('../../../sinon-chai');
 import blink = require('../../../../lib/blink');
+import background = require('../../../../lib/overrides/background');
 
-var compiler = new blink.Compiler(blink.config);
 var expect = sinonChai.expect;
+var config = new blink.Configuration();
 
 // ReSharper disable WrongExpressionStatement
 describe('background override', () => {
 
 	it('inserts shorthand declaration for all background properties', () => {
-		var rule = new blink.Rule('foo', {
-			background: {
-				position: 'corge',
-				repeat: 'qux',
-				image: 'baz',
-				color: 'bar',
-				attachment: 'quux'
-			}
-		});
-		expect(compiler.resolveRules([rule])).to.deep.equal([
-			[['foo'], [
-				['background', 'bar baz qux quux corge']
-			]]
+		var result = background({
+			position: 'corge',
+			repeat: 'qux',
+			image: 'baz',
+			color: 'bar',
+			attachment: 'quux'
+		})(config);
+		expect(result).to.deep.equal([
+			['background', ['bar', 'baz', 'qux', 'quux', 'corge']]
 		]);
+	});
+
+	it('generates no declarations when no options are provided', () => {
+		var result = background({})(config);
+		expect(result).to.deep.equal([]);
 	});
 
 });

@@ -49,20 +49,6 @@ class Configuration
 		}
 	}
 
-	public registerFunctions(configProperty: string, folder: string) {
-		var overrides: any = {};
-		fs.readdir(folder, (err, files) => {
-			if (err) {
-				throw err;
-			}
-			files.forEach(file => {
-				var property = s.dasherize(path.basename(file, '.js'));
-				overrides[property] = require(file);
-			});
-		});
-		return overrides;
-	}
-
 	private loadConfig(filename: string) {
 		if (!fs.existsSync(filename)) {
 			throw new Error('Configuration file does not exist: ' + filename);

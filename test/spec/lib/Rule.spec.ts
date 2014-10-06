@@ -157,8 +157,32 @@ describe('Rule', () => {
 	it('resolves numbers with px as the default unit', () => {
 		var rule = new Rule('foo', { bar: 42 });
 		expect(rule.resolve(config)).to.deep.equal([
+			[
+				['foo'], [
+					['bar', '42px']
+				]
+			]
+		]);
+	});
+
+	it('joins an array of declaration values with spaces', () => {
+		var rule = new Rule('foo', {
+			bar: ['baz', 42, 'qux quux']
+		});
+		expect(rule.resolve(config)).to.deep.equal([
 			[['foo'], [
-				['bar', '42px']
+				['bar', 'baz 42px "qux quux"']
+			]]
+		]);
+	});
+
+	it('resolves empty string values as empty quotes', () => {
+		var rule = new Rule('foo', {
+			bar: ''
+		});
+		expect(rule.resolve(config)).to.deep.equal([
+			[['foo'], [
+				['bar', '""']
 			]]
 		]);
 	});
@@ -188,6 +212,15 @@ describe('Rule', () => {
 				['bar', 'baz']
 			]]
 		]);
+	});
+
+	it('compiles into CSS via the compile method', () => {
+		var rule = new Rule('foo', { bar: 'baz' });
+		expect(rule.compile(config)).to.eq([
+			'foo {',
+			config.oneIndent + 'bar: baz;',
+			'}'
+		].join(config.newline) + config.newline);
 	});
 
 });

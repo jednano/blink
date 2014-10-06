@@ -75,7 +75,7 @@ describe('overrides', () => {
 
 		it('generates clearfix declarations when value is true', () => {
 			expect(overrides.clearfix(true)(config)).to.deep.equal([
-				['content', ''],
+				['content', '""'],
 				['display', 'table'],
 				['clear', 'both']
 			]);
@@ -87,7 +87,7 @@ describe('overrides', () => {
 			});
 			expect(compiler.resolveRules([rule])).to.deep.equal([
 				[['foo:after'], [
-					['content', ''],
+					['content', '""'],
 					['display', 'table'],
 					['clear', 'both']
 				]]

@@ -7,6 +7,9 @@ declare class Configuration implements ConfigurationOptions {
     public set(options: ConfigurationOptions): Configuration;
     public raw: ConfigurationOptions;
     public toString(): string;
+    /**
+    * The location of the config file
+    */
     public config : string;
     public quiet : boolean;
     public trace : boolean;

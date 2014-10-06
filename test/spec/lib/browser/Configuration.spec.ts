@@ -39,6 +39,36 @@ describe('Configuration for browser', () => {
 		expect(config.raw.newline).to.eq('crlf');
 	});
 
+	it('JSON strigifies the raw settings when toString() is called', () => {
+		expect(config.toString()).to.eq(JSON.stringify(config.raw));
+	});
+
+	it('gets and sets the config property', () => {
+		config.config = 'foo.json';
+		expect(config.config).to.eq('foo.json');
+	});
+
+	it('gets and sets the quiet property', () => {
+		expect(config.quiet).to.be.false;
+		config.quiet = true;
+		expect(config.quiet).to.be.true;
+		config.quiet = false;
+	});
+
+	it('gets and sets the force property', () => {
+		expect(config.force).to.be.false;
+		config.force = true;
+		expect(config.force).to.be.true;
+		config.force = false;
+	});
+
+	it('gets and sets the boring property', () => {
+		expect(config.boring).to.be.false;
+		config.boring = true;
+		expect(config.boring).to.be.true;
+		config.boring = false;
+	});
+
 	it('supports only nested, expanded, compact and compressed styles', () => {
 		['nested', 'expanded', 'compact', 'compressed'].forEach(style => {
 			config.style = style;
@@ -174,6 +204,29 @@ describe('Configuration for browser', () => {
 
 	});
 
+	describe('rule separator', () => {
+
+		it('returns a newline when style is compact', () => {
+			config.style = 'compact';
+			expect(config.ruleSeparator).to.eq('\n');
+		});
+
+		it('returns an empty string when style is compressed', () => {
+			config.style = 'compressed';
+			expect(config.ruleSeparator).to.eq('');
+		});
+
+		it('returns config.newline in all other cases', () => {
+			config.newline = 'lf';
+			config.oneIndent = '2s';
+			['nested', 'expanded'].forEach(style => {
+				config.style = style;
+				expect(config.declarationSeparator).to.eq('\n');
+			});
+		});
+
+	});
+
 	it('requires a "%s" inside block, element and modifier settings', () => {
 		['block', 'element', 'modifier'].forEach(setting => {
 			config[setting] = 'foo%sbar';
@@ -185,15 +238,26 @@ describe('Configuration for browser', () => {
 		});
 	});
 
-	it('requires a number for Chrome, Firefox, IE and Opera settings', () => {
-		['Chrome', 'Firefox', 'IE', 'Opera'].forEach(setting => {
-			var key = setting.toLowerCase();
+	it('requires a number browser version settings', () => {
+		var settings = {
+			chrome: 'Chrome',
+			firefox: 'Firefox',
+			ie: 'IE',
+			opera: 'Opera',
+			safari: 'Safari',
+			android: 'Android',
+			firefoxMobile: 'Firefox Mobile',
+			ieMobile: 'IE Mobile',
+			operaMobile: 'Opera Mobile',
+			safariMobile: 'Safari Mobile'
+		};
+		Object.keys(settings).forEach(key => {
 			config[key] = 42;
 			expect(config[key]).to.eq(42);
 			var fn = () => {
 				config[key] = 'foo';
 			};
-			expect(fn).to.throw('Invalid ' + setting + ' version. Expected number.');
+			expect(fn).to.throw('Invalid ' + settings[key] + ' version. Expected number.');
 		});
 	});
 

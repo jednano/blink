@@ -1,3 +1,4 @@
 import Override = require('../interfaces/Override');
-declare function background(value: any): Override;
+import BackgroundOptions = require('../interfaces/css/BackgroundOptions');
+declare function background(options?: BackgroundOptions): Override;
 export = background;
