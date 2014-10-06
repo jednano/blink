@@ -34,6 +34,12 @@ declare module "blink" {
 		public firefox: number;
 		public ie: number;
 		public opera: number;
+		public safari: number;
+		public android: number;
+		public firefoxMobile: number;
+		public ieMobile: number;
+		public operaMobile: number;
+		public safariMobile: number;
 		public webkitPrefix: boolean;
 		public khtmlPrefix: boolean;
 		public mozPrefix: boolean;
@@ -100,7 +106,7 @@ declare module "blink" {
 		*/
 		chrome?: number;
 		/**
-		* Minimum Firefox version supported: 0 (default)
+		* Minimum Firefox (Gecko) version supported: 0 (default)
 		*/
 		firefox?: number;
 		/**
@@ -111,6 +117,30 @@ declare module "blink" {
 		* Minimum Opera version supported: 0 (default)
 		*/
 		opera?: number;
+		/**
+		* Minimum Safari version supported: 0 (default)
+		*/
+		safari?: number;
+		/**
+		* Minimum Android version supported: 0 (default)
+		*/
+		android?: number;
+		/**
+		* Minimum Firefox Mobile (Gecko) version supported: 0 (default)
+		*/
+		firefoxMobile?: number;
+		/**
+		* Minimum IE Phone version supported: 0 (default)
+		*/
+		ieMobile?: number;
+		/**
+		* Minimum Opera Mobile version supported: 0 (default)
+		*/
+		operaMobile?: number;
+		/**
+		* Minimum Safari Mobile version supported: 0 (default)
+		*/
+		safariMobile?: number;
 		/**
 		* Enable experimental -webkit- prefix: true (default)
 		*/
@@ -134,17 +164,21 @@ declare module "blink" {
 	}
 	interface Extenders {
 		background: any;
-		clearfix: any;
 		experimental: any;
 		font: any;
 		inlineBlock: any;
 	}
 	interface Overrides {
+		appearance: any;
 		background: any;
+		box: any;
 		boxSizing: any;
 		clearfix: any;
 		display: any;
 		font: any;
+		opacity: any;
+		text: any;
+		textSizeAdjust: any;
 	}
 	class Compiler extends CompilerBrowser {
 		public config: Configuration;

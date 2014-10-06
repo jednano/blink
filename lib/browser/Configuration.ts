@@ -295,15 +295,15 @@ class Configuration implements ConfigurationOptions {
 		this.raw.firefoxMobile = value;
 	}
 
-	get iePhone() {
-		return this.raw.iePhone;
+	get ieMobile() {
+		return this.raw.ieMobile;
 	}
 
-	set iePhone(value: number) {
+	set ieMobile(value: number) {
 		if (typeof value !== 'number') {
 			throw new Error('Invalid IE Phone version. Expected number.');
 		}
-		this.raw.iePhone = value;
+		this.raw.ieMobile = value;
 	}
 
 	get operaMobile() {

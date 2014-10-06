@@ -6,6 +6,7 @@ import boxSizing = require('./boxSizing');
 import clearfix = require('./clearfix');
 import display = require('./display');
 import font = require('./font');
+import opacity = require('./opacity');
 import text = require('./text');
 import textSizeAdjust = require('./textSizeAdjust');
 
@@ -19,6 +20,7 @@ var overrides: Overrides = {
 	clearfix: clearfix,
 	display: display,
 	font: font,
+	opacity: opacity,
 	text: text,
 	textSizeAdjust: textSizeAdjust
 };

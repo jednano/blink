@@ -6,6 +6,7 @@ interface Overrides {
     clearfix: any;
     display: any;
     font: any;
+    opacity: any;
     text: any;
     textSizeAdjust: any;
 }

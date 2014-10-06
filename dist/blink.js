@@ -111,7 +111,7 @@ module.exports={
 
   "android": 0,
   "firefoxMobile": 0,
-  "iePhone": 0,
+  "ieMobile": 0,
   "operaMobile": 0,
   "safariMobile": 0,
 
@@ -599,7 +599,7 @@ var Rule = (function () {
 
 module.exports = Rule;
 
-},{"./Formatter":6,"./helpers/string":19,"node.extend":30}],10:[function(require,module,exports){
+},{"./Formatter":6,"./helpers/string":19,"node.extend":31}],10:[function(require,module,exports){
 /* jshint evil: true */
 /* tslint:disable:no-eval */
 var a = require('../helpers/array');
@@ -1143,15 +1143,15 @@ var Configuration = (function () {
     });
 
 
-    Object.defineProperty(Configuration.prototype, "iePhone", {
+    Object.defineProperty(Configuration.prototype, "ieMobile", {
         get: function () {
-            return this.raw.iePhone;
+            return this.raw.ieMobile;
         },
         set: function (value) {
             if (typeof value !== 'number') {
                 throw new Error('Invalid IE Phone version. Expected number.');
             }
-            this.raw.iePhone = value;
+            this.raw.ieMobile = value;
         },
         enumerable: true,
         configurable: true
@@ -1268,7 +1268,7 @@ var Configuration = (function () {
 
 module.exports = Configuration;
 
-},{"../../defaults.browser.json":2,"../extenders/all":12,"../helpers/string":19,"../overrides/all":20,"node.extend":30}],12:[function(require,module,exports){
+},{"../../defaults.browser.json":2,"../extenders/all":12,"../helpers/string":19,"../overrides/all":20,"node.extend":31}],12:[function(require,module,exports){
 var background = require('./background');
 var experimental = require('./experimental');
 var font = require('./font');
@@ -1492,6 +1492,7 @@ var boxSizing = require('./boxSizing');
 var clearfix = require('./clearfix');
 var display = require('./display');
 var font = require('./font');
+var opacity = require('./opacity');
 var text = require('./text');
 var textSizeAdjust = require('./textSizeAdjust');
 
@@ -1504,13 +1505,14 @@ var overrides = {
     clearfix: clearfix,
     display: display,
     font: font,
+    opacity: opacity,
     text: text,
     textSizeAdjust: textSizeAdjust
 };
 
 module.exports = overrides;
 
-},{"./appearance":21,"./background":22,"./box":23,"./boxSizing":24,"./clearfix":25,"./display":26,"./font":27,"./text":28,"./textSizeAdjust":29}],21:[function(require,module,exports){
+},{"./appearance":21,"./background":22,"./box":23,"./boxSizing":24,"./clearfix":25,"./display":26,"./font":27,"./opacity":28,"./text":29,"./textSizeAdjust":30}],21:[function(require,module,exports){
 var experimental = require('../extenders/experimental');
 
 function appearance(value) {
@@ -1644,6 +1646,49 @@ function font(value) {
 module.exports = font;
 
 },{"../extenders/font":15}],28:[function(require,module,exports){
+var experimental = require('../extenders/experimental');
+
+
+function opacity(value) {
+    var override = (function (config) {
+        var decs = [];
+
+        if (config.ie < 9 || config.ieMobile < 9) {
+            var alphaArgs = 'Opacity=' + Math.round(value * 100);
+            if (value === 1) {
+                alphaArgs = 'enabled=false';
+            }
+
+            // IE 8
+            [].push.apply(decs, experimental('filter', 'progid:DXImageTransform.' + 'Microsoft.Alpha(' + alphaArgs + ')', { ms: true })(config));
+
+            // IE 5-7
+            if (config.ie < 8 || config.ieMobile < 8) {
+                decs.push(['filter', 'alpha(' + alphaArgs.toLowerCase() + ')']);
+            }
+        }
+
+        [].push.apply(decs, experimental('opacity', value, {
+            khtml: config.safari < 1.2,
+            moz: config.firefox < 0.9,
+            official: true
+        })(config));
+
+        // Trigger "hasLayout" in IE 7 and lower
+        if (config.ie < 8 || config.ieMobile < 8) {
+            decs.push(['zoom', 1]);
+        }
+
+        return decs;
+    });
+
+    override.args = arguments;
+    return override;
+}
+
+module.exports = opacity;
+
+},{"../extenders/experimental":14}],29:[function(require,module,exports){
 var textSizeAdjust = require('./textSizeAdjust');
 
 // ReSharper disable once UnusedLocals
@@ -1665,7 +1710,7 @@ function text(value) {
 
 module.exports = text;
 
-},{"./textSizeAdjust":29}],29:[function(require,module,exports){
+},{"./textSizeAdjust":30}],30:[function(require,module,exports){
 var experimental = require('../extenders/experimental');
 
 // ReSharper disable once UnusedLocals
@@ -1684,11 +1729,11 @@ function textSizeAdjust(value) {
 
 module.exports = textSizeAdjust;
 
-},{"../extenders/experimental":14}],30:[function(require,module,exports){
+},{"../extenders/experimental":14}],31:[function(require,module,exports){
 module.exports = require('./lib/extend');
 
 
-},{"./lib/extend":31}],31:[function(require,module,exports){
+},{"./lib/extend":32}],32:[function(require,module,exports){
 /*!
  * node.extend
  * Copyright 2011, John Resig
@@ -1772,7 +1817,7 @@ extend.version = '1.0.8';
 module.exports = extend;
 
 
-},{"is":32}],32:[function(require,module,exports){
+},{"is":33}],33:[function(require,module,exports){
 
 /**!
  * is

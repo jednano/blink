@@ -29,7 +29,7 @@ declare class Configuration implements ConfigurationOptions {
     public safari : number;
     public android : number;
     public firefoxMobile : number;
-    public iePhone : number;
+    public ieMobile : number;
     public operaMobile : number;
     public safariMobile : number;
     public webkitPrefix : boolean;
