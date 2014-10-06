@@ -377,15 +377,15 @@ var Configuration = (function () {
     });
 
 
-    Object.defineProperty(Configuration.prototype, "iePhone", {
+    Object.defineProperty(Configuration.prototype, "ieMobile", {
         get: function () {
-            return this.raw.iePhone;
+            return this.raw.ieMobile;
         },
         set: function (value) {
             if (typeof value !== 'number') {
                 throw new Error('Invalid IE Phone version. Expected number.');
             }
-            this.raw.iePhone = value;
+            this.raw.ieMobile = value;
         },
         enumerable: true,
         configurable: true

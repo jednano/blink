@@ -82,7 +82,7 @@ interface ConfigurationOptions {
     /**
     * Minimum IE Phone version supported: 0 (default)
     */
-    iePhone?: number;
+    ieMobile?: number;
     /**
     * Minimum Opera Mobile version supported: 0 (default)
     */
