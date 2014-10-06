@@ -108,9 +108,16 @@ describe('Formatter', () => {
 		].join(newline) + newline);
 	});
 
-	it('formats to an empty string when rules to format are empty', () => {
+	it('formats to an empty string when there are no rules to format', () => {
 		var css = f.format(config, []);
-		expect(css).to.eq('');
+		expect(css).to.be.empty;
+	});
+
+	it('formats to an empty string when the rule body is empty', () => {
+		var css = f.format(config, [
+			[['foo'], []]
+		]);
+		expect(css).to.be.empty;
 	});
 
 	it('throws an error when rules are undefined', () => {

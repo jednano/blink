@@ -48,25 +48,13 @@ describe('Configuration for browser', () => {
 		expect(config.config).to.eq('foo.json');
 	});
 
-	it('gets and sets the quiet property', () => {
-		expect(config.quiet).to.be.false;
-		config.quiet = true;
-		expect(config.quiet).to.be.true;
-		config.quiet = false;
-	});
-
-	it('gets and sets the force property', () => {
-		expect(config.force).to.be.false;
-		config.force = true;
-		expect(config.force).to.be.true;
-		config.force = false;
-	});
-
-	it('gets and sets the boring property', () => {
-		expect(config.boring).to.be.false;
-		config.boring = true;
-		expect(config.boring).to.be.true;
-		config.boring = false;
+	['quiet', 'trace', 'force', 'boring'].forEach(prop => {
+		it('gets and sets the ' + prop + ' property', () => {
+			expect(config[prop]).to.be.false;
+			config[prop] = true;
+			expect(config[prop]).to.be.true;
+			config[prop] = false;
+		});
 	});
 
 	it('supports only nested, expanded, compact and compressed styles', () => {
@@ -217,11 +205,9 @@ describe('Configuration for browser', () => {
 		});
 
 		it('returns config.newline in all other cases', () => {
-			config.newline = 'lf';
-			config.oneIndent = '2s';
 			['nested', 'expanded'].forEach(style => {
 				config.style = style;
-				expect(config.declarationSeparator).to.eq('\n');
+				expect(config.ruleSeparator).to.eq('\n');
 			});
 		});
 
@@ -238,7 +224,7 @@ describe('Configuration for browser', () => {
 		});
 	});
 
-	it('requires a number browser version settings', () => {
+	it('requires numeric browser version settings', () => {
 		var settings = {
 			chrome: 'Chrome',
 			firefox: 'Firefox',
@@ -258,6 +244,14 @@ describe('Configuration for browser', () => {
 				config[key] = 'foo';
 			};
 			expect(fn).to.throw('Invalid ' + settings[key] + ' version. Expected number.');
+		});
+	});
+
+	it('gets and sets vendor prefixes', () => {
+		['webkit', 'khtml', 'moz', 'ms', 'o'].forEach(vendor => {
+			var key = vendor + 'Prefix';
+			config[key] = true;
+			expect(config[key]).to.be.true;
 		});
 	});
 

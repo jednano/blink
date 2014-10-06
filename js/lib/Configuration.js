@@ -7,7 +7,7 @@ var __extends = this.__extends || function (d, b) {
 ///<reference path="../bower_components/dt-node/node.d.ts"/>
 var extend = require('node.extend');
 var stripBom = require('strip-bom');
-var fs = require('fs');
+
 var os = require('os');
 
 var ConfigurationForBrowser = require('./browser/Configuration');
@@ -41,18 +41,6 @@ var Configuration = (function (_super) {
             return require(pluginPath);
         } catch (err) {
             throw new Error('Invalid plugin. Path not found: ' + pluginPath);
-        }
-    };
-
-    Configuration.prototype.loadConfig = function (filename) {
-        if (!fs.existsSync(filename)) {
-            throw new Error('Configuration file does not exist: ' + filename);
-        }
-        var contents = stripBom(fs.readFileSync(filename)).toString();
-        try  {
-            return JSON.parse(contents);
-        } catch (e) {
-            throw new Error('Invalid JSON format: ' + filename);
         }
     };
 

@@ -20,9 +20,12 @@ class Formatter {
 	}
 
 	private formatRule(rule: any[][], level: number) {
-		var config = this.config;
 		var selectors = this.joinSelectors(rule[0]);
 		var body = this.formatBody(rule[1], level + 1);
+		if (body === '') {
+			return '';
+		}
+		var config = this.config;
 		var indent = s.repeat(config.oneIndent, level);
 		var css = indent + selectors + config.oneSpace + '{' + config.newline;
 		css += body;

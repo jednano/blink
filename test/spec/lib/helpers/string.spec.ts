@@ -19,6 +19,7 @@ describe('string helper', () => {
 		expect(s.camelize('foo_bar_baz')).to.eq('fooBarBaz');
 		expect(s.camelize('foo-bar-baz')).to.eq('fooBarBaz');
 		expect(s.camelize('foo bar baz')).to.eq('fooBarBaz');
+		expect(s.camelize('FooBarBaz')).to.eq('fooBarBaz');
 	});
 
 	it('decamelizes strings', () => {

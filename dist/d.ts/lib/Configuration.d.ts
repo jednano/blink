@@ -4,7 +4,6 @@ declare class Configuration extends ConfigurationForBrowser implements Configura
     constructor(options?: ConfigurationOptions);
     public loadPlugins(options?: ConfigurationOptions): any;
     private tryLoadingPlugin(pluginPath);
-    private loadConfig(filename);
     public newline : string;
 }
 export = Configuration;

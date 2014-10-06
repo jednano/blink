@@ -49,18 +49,6 @@ class Configuration
 		}
 	}
 
-	private loadConfig(filename: string) {
-		if (!fs.existsSync(filename)) {
-			throw new Error('Configuration file does not exist: ' + filename);
-		}
-		var contents = stripBom(fs.readFileSync(filename)).toString();
-		try {
-			return JSON.parse(contents);
-		} catch (e) {
-			throw new Error('Invalid JSON format: ' + filename);
-		}
-	}
-
 	public get newline() {
 		switch (this.style) {
 			case 'compact':
