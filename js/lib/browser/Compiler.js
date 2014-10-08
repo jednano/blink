@@ -30,7 +30,7 @@ var Compiler = (function () {
     Compiler.prototype.compileRules = function (rules, callback) {
         try  {
             var resolved = this.resolveRules(rules);
-            var formatted = new Formatter().format(this.config, resolved);
+            var formatted = this.format(resolved);
             callback(null, formatted);
         } catch (err) {
             callback(err);

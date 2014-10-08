@@ -23,14 +23,36 @@ describe('Compiler for browser', () => {
 		compiler = new blink.Compiler(config);
 	});
 
+	it('compiles no rules into an empty string', (done) => {
+		compiler.compile([], (err, css) => {
+			expect(err).to.be.null;
+			expect(css).to.be.empty;
+			done();
+		});
+	});
+
 	it('compiles a basic rule', (done) => {
 		var rule = new blink.Rule('foo', { bar: 'baz' });
 		compiler.compileRules([rule], (err, css) => {
+			expect(err).to.be.null;
 			expect(css).to.eq([
 				'foo {',
 				'  bar: baz;',
 				'}'
 			].join(newline) + newline);
+			done();
+		});
+	});
+
+	it('compiles a basic rule in a string', (done) => {
+		var contents = 'exports = new Rule("foo", { bar: "baz" });';
+		compiler.compile(contents, (err, css) => {
+			expect(err).to.be.null;
+			expect(css).to.eq([
+				'foo {',
+				'  bar: baz;',
+				'}'
+			].join(config.newline) + config.newline);
 			done();
 		});
 	});
@@ -61,6 +83,7 @@ describe('Compiler for browser', () => {
 			})
 		];
 		compiler.compileRules(rules, (err, css) => {
+			expect(err).to.be.null;
 			expect(css).to.eq([
 				'.foo, .bar {',
 				'  baz: BAZ;',
@@ -83,6 +106,7 @@ describe('Compiler for browser', () => {
 			})
 		];
 		compiler.compileRules(rules, (err, css) => {
+			expect(err).to.be.null;
 			expect(css).to.eq([
 				'.foo, .baz {',
 				'  cap: QUUX;',
@@ -111,6 +135,7 @@ describe('Compiler for browser', () => {
 			})
 		];
 		compiler.compileRules(rules, (err, css) => {
+			expect(err).to.be.null;
 			expect(css).to.eq([
 				'.foo, .baz {',
 				'  cap: QUX;',
@@ -144,6 +169,7 @@ describe('Compiler for browser', () => {
 				]
 			});
 			compiler.compileRules([rule], (err, css) => {
+				expect(err).to.be.null;
 				expect(css).to.eq([
 					'.foo {',
 					'  bar: BAR;',
@@ -172,6 +198,7 @@ describe('Compiler for browser', () => {
 				]
 			});
 			compiler.compileRules([rule], (err, css) => {
+				expect(err).to.be.null;
 				expect(css).to.eq([
 					'.foo {',
 					'  bar: BAR;',
@@ -208,6 +235,7 @@ describe('Compiler for browser', () => {
 				})
 			];
 			compiler.compileRules(rules, (err, css) => {
+				expect(err).to.be.null;
 				expect(css).to.eq([
 					'@media baz {',
 					'  .foo, .bar {',
@@ -236,6 +264,7 @@ describe('Compiler for browser', () => {
 				})
 			];
 			compiler.compileRules(rules, (err, css) => {
+				expect(err).to.be.null;
 				expect(css).to.eq([
 					'@media baz {',
 					'  .foo {',
@@ -277,6 +306,7 @@ describe('Compiler for browser', () => {
 				})
 			];
 			compiler.compileRules(rules, (err, css) => {
+				expect(err).to.be.null;
 				expect(css).to.eq([
 					'@media baz {',
 					'  .foo {',
@@ -296,10 +326,6 @@ describe('Compiler for browser', () => {
 					'}'
 				].join(newline) + newline);
 			});
-		});
-
-		it('resolves empty rules to an empty array', () => {
-			expect(compiler.resolveRules([])).to.deep.equal([]);
 		});
 
 	});
