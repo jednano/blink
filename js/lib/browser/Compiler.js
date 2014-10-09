@@ -84,9 +84,6 @@ var Compiler = (function () {
 
     Compiler.prototype.registerExtenders = function (extenders, rules) {
         var _this = this;
-        if (!rules) {
-            return;
-        }
         rules.forEach(function (rule) {
             (rule.extenders || []).forEach(function (extender) {
                 if (!extender.hasOwnProperty('args')) {

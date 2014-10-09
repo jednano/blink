@@ -89,9 +89,6 @@ class Compiler {
 	}
 
 	private registerExtenders(extenders: ExtenderRegistry, rules: Rule[]) {
-		if (!rules) {
-			return;
-		}
 		rules.forEach(rule => {
 			(rule.extenders || []).forEach(extender => {
 				if (!extender.hasOwnProperty('args')) {

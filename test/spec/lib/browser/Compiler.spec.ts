@@ -24,7 +24,7 @@ describe('Compiler for browser', () => {
 	});
 
 	it('compiles no rules into an empty string', (done) => {
-		compiler.compile([], (err, css) => {
+		blink.compile([], (err, css) => {
 			expect(err).to.be.null;
 			expect(css).to.be.empty;
 			done();
@@ -44,9 +44,18 @@ describe('Compiler for browser', () => {
 		});
 	});
 
+	it('catches errors on compile', (done) => {
+		var rule = new blink.Rule('foo', { '': 'baz' });
+		compiler.compileRules([rule], err => {
+			expect(err).to.exist.and.to.have.property('message',
+				'Invalid declaration property');
+			done();
+		});
+	});
+
 	it('compiles a basic rule in a string', (done) => {
 		var contents = 'exports = new Rule("foo", { bar: "baz" });';
-		compiler.compile(contents, (err, css) => {
+		blink.compile(contents, (err, css) => {
 			expect(err).to.be.null;
 			expect(css).to.eq([
 				'foo {',
@@ -57,11 +66,10 @@ describe('Compiler for browser', () => {
 		});
 	});
 
-	it('catches errors on compile', (done) => {
-		var rule = new blink.Rule('foo', { '': 'baz' });
-		compiler.compileRules([rule], err => {
-			expect(err).to.exist.and.to.have.property('message',
-				'Invalid declaration property');
+	it('catches errors on string compilation', (done) => {
+		var contents = 'exports = }';
+		blink.compile(contents, (err) => {
+			expect(err).to.exist.and.to.have.property('message', 'Unexpected token }');
 			done();
 		});
 	});
