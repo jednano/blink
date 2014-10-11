@@ -1,6 +1,8 @@
 ﻿import os = require('os');
 
 import Configuration = require('../../../../lib/browser/Configuration');
+import extenders = require('../../../../lib/extenders/all');
+import overrides = require('../../../../lib/overrides/all');
 import sinonChai = require('../../../sinon-chai');
 
 var expect = sinonChai.expect;
@@ -250,6 +252,14 @@ describe('Configuration for browser', () => {
 			config[key] = true;
 			expect(config[key]).to.be.true;
 		});
+	});
+
+	it('gets all registered extenders', () => {
+		expect(config.extenders).to.deep.equal(extenders);
+	});
+
+	it('gets all registered overrides', () => {
+		expect(config.overrides).to.deep.equal(overrides);
 	});
 
 });

@@ -40,9 +40,10 @@ var Compiler = (function () {
     };
 
     Compiler.prototype.compileRules = function (rules, callback) {
+        var formatted;
         try  {
             var resolved = this.resolveRules(rules);
-            var formatted = this.format(resolved);
+            formatted = this.format(resolved);
         } catch (err) {
             callback(err);
             return;
@@ -99,9 +100,6 @@ var Compiler = (function () {
         var _this = this;
         rules.forEach(function (rule) {
             (rule.extenders || []).forEach(function (extender) {
-                if (!extender.hasOwnProperty('args')) {
-                    extender = extender();
-                }
                 extenders.add(extender, rule.selectors);
             });
             var overrides = _this.config.overrides;

@@ -50,9 +50,10 @@ class Compiler {
 	public compileRules(rules: Rule[],
 		callback: (err: Error, css?: string) => void) {
 
+		var formatted: string;
 		try {
 			var resolved = this.resolveRules(rules);
-			var formatted = this.format(resolved);
+			formatted = this.format(resolved);
 		} catch (err) {
 			callback(err);
 			return;
@@ -106,9 +107,6 @@ class Compiler {
 	private registerExtenders(extenders: ExtenderRegistry, rules: Rule[]) {
 		rules.forEach(rule => {
 			(rule.extenders || []).forEach(extender => {
-				if (!extender.hasOwnProperty('args')) {
-					extender = extender();
-				}
 				extenders.add(extender, rule.selectors);
 			});
 			var overrides = this.config.overrides;
