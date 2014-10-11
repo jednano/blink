@@ -17,7 +17,7 @@
     "css",
     "bem",
     "oocss",
-    "framework"
+    "gulpplugin"
   ],
   "license": "MIT",
   "ignore": [
