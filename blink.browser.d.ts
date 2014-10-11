@@ -1,14 +1,42 @@
 ﻿declare module "blink" {
-	var config: Configuration;
+	class Block {
+		public name: string;
+		public body: BlockBody;
+		public elements: Element[];
+		public modifiers: Modifier[];
+		constructor(name: string, body?: BlockBody);
+		public resolve(config: Configuration): any[];
+	}
+	class Compiler {
+		public config: Configuration;
+		constructor(config?: Configuration);
+		public compile(contents: string, callback: Callback): void;
+		public compile(rules: {}, callback: Callback): void;
+		public compile(rules: {}[], callback: Callback): void;
+		public compile(rule: Rule, callback: Callback): void;
+		public compile(rules: Rule[], callback: Callback): void;
+		public compile(block: Block, callback: Callback): void;
+		public compileRules(rules: Rule[], callback: (err: Error, css?: string) => void): void;
+		public resolveRules(rules: Rule[]): any[];
+		private format(rules);
+		private resolveExtenders(rules);
+		private registerExtenders(extenders, rules);
+		private resolveResponders(responders);
+		private registerResponders(registry, selectors, responders);
+		private resolveTree(tree);
+	}
+	interface Callback {
+		(err: Error, css?: string): void;
+	}
 	class Configuration implements ConfigurationOptions {
 		constructor(options?: ConfigurationOptions);
-		private loadPlugins(options?);
-		public registerFunctions(configProperty: string, folder: string): any;
 		public clone(): Configuration;
 		public set(options: ConfigurationOptions): Configuration;
-		private loadConfig(filename);
 		public raw: ConfigurationOptions;
 		public toString(): string;
+		/**
+		* The location of the config file
+		*/
 		public config: string;
 		public quiet: boolean;
 		public trace: boolean;
@@ -28,6 +56,12 @@
 		public firefox: number;
 		public ie: number;
 		public opera: number;
+		public safari: number;
+		public android: number;
+		public firefoxMobile: number;
+		public ieMobile: number;
+		public operaMobile: number;
+		public safariMobile: number;
 		public webkitPrefix: boolean;
 		public khtmlPrefix: boolean;
 		public mozPrefix: boolean;
@@ -35,6 +69,84 @@
 		public oPrefix: boolean;
 		public extenders: Extenders;
 		public overrides: Overrides;
+	}
+	interface Extenders {
+		experimental(property: string, value: any, options?: {
+			official?: boolean;
+			webkit?: boolean;
+			khtml?: boolean;
+			moz?: boolean;
+			ms?: boolean;
+			o?: boolean;
+		}): Extender;
+		inlineBlock(options?: {
+			verticalAlign?: string;
+		}): Extender;
+	}
+	interface Overrides {
+		appearance(value: string): Override;
+		background(options?: BackgroundOptions): Override;
+		box(value: any): Override;
+		boxSizing(value: string): Override;
+		clearfix(value: boolean): Extender;
+		display(value: string): Override;
+		opacity(value: number): Override;
+		opacity(value: string): Override;
+		text(value: any): Override;
+		textSizeAdjust(value: any): Override;
+	}
+	class Element {
+		public name: string;
+		public body: ElementBody;
+		public modifiers: Modifier[];
+		constructor(name: string, body?: ElementBody);
+		public resolve(base: string, config: Configuration): any[];
+	}
+	class MediaAtRule extends Rule {
+		public condition: string;
+		public body: RuleBody;
+		constructor(condition: string, body?: RuleBody);
+	}
+	class Modifier {
+		public name: string;
+		public body: ModifierBody;
+		public elements: Element[];
+		constructor(name: string, body?: ModifierBody);
+		public resolve(base: string, config: Configuration): any[];
+	}
+	class Rule {
+		public body: RuleBody;
+		private config;
+		private decs;
+		public extenders: any[];
+		public includes: Function[];
+		public responders: MediaAtRule[];
+		private _selectors;
+		public selectors: any;
+		constructor(selectors: any, body?: RuleBody);
+		private splitSelectors(selectors);
+		public resolve(config: Configuration): any[];
+		private joinSelectors(left, right);
+		public clone(): Rule;
+		private resolveIncludes();
+		private resolveBody(seed, key, body);
+		private combineKeys(k1, k2);
+		private isDeclarationValue(value);
+		private compileDeclarationValue(value);
+		private compileArray(arr);
+		private compilePrimitive(value);
+		public compile(config: Configuration): string;
+	}
+	interface BackgroundOptions {
+		color?: string;
+		image?: string;
+		repeat?: string;
+		attachment?: string;
+		position?: any;
+	}
+	interface BlockBody extends RuleBody {
+		elements?: Element[];
+		modifiers?: Modifier[];
 	}
 	interface ConfigurationOptions {
 		/**
@@ -74,7 +186,7 @@
 		*/
 		quote?: string;
 		/**
-		* Newline: lf (default) or crlf.
+		* Newline: os (default), lf, crlf.
 		*/
 		newline?: string;
 		/**
@@ -94,7 +206,7 @@
 		*/
 		chrome?: number;
 		/**
-		* Minimum Firefox version supported: 0 (default)
+		* Minimum Firefox (Gecko) version supported: 0 (default)
 		*/
 		firefox?: number;
 		/**
@@ -105,6 +217,30 @@
 		* Minimum Opera version supported: 0 (default)
 		*/
 		opera?: number;
+		/**
+		* Minimum Safari version supported: 0 (default)
+		*/
+		safari?: number;
+		/**
+		* Minimum Android version supported: 0 (default)
+		*/
+		android?: number;
+		/**
+		* Minimum Firefox Mobile (Gecko) version supported: 0 (default)
+		*/
+		firefoxMobile?: number;
+		/**
+		* Minimum IE Phone version supported: 0 (default)
+		*/
+		ieMobile?: number;
+		/**
+		* Minimum Opera Mobile version supported: 0 (default)
+		*/
+		operaMobile?: number;
+		/**
+		* Minimum Safari Mobile version supported: 0 (default)
+		*/
+		safariMobile?: number;
 		/**
 		* Enable experimental -webkit- prefix: true (default)
 		*/
@@ -126,110 +262,6 @@
 		*/
 		oPrefix?: boolean;
 	}
-	function compile(contents: string, callback: CompileCallback, options?: ConfigurationOptions): void;
-	function compile(rule: Rule, callback: CompileCallback, options?: ConfigurationOptions): void;
-	function compile(rules: Rule[], callback: CompileCallback, options?: ConfigurationOptions): void;
-	function compile(block: Block, callback: CompileCallback, options?: ConfigurationOptions): void;
-	function compile(blocks: Block[], callback: CompileCallback, options?: ConfigurationOptions): void;
-	interface CompileCallback {
-		(err: Error, css?: string): void;
-	}
-	interface Extenders {
-		background: any;
-		clearfix: any;
-		experimental: any;
-		font: any;
-		inlineBlock: any;
-	}
-	interface Overrides {
-		background: any;
-		boxSizing: any;
-		clearfix: any;
-		display: any;
-		font: any;
-	}
-	class Compiler {
-		public config: Configuration;
-		constructor(config?: Configuration);
-		public compile(contents: string, callback: CompileCallback): void;
-		public compile(rule: Rule, callback: CompileCallback): void;
-		public compile(rules: Rule[], callback: CompileCallback): void;
-		public compile(block: Block, callback: CompileCallback): void;
-		public compile(blocks: Block[], callback: CompileCallback): void;
-		public compileRules(rules: Rule[], callback: (err: Error, css?: string) => void): void;
-		public resolveRules(rules: Rule[]): any[];
-		private format(rules);
-		private resolveExtenders(rules);
-		private registerExtenders(extenders, rules);
-		private resolveResponders(responders);
-		private registerResponders(registry, selectors, responders);
-		private resolveTree(tree);
-	}
-	class Rule {
-		public body: RuleBody;
-		private config;
-		private decs;
-		public extenders: any[];
-		public includes: Function[];
-		public responders: MediaAtRule[];
-		private _selectors;
-		public selectors: any;
-		constructor(selectors: any, body?: RuleBody);
-		private splitSelectors(selectors);
-		public resolve(config: Configuration): any[];
-		private joinSelectors(left, right);
-		public clone(): Rule;
-		private resolveIncludes();
-		private resolveBody(seed, key, body);
-		private combineKeys(k1, k2);
-		private isDeclarationValue(value);
-		private compileDeclarationValue(value);
-		private compileArray(arr);
-		private compilePrimitive(value);
-		public compile(config: Configuration): string;
-	}
-	interface RuleBody extends HashTable<any> {
-		extend?: any[];
-		include?: Function[];
-		respond?: MediaAtRule[];
-	}
-	class MediaAtRule extends Rule {
-		public condition: string;
-		public body: RuleBody;
-		constructor(condition: string, body?: RuleBody);
-	}
-	interface HashTable<T> {
-		[key: string]: T;
-	}
-	class Block {
-		public name: string;
-		public body: BlockBody;
-		public elements: Element[];
-		public modifiers: Modifier[];
-		constructor(name: string, body?: BlockBody);
-		public resolve(config: Configuration): any[];
-	}
-	interface BlockBody extends RuleBody {
-		elements?: Element[];
-		modifiers?: Modifier[];
-	}
-	class Modifier {
-		public name: string;
-		public body: ModifierBody;
-		public elements: Element[];
-		constructor(name: string, body?: ModifierBody);
-		public resolve(base: string, config: Configuration): any[];
-	}
-	interface ModifierBody extends RuleBody {
-		elements?: Element[];
-	}
-	class Element {
-		public name: string;
-		public body: ElementBody;
-		public modifiers: Modifier[];
-		constructor(name: string, body?: ElementBody);
-		public resolve(base: string, config: Configuration): any[];
-	}
 	interface ElementBody extends RuleBody {
 		modifiers?: Modifier[];
 	}
@@ -238,6 +270,20 @@
 		selectors?: string[];
 		(config?: Configuration): any[][];
 	}
+	interface ModifierBody extends RuleBody {
+		elements?: Element[];
+	}
 	interface Override extends Extender {
 	}
+	interface RuleBody extends HashTable<any> {
+		extend?: any[];
+		include?: Function[];
+		respond?: MediaAtRule[];
+		background?: BackgroundOptions;
+		clearfix?: boolean;
+	}
+	interface HashTable<T> {
+		[key: string]: T;
+	}
+	var config: Configuration;
 }

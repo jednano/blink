@@ -26,6 +26,7 @@ Blink is just getting started, so stay tuned for any updates.
 
 ## Features
 
+- 100% code coverage
 - [Runs on Node](#runs-on-node)
 - [Gulp plugin](#gulp-plugin)
 - [Grunt plugin](https://github.com/blinkjs/grunt-blink)
