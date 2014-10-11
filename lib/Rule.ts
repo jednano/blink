@@ -136,7 +136,7 @@ class Rule {
 	}
 
 	private isDeclarationValue(value: any) {
-		if (value instanceof Array) {
+		if (Array.isArray(value)) {
 			return true;
 		}
 		switch (typeof value) {
@@ -149,7 +149,7 @@ class Rule {
 	}
 
 	private compileDeclarationValue(value: any) {
-		if (value instanceof Array) {
+		if (Array.isArray(value)) {
 			return this.compileArray(value);
 		}
 		return this.compilePrimitive(value);

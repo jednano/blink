@@ -145,7 +145,7 @@ var Rule = (function () {
     };
 
     Rule.prototype.isDeclarationValue = function (value) {
-        if (value instanceof Array) {
+        if (Array.isArray(value)) {
             return true;
         }
         switch (typeof value) {
@@ -158,7 +158,7 @@ var Rule = (function () {
     };
 
     Rule.prototype.compileDeclarationValue = function (value) {
-        if (value instanceof Array) {
+        if (Array.isArray(value)) {
             return this.compileArray(value);
         }
         return this.compilePrimitive(value);

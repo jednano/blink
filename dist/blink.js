@@ -550,7 +550,7 @@ var Rule = (function () {
     };
 
     Rule.prototype.isDeclarationValue = function (value) {
-        if (value instanceof Array) {
+        if (Array.isArray(value)) {
             return true;
         }
         switch (typeof value) {
@@ -563,7 +563,7 @@ var Rule = (function () {
     };
 
     Rule.prototype.compileDeclarationValue = function (value) {
-        if (value instanceof Array) {
+        if (Array.isArray(value)) {
             return this.compileArray(value);
         }
         return this.compilePrimitive(value);
@@ -761,9 +761,11 @@ var Compiler = (function () {
         });
         Object.keys(tree).forEach(function (key) {
             var value = tree[key];
-            if (value instanceof Array) {
+            if (Array.isArray(value)) {
                 result.push([[key], value]);
-            } else if (value) {
+                return;
+            }
+            if (value) {
                 result.push([[key], _this.resolveTree(value)]);
             }
         });

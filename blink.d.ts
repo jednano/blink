@@ -9,8 +9,8 @@ declare module "blink" {
 		public resolve(config: Configuration): any[];
 	}
 	class Compiler extends CompilerForBrowser {
-		public config: ConfigurationForBrowser;
-		constructor(config?: ConfigurationForBrowser);
+		public config: Configuration;
+		constructor(config?: Configuration);
 		public compile(): NodeJS.ReadWriteStream;
 		private renameExtToCss(file);
 		private compileBuffer(data, filepath, callback);

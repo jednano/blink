@@ -162,9 +162,11 @@ class Compiler {
 		});
 		Object.keys(tree).forEach(key => {
 			var value = tree[key];
-			if (value instanceof Array) {
+			if (Array.isArray(value)) {
 				result.push([[key], value]);
-			} else if (value) {
+				return;
+			}
+			if (value) {
 				result.push([[key], this.resolveTree(value)]);
 			}
 		});

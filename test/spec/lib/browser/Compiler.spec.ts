@@ -1,5 +1,5 @@
 ﻿import blink = require('../../../../lib/browser/blink');
-import Compiler = require('../../../../lib/Compiler');
+import Compiler = require('../../../../lib/browser/Compiler');
 import Configuration = require('../../../../lib/browser/Configuration');
 import Extender = require('../../../../lib/interfaces/Extender');
 import MediaAtRule = require('../../../../lib/MediaAtRule');
@@ -11,8 +11,8 @@ var expect = sinonChai.expect;
 // ReSharper disable WrongExpressionStatement
 describe('Compiler for browser', () => {
 
-	var config = new Configuration();
-	var compiler = new Compiler(config);
+	var compiler = new Compiler();
+	var config = compiler.config;
 	var newline = config.newline;
 
 	it('compiles no rules into an empty string', done => {

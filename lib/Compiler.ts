@@ -6,15 +6,15 @@ var through = require('through2');
 
 import CompilerForBrowser = require('./browser/Compiler');
 import Configuration = require('./Configuration');
-import ConfigurationForBrowser = require('./browser/Configuration');
 
 var PluginError = require('gulp-util').PluginError;
 var PLUGIN_NAME = 'blink';
 
 class Compiler extends CompilerForBrowser {
 
-	constructor(public config?: ConfigurationForBrowser) {
-		super(config || new Configuration());
+	constructor(public config?: Configuration) {
+		super(config);
+		this.config = config || new Configuration();
 	}
 
 	public compile(): NodeJS.ReadWriteStream {

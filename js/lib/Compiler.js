@@ -19,8 +19,9 @@ var PLUGIN_NAME = 'blink';
 var Compiler = (function (_super) {
     __extends(Compiler, _super);
     function Compiler(config) {
-        _super.call(this, config || new Configuration());
+        _super.call(this, config);
         this.config = config;
+        this.config = config || new Configuration();
     }
     Compiler.prototype.compile = function () {
         var compiler = this;

@@ -5,6 +5,8 @@ var vfs = require('vinyl-fs');
 var through = require('through2');
 
 import blink = require('../../../lib/blink');
+import Compiler = require('../../../lib/Compiler');
+import Configuration = require('../../../lib/Configuration');
 import sinonChai = require('../../sinon-chai');
 
 var expect = sinonChai.expect;
@@ -12,21 +14,9 @@ var expect = sinonChai.expect;
 // ReSharper disable WrongExpressionStatement
 describe('Compiler', () => {
 
-	function readFile(file: Vinyl.IFile) {
-		if (file.isStream()) {
-			return file.contents.read().toString();
-		}
-		if (file.isBuffer()) {
-			return file.contents.toString();
-		}
-		throw new Error('Expected stream or buffer');
-	}
-
-	function readExpected(filename) {
-		return fs.readFileSync(path.join('test', 'expected', filename), {
-			encoding: 'utf8'
-		});
-	}
+	it('provides a configuration if you don\'t provide one', () => {
+		expect(new Compiler().config).to.deep.equal(new Configuration());
+	});
 
 	it('compiles files in streaming mode', done => {
 		vfs.src('test/fixtures/foo.js', { buffer: false })
@@ -97,5 +87,21 @@ describe('Compiler', () => {
 				done();
 			});
 	});
+
+	function readFile(file: Vinyl.IFile) {
+		if (file.isStream()) {
+			return file.contents.read().toString();
+		}
+		if (file.isBuffer()) {
+			return file.contents.toString();
+		}
+		throw new Error('Expected stream or buffer');
+	}
+
+	function readExpected(filename) {
+		return fs.readFileSync(path.join('test', 'expected', filename), {
+			encoding: 'utf8'
+		});
+	}
 
 });

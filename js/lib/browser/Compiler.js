@@ -156,9 +156,11 @@ var Compiler = (function () {
         });
         Object.keys(tree).forEach(function (key) {
             var value = tree[key];
-            if (value instanceof Array) {
+            if (Array.isArray(value)) {
                 result.push([[key], value]);
-            } else if (value) {
+                return;
+            }
+            if (value) {
                 result.push([[key], _this.resolveTree(value)]);
             }
         });
