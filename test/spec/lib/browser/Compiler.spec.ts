@@ -1,38 +1,65 @@
 ﻿import blink = require('../../../../lib/browser/blink');
+import Compiler = require('../../../../lib/Compiler');
+import Configuration = require('../../../../lib/browser/Configuration');
+import Extender = require('../../../../lib/interfaces/Extender');
+import MediaAtRule = require('../../../../lib/MediaAtRule');
+import Rule = require('../../../../lib/Rule');
 import sinonChai = require('../../../sinon-chai');
 
-var config = blink.config;
 var expect = sinonChai.expect;
-var newline = config.newline;
-
-function cap(val: string) {
-	var fn = <blink.Extender>(() => {
-		return [
-			['cap', val.toUpperCase()]
-		];
-	});
-	fn.args = arguments;
-	return fn;
-};
 
 // ReSharper disable WrongExpressionStatement
 describe('Compiler for browser', () => {
 
-	var compiler: blink.Compiler;
-	beforeEach(() => {
-		compiler = new blink.Compiler(config);
-	});
+	var config = new Configuration();
+	var compiler = new Compiler(config);
+	var newline = config.newline;
 
-	it('compiles no rules into an empty string', (done) => {
-		blink.compile([], (err, css) => {
+	it('compiles no rules into an empty string', done => {
+		blink([], (err, css) => {
 			expect(err).to.be.null;
 			expect(css).to.be.empty;
 			done();
 		});
 	});
 
-	it('compiles a basic rule', (done) => {
-		var rule = new blink.Rule('foo', { bar: 'baz' });
+	it('compiles an object literal as a Rule', done => {
+		blink({ foo: { bar: 'baz' } }, (err, css) => {
+			expect(err).to.be.null;
+			expect(css).to.eq([
+				'foo {',
+				'  bar: baz;',
+				'}'
+			].join(newline) + newline);
+			done();
+		});
+	});
+
+	it('compiles multiple rules from an object literal', done => {
+		var rules = {
+			foo: {
+				bar: 'baz'
+			},
+			waldo: {
+				fred: 'thud'
+			}
+		};
+		blink(rules, (err, css) => {
+			expect(err).to.be.null;
+			expect(css).to.eq([
+				'foo {',
+				'  bar: baz;',
+				'}',
+				'waldo {',
+				'  fred: thud;',
+				'}'
+			].join(newline) + newline);
+			done();
+		});
+	});
+
+	it('compiles an instance of Rule', done => {
+		var rule = new Rule('foo', { bar: 'baz' });
 		compiler.compileRules([rule], (err, css) => {
 			expect(err).to.be.null;
 			expect(css).to.eq([
@@ -44,8 +71,8 @@ describe('Compiler for browser', () => {
 		});
 	});
 
-	it('catches errors on compile', (done) => {
-		var rule = new blink.Rule('foo', { '': 'baz' });
+	it('catches errors on compile', done => {
+		var rule = new Rule('foo', { '': 'baz' });
 		compiler.compileRules([rule], err => {
 			expect(err).to.exist.and.to.have.property('message',
 				'Invalid declaration property');
@@ -53,9 +80,9 @@ describe('Compiler for browser', () => {
 		});
 	});
 
-	it('compiles a basic rule in a string', (done) => {
+	it('compiles a basic rule in a string', done => {
 		var contents = 'exports = new Rule("foo", { bar: "baz" });';
-		blink.compile(contents, (err, css) => {
+		blink(contents, (err, css) => {
 			expect(err).to.be.null;
 			expect(css).to.eq([
 				'foo {',
@@ -66,16 +93,16 @@ describe('Compiler for browser', () => {
 		});
 	});
 
-	it('catches errors on string compilation', (done) => {
+	it('catches errors on string compilation', done => {
 		var contents = 'exports = }';
-		blink.compile(contents, (err) => {
+		blink(contents, (err) => {
 			expect(err).to.exist.and.to.have.property('message', 'Unexpected token }');
 			done();
 		});
 	});
 
 	it('compiles extenders', () => {
-		var extender = <blink.Extender>(() => {
+		var extender = <Extender>(() => {
 			return [
 				['baz', 'BAZ'],
 				['qux', 'QUX']
@@ -83,10 +110,10 @@ describe('Compiler for browser', () => {
 		});
 		extender.args = arguments;
 		var rules = [
-			new blink.Rule(['.foo'], {
+			new Rule(['.foo'], {
 				extend: [ extender ]
 			}),
-			new blink.Rule(['.bar'], {
+			new Rule(['.bar'], {
 				extend: [ extender ]
 			})
 		];
@@ -103,13 +130,13 @@ describe('Compiler for browser', () => {
 
 	it('compiles extenders with parameters', () => {
 		var rules = [
-			new blink.Rule(['.foo'], {
+			new Rule(['.foo'], {
 				extend: [ cap('quux') ]
 			}),
-			new blink.Rule(['.bar'], {
+			new Rule(['.bar'], {
 				extend: [ cap('corge') ]
 			}),
-			new blink.Rule(['.baz'], {
+			new Rule(['.baz'], {
 				extend: [ cap('quux') ]
 			})
 		];
@@ -129,15 +156,15 @@ describe('Compiler for browser', () => {
 	it('compiles overrides', () => {
 		(<any>config.overrides).cap = cap;
 		var rules = [
-			new blink.Rule(['.foo'], {
+			new Rule(['.foo'], {
 				cap: 'qux',
 				waldo: 'WALDO'
 			}),
-			new blink.Rule(['.bar'], {
+			new Rule(['.bar'], {
 				cap: 'fred',
 				thud: 'THUD'
 			}),
-			new blink.Rule(['.baz'], {
+			new Rule(['.baz'], {
 				cap: 'qux',
 				garpley: 'GARPLEY'
 			})
@@ -168,10 +195,10 @@ describe('Compiler for browser', () => {
 	describe('responders', () => {
 
 		it('compiles a basic responder', () => {
-			var rule = new blink.Rule('.foo', {
+			var rule = new Rule('foo', {
 				bar: 'BAR',
 				respond: [
-					new blink.MediaAtRule('baz', {
+					new MediaAtRule('baz', {
 						qux: 'QUX'
 					})
 				]
@@ -179,11 +206,11 @@ describe('Compiler for browser', () => {
 			compiler.compileRules([rule], (err, css) => {
 				expect(err).to.be.null;
 				expect(css).to.eq([
-					'.foo {',
+					'foo {',
 					'  bar: BAR;',
 					'}',
 					'@media baz {',
-					'  .foo {',
+					'  foo {',
 					'    qux: QUX;',
 					'  }',
 					'}'
@@ -192,13 +219,13 @@ describe('Compiler for browser', () => {
 		});
 
 		it('compiles a nested responder', () => {
-			var rule = new blink.Rule('.foo', {
+			var rule = new Rule('foo', {
 				bar: 'BAR',
 				respond: [
-					new blink.MediaAtRule('baz', {
+					new MediaAtRule('baz', {
 						qux: 'QUX',
 						respond: [
-							new blink.MediaAtRule('quux', {
+							new MediaAtRule('quux', {
 								corge: 'CORGE'
 							})
 						]
@@ -208,15 +235,15 @@ describe('Compiler for browser', () => {
 			compiler.compileRules([rule], (err, css) => {
 				expect(err).to.be.null;
 				expect(css).to.eq([
-					'.foo {',
+					'foo {',
 					'  bar: BAR;',
 					'}',
 					'@media baz {',
-					'  .foo {',
+					'  foo {',
 					'    qux: QUX;',
 					'  }',
 					'  @media quux {',
-					'    .foo {',
+					'    foo {',
 					'      corge: CORGE;',
 					'    }',
 					'  }',
@@ -227,16 +254,16 @@ describe('Compiler for browser', () => {
 
 		it('properly extends inside of a responder', () => {
 			var rules = [
-				new blink.Rule('.foo', {
+				new Rule('foo', {
 					respond: [
-						new blink.MediaAtRule('baz', {
+						new MediaAtRule('baz', {
 							extend: [cap('qux')]
 						})
 					]
 				}),
-				new blink.Rule('.bar', {
+				new Rule('bar', {
 					respond: [
-						new blink.MediaAtRule('baz', {
+						new MediaAtRule('baz', {
 							extend: [cap('qux')]
 						})
 					]
@@ -246,7 +273,7 @@ describe('Compiler for browser', () => {
 				expect(err).to.be.null;
 				expect(css).to.eq([
 					'@media baz {',
-					'  .foo, .bar {',
+					'  foo, bar {',
 					'    cap: QUX;',
 					'  }',
 					'}'
@@ -256,16 +283,16 @@ describe('Compiler for browser', () => {
 
 		it('merges responders with the same queries', () => {
 			var rules = [
-				new blink.Rule('.foo', {
+				new Rule('foo', {
 					respond: [
-						new blink.MediaAtRule('baz', {
+						new MediaAtRule('baz', {
 							qux: 'QUX'
 						})
 					]
 				}),
-				new blink.Rule('.bar', {
+				new Rule('bar', {
 					respond: [
-						new blink.MediaAtRule('baz', {
+						new MediaAtRule('baz', {
 							quux: 'QUUX'
 						})
 					]
@@ -275,10 +302,10 @@ describe('Compiler for browser', () => {
 				expect(err).to.be.null;
 				expect(css).to.eq([
 					'@media baz {',
-					'  .foo {',
+					'  foo {',
 					'    qux: QUX;',
 					'  }',
-					'  .bar {',
+					'  bar {',
 					'    quux: QUUX;',
 					'  }',
 					'}'
@@ -288,24 +315,24 @@ describe('Compiler for browser', () => {
 
 		it('merges nested responders with the same queries', () => {
 			var rules = [
-				new blink.Rule('.foo', {
+				new Rule('foo', {
 					respond: [
-						new blink.MediaAtRule('baz', {
+						new MediaAtRule('baz', {
 							qux: 'QUX',
 							respond: [
-								new blink.MediaAtRule('corge', {
+								new MediaAtRule('corge', {
 									grault: 'GRAULT'
 								})
 							]
 						})
 					]
 				}),
-				new blink.Rule('.bar', {
+				new Rule('bar', {
 					respond: [
-						new blink.MediaAtRule('baz', {
+						new MediaAtRule('baz', {
 							quux: 'QUUX',
 							respond: [
-								new blink.MediaAtRule('corge', {
+								new MediaAtRule('corge', {
 									garply: 'GARPLY'
 								})
 							]
@@ -317,18 +344,18 @@ describe('Compiler for browser', () => {
 				expect(err).to.be.null;
 				expect(css).to.eq([
 					'@media baz {',
-					'  .foo {',
+					'  foo {',
 					'    qux: QUX;',
 					'  }',
 					'  @media corge {',
-					'    .foo {',
+					'    foo {',
 					'      grault: GRAULT;',
 					'    }',
-					'    .bar {',
+					'    bar {',
 					'      garply: GARPLY;',
 					'    }',
 					'  }',
-					'  .bar {',
+					'  bar {',
 					'    quux: QUUX;',
 					'  }',
 					'}'
@@ -337,5 +364,15 @@ describe('Compiler for browser', () => {
 		});
 
 	});
+
+	function cap(val: string) {
+		var fn = <Extender>(() => {
+			return [
+				['cap', val.toUpperCase()]
+			];
+		});
+		fn.args = arguments;
+		return fn;
+	};
 
 });

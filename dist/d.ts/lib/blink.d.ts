@@ -13,14 +13,13 @@ import _ModifierBody = require('./interfaces/ModifierBody');
 import _Override = require('./interfaces/Override');
 import _Rule = require('./Rule');
 import _RuleBody = require('./interfaces/RuleBody');
-declare module Blink {
+declare function blink(options?: blink.ConfigurationOptions): NodeJS.ReadWriteStream;
+declare module blink {
+    class Block extends _Block {
+    }
     class Compiler extends _Compiler {
     }
     class Configuration extends _Configuration {
-    }
-    class Rule extends _Rule {
-    }
-    class Block extends _Block {
     }
     class Element extends _Element {
     }
@@ -28,11 +27,13 @@ declare module Blink {
     }
     class Modifier extends _Modifier {
     }
+    class Rule extends _Rule {
+    }
     interface BackgroundOptions extends _BackgroundOptions {
     }
-    interface ConfigurationOptions extends _ConfigurationOptions {
-    }
     interface BlockBody extends _BlockBody {
+    }
+    interface ConfigurationOptions extends _ConfigurationOptions {
     }
     interface ElementBody extends _ElementBody {
     }
@@ -45,6 +46,5 @@ declare module Blink {
     interface RuleBody extends _RuleBody {
     }
     var config: Configuration;
-    function compile(options?: ConfigurationOptions): NodeJS.ReadWriteStream;
 }
-export = Blink;
+export = blink;

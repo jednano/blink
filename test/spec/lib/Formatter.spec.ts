@@ -1,14 +1,14 @@
-﻿import sinonChai = require('../../sinon-chai');
-var expect = sinonChai.expect;
-import blink = require('../../../lib/browser/blink');
+﻿import Configuration = require('../../../lib/Configuration');
 import Formatter = require('../../../lib/Formatter');
+import sinonChai = require('../../sinon-chai');
 
-
-var config = blink.config;
-var newline = config.newline;
+var expect = sinonChai.expect;
 
 // ReSharper disable WrongExpressionStatement
 describe('Formatter', () => {
+
+	var config = new Configuration();
+	var newline = config.newline;
 
 	var f: Formatter;
 	before(() => {

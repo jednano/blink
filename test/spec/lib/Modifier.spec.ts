@@ -1,15 +1,17 @@
-﻿import sinonChai = require('../../sinon-chai');
+﻿import Configuration = require('../../../lib/Configuration');
+import Element = require('../../../lib/Element');
+import Modifier = require('../../../lib/Modifier');
+import sinonChai = require('../../sinon-chai');
+
 var expect = sinonChai.expect;
-import blink = require('../../../lib/blink');
-
-
-var config = blink.config;
 
 // ReSharper disable WrongExpressionStatement
 describe('Modifier', () => {
 
+	var config = new Configuration();
+
 	it('compiles a modifier', () => {
-		var modifier = new blink.Modifier('b', { c: 'd' });
+		var modifier = new Modifier('b', { c: 'd' });
 		expect(modifier.resolve('.a', config)).to.deep.equal([
 			[['.a--b'], [
 				['c', 'd']
@@ -18,13 +20,13 @@ describe('Modifier', () => {
 	});
 
 	it('compiles a modifier with elements', () => {
-		var modifier = new blink.Modifier('b', {
+		var modifier = new Modifier('b', {
 			c: 'd',
 			elements: [
-				new blink.Element('e', {
+				new Element('e', {
 					f: 'g'
 				}),
-				new blink.Element('h', {
+				new Element('h', {
 					i: 'j'
 				})
 			]

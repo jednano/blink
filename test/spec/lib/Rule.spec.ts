@@ -1,14 +1,13 @@
-﻿import sinonChai = require('../../sinon-chai');
+﻿import Configuration = require('../../../lib/Configuration');
+import Rule = require('../../../lib/Rule');
+import sinonChai = require('../../sinon-chai');
+
 var expect = sinonChai.expect;
-import blink = require('../../../lib/blink');
-
-
-// ReSharper disable once InconsistentNaming
-var Rule = blink.Rule;
-var config = blink.config;
 
 // ReSharper disable WrongExpressionStatement
 describe('Rule', () => {
+
+	var config = new Configuration();
 
 	it('resolves a single declaration', () => {
 		var rule = new Rule('foo', { bar: 'baz' });
@@ -203,8 +202,8 @@ describe('Rule', () => {
 	it('provides declaration-value functions the configuration object', () => {
 		(<any>config).bar = 'baz';
 		var rule = new Rule('foo', {
-			bar: (config: any) => {
-				return config.bar;
+			bar: (configuration: any) => {
+				return configuration.bar;
 			}
 		});
 		expect(rule.resolve(config)).to.deep.equal([

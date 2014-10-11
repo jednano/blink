@@ -2,10 +2,12 @@
 /* tslint:disable:no-eval */
 import a = require('../helpers/array');
 import blink = require('./blink');
+import Block = require('../Block');
 import Configuration = require('./Configuration');
 import ExtenderRegistry = require('../ExtenderRegistry');
 import Formatter = require('../Formatter');
 import MediaAtRule = require('../MediaAtRule');
+import o = require('../helpers/object');
 import Rule = require('../Rule');
 import s = require('../helpers/string');
 
@@ -15,12 +17,13 @@ class Compiler {
 		this.config = config || new Configuration();
 	}
 
-	public compile(contents: string, callback: blink.CompileCallback): void;
-	public compile(rule: Rule, callback: blink.CompileCallback): void;
-	public compile(rules: Rule[], callback: blink.CompileCallback): void;
-	public compile(block: blink.Block, callback: blink.CompileCallback): void;
-	public compile(blocks: blink.Block[], callback: blink.CompileCallback): void;
-	public compile(rules: any, callback: blink.CompileCallback) {
+	public compile(contents: string, callback: blink.Callback): void;
+	public compile(rules: {}, callback: blink.Callback): void;
+	public compile(rules: {}[], callback: blink.Callback): void;
+	public compile(rule: Rule, callback: blink.Callback): void;
+	public compile(rules: Rule[], callback: blink.Callback): void;
+	public compile(block: Block, callback: blink.Callback): void;
+	public compile(rules: any, callback: blink.Callback) {
 		if (typeof rules === 'string') {
 			try {
 				rules = eval(rules);
@@ -29,8 +32,19 @@ class Compiler {
 				return;
 			}
 		}
-		rules = a.flatten([rules]);
-		this.compileRules(rules, callback);
+		rules = a.flatten([rules]).map(rule => {
+			if (o.isPlainObject(rule)) {
+				return createRulesFromObject(rule);
+			}
+			return rule;
+		});
+		this.compileRules(a.flatten(rules), callback);
+
+		function createRulesFromObject(obj) {
+			return Object.keys(obj).map(selectors => {
+				return new Rule(selectors, obj[selectors]);
+			});
+		}
 	}
 
 	public compileRules(rules: Rule[],
@@ -39,10 +53,11 @@ class Compiler {
 		try {
 			var resolved = this.resolveRules(rules);
 			var formatted = this.format(resolved);
-			callback(null, formatted);
 		} catch (err) {
 			callback(err);
+			return;
 		}
+		callback(null, formatted);
 	}
 
 	public resolveRules(rules: Rule[]) {

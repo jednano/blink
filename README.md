@@ -24,15 +24,10 @@ With blink, browser support is a configuration setting, so when your browser sup
 Blink is just getting started, so stay tuned for any updates.
 
 
-## Requirements
-
-- [Node][]
-
-
 ## Features
 
 - [Runs on Node](#runs-on-node)
-- [gulpfriendly](#gulp-friendly)
+- [Gulp plugin](#gulp-plugin)
 - [Grunt plugin](https://github.com/blinkjs/grunt-blink)
 - [Middleware](https://github.com/blinkjs/blink-middleware)
 - [Browserified](#browserified)
@@ -51,18 +46,50 @@ Blink is just getting started, so stay tuned for any updates.
 - [Spriting](#spriting)
 
 
+## Getting started
+
+
+### Installation
+- [Node](#library-usage)
+- [In the browser](#browserified)
+
+
+### Example
+
+At its simplest, blink lets you write CSS with a simple [object initializer](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Working_with_Objects#Using_object_initializers).
+This object needs to be exported with either `module.exports` in Node or just `exports` in the browser.
+Here's a quick and dirty example:
+
+```js
+exports = {
+  foo: {
+    bar: 'baz'
+  }
+};
+```
+
+This would generate the following CSS:
+
+```css
+foo {
+  bar: baz;
+}
+```
+
+From here, you'll want look at [the full list of features](#features) for a comprehensive overview of what-all blink has to offer.
+
+
 ### Runs on Node
 
 Unlike most CSS preprocessors out there, blink does not transpile a [DSL](http://en.wikipedia.org/wiki/Domain-specific_language) into CSS. Blink code gets compiled directly as a [Node][] module, giving you access to all JavaScript syntax for free. This, of course, includes variables and functions, as well as [file I/O](http://nodejs.org/api/fs.html). The possibilities are endless.
 
 
-### Gulp friendly
+### Gulp plugin
 
-The [blink.compile() method](https://github.com/blinkjs/blink/blob/master/lib/Compiler.ts#L22-L69)
-is written exactly like a gulp plugin. As such, blink will never write intermediate files unless
-you want it to do so. Files can be piped to other streams or [gulp plugins](http://gulpjs.com/plugins/)
-before being written to their final destination. This gives blink some performance benefits as well as
-putting it in the [gulpfriendly](https://www.npmjs.org/search?q=gulpfriendly) category. Blink supports [vinyl](https://github.com/wearefractal/vinyl) files in both stream and buffer modes.
+Blink is itself a gulp plugin, supporting both stream and buffer [file modes](https://github.com/wearefractal/vinyl).
+As with any gulp plugin, files can be piped to other streams or [gulp plugins](http://gulpjs.com/plugins/)
+before being written to their final destination.
+Blink supports [vinyl]() files in both stream and buffer modes.
 
 ```js
 var blink = require('blink');
@@ -70,7 +97,7 @@ var gulp = require('gulp');
 
 gulp.task('styles', function() {
   return gulp.src('styles/*.js', { buffer: false })
-    .pipe(blink.compile(/* options */))
+    .pipe(blink(/* options */))
     .on('error', function(err) {
       // handle error
     })
@@ -100,7 +127,7 @@ Compile your block:
 
 ```js
 var foo = new blink.Block('foo', { bar: 'baz' });
-blink.compile(foo, function(err, css) {
+blink(foo, function(err, css) {
   console.log(css);
 });
 ```
@@ -109,7 +136,7 @@ You can also compile a string of source code as long as you export the rule with
 
 ```js
 var foo = "exports = new blink.Block('foo', { bar: 'baz' });";
-blink.compile(foo, function(err, css) {
+blink(foo, function(err, css) {
   console.log(css);
 });
 ```
@@ -225,7 +252,7 @@ import blink = require('blink');
 // ReSharper disable once UnusedLocals
 function fill() {
 
-	var extender = <blink.IExtender>(() => {
+	var extender = <blink.Extender>(() => {
 		return [
 			['position', 'absolute'],
 			['top', '0'],
@@ -280,7 +307,7 @@ import blink = require('blink');
 
 // ReSharper disable once UnusedLocals
 function noop() {
-	var extender = <blink.IExtender>(() => []);
+	var extender = <blink.Extender>(() => []);
 	extender.args = arguments;
 	return extender;
 }
@@ -300,7 +327,7 @@ import blink = require('blink');
 
 // ReSharper disable once UnusedLocals
 function inlineBlock() {
-	var extender = <blink.IExtender>(() => {
+	var extender = <blink.Extender>(() => {
 		return ['display', 'inline-block'];
 	});
 }
@@ -320,7 +347,7 @@ function inlineBlock(options?: {
 
 	options = options || {};
 
-	var extender = <blink.IExtender>((config: blink.Configuration) => {
+	var extender = <blink.Extender>((config: blink.Configuration) => {
 		var decs = [];
 
 		decs.push(['display', 'inline-block']);
@@ -351,7 +378,7 @@ function inlineBlock(options?: {
 
 	options = options || {};
 
-	var extender = <blink.IExtender>((config: blink.Configuration) => {
+	var extender = <blink.Extender>((config: blink.Configuration) => {
 		var decs = [];
 
 		if (config.firefox < 3) {

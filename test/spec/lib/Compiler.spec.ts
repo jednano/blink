@@ -7,16 +7,10 @@ var through = require('through2');
 import blink = require('../../../lib/blink');
 import sinonChai = require('../../sinon-chai');
 
-var config = blink.config;
 var expect = sinonChai.expect;
 
 // ReSharper disable WrongExpressionStatement
 describe('Compiler', () => {
-
-	var compiler: blink.Compiler;
-	beforeEach(() => {
-		compiler = new blink.Compiler(config);
-	});
 
 	function readFile(file: Vinyl.IFile) {
 		if (file.isStream()) {
@@ -36,7 +30,7 @@ describe('Compiler', () => {
 
 	it('compiles files in streaming mode', done => {
 		vfs.src('test/fixtures/foo.js', { buffer: false })
-			.pipe(blink.compile())
+			.pipe(blink())
 			.on('data', file => {
 				var transpiled = readFile(file);
 				var expected = readExpected('foo.css');
@@ -47,7 +41,7 @@ describe('Compiler', () => {
 
 	it('compiles files in buffer mode', done => {
 		vfs.src('test/fixtures/foo.js')
-			.pipe(blink.compile())
+			.pipe(blink())
 			.on('data', file => {
 				var transpiled = readFile(file);
 				var expected = readExpected('foo.css');
@@ -63,7 +57,7 @@ describe('Compiler', () => {
 				this.push(file);
 				callback();
 			}))
-			.pipe(blink.compile())
+			.pipe(blink())
 			.on('error', err => {
 				expect(err).to.exist.and.to.have.property('message',
 					'Unexpected file mode. Expected stream or buffer.');
@@ -73,7 +67,7 @@ describe('Compiler', () => {
 
 	it('compiles master files (i.e., files that include other files)', done => {
 		vfs.src('test/fixtures/app.js')
-			.pipe(blink.compile())
+			.pipe(blink())
 			.on('data', file => {
 				var transpiled = readFile(file);
 				var expected = readExpected('app.css');
@@ -83,8 +77,8 @@ describe('Compiler', () => {
 	});
 
 	it('emits errors as plugin errors', done => {
-		vfs.src('test/fixtures/err1.js')
-			.pipe(blink.compile())
+		vfs.src('test/fixtures/invalid_declaration.js')
+			.pipe(blink())
 			.on('error', err => {
 				expect(err).to.exist.and.to.have.property('message',
 					'Invalid declaration property');
@@ -93,9 +87,9 @@ describe('Compiler', () => {
 			});
 	});
 
-	it('emits node module parsing errors as plugin errors', done => {
-		vfs.src('test/fixtures/err2.js')
-			.pipe(blink.compile())
+	it('emits syntax errors as plugin errors', done => {
+		vfs.src('test/fixtures/syntax_error.js')
+			.pipe(blink())
 			.on('error', err => {
 				expect(err).to.exist.and.to.have.property('message',
 					'Unexpected token }');

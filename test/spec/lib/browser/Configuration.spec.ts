@@ -1,17 +1,14 @@
 ﻿import os = require('os');
 
-import sinonChai = require('../../../sinon-chai');
-var expect = sinonChai.expect;
 import Configuration = require('../../../../lib/browser/Configuration');
+import sinonChai = require('../../../sinon-chai');
 
+var expect = sinonChai.expect;
 
 // ReSharper disable WrongExpressionStatement
 describe('Configuration for browser', () => {
 
-	var config: Configuration;
-	before(() => {
-		config = new Configuration();
-	});
+	var config = new Configuration();
 
 	it('initializes default values from defaults.json file', () => {
 		var defaults = require('../../../../defaults.browser.json');

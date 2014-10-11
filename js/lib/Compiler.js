@@ -10,7 +10,6 @@ var mod = require('module');
 var path = require('path');
 var through = require('through2');
 
-var a = require('./helpers/array');
 var CompilerForBrowser = require('./browser/Compiler');
 var Configuration = require('./Configuration');
 
@@ -76,8 +75,7 @@ var Compiler = (function (_super) {
 
     Compiler.prototype.compileBuffer = function (data, filepath, callback) {
         try  {
-            var rules = a.flatten([mod._load(filepath)]);
-            _super.prototype.compileRules.call(this, rules, callback);
+            _super.prototype.compile.call(this, mod._load(filepath), callback);
         } catch (err) {
             callback(err);
         }

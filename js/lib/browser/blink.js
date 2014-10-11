@@ -16,32 +16,15 @@ var _Modifier = require('../Modifier');
 
 var _Rule = require('../Rule');
 
-var Blink;
-(function (Blink) {
-    var Compiler = (function (_super) {
-        __extends(Compiler, _super);
-        function Compiler() {
-            _super.apply(this, arguments);
-        }
-        return Compiler;
-    })(_Compiler);
-    Blink.Compiler = Compiler;
-    var Configuration = (function (_super) {
-        __extends(Configuration, _super);
-        function Configuration() {
-            _super.apply(this, arguments);
-        }
-        return Configuration;
-    })(_Configuration);
-    Blink.Configuration = Configuration;
-    var Rule = (function (_super) {
-        __extends(Rule, _super);
-        function Rule() {
-            _super.apply(this, arguments);
-        }
-        return Rule;
-    })(_Rule);
-    Blink.Rule = Rule;
+
+function blink(contents, callback, options) {
+    var compiler = new blink.Compiler(new blink.Configuration(options || {}));
+    compiler.compile(contents, callback);
+}
+
+// ReSharper disable once InconsistentNaming
+var blink;
+(function (blink) {
     var Block = (function (_super) {
         __extends(Block, _super);
         function Block() {
@@ -49,7 +32,23 @@ var Blink;
         }
         return Block;
     })(_Block);
-    Blink.Block = Block;
+    blink.Block = Block;
+    var Compiler = (function (_super) {
+        __extends(Compiler, _super);
+        function Compiler() {
+            _super.apply(this, arguments);
+        }
+        return Compiler;
+    })(_Compiler);
+    blink.Compiler = Compiler;
+    var Configuration = (function (_super) {
+        __extends(Configuration, _super);
+        function Configuration() {
+            _super.apply(this, arguments);
+        }
+        return Configuration;
+    })(_Configuration);
+    blink.Configuration = Configuration;
     var Element = (function (_super) {
         __extends(Element, _super);
         function Element() {
@@ -57,7 +56,7 @@ var Blink;
         }
         return Element;
     })(_Element);
-    Blink.Element = Element;
+    blink.Element = Element;
     var MediaAtRule = (function (_super) {
         __extends(MediaAtRule, _super);
         function MediaAtRule() {
@@ -65,7 +64,7 @@ var Blink;
         }
         return MediaAtRule;
     })(_MediaAtRule);
-    Blink.MediaAtRule = MediaAtRule;
+    blink.MediaAtRule = MediaAtRule;
     var Modifier = (function (_super) {
         __extends(Modifier, _super);
         function Modifier() {
@@ -73,15 +72,17 @@ var Blink;
         }
         return Modifier;
     })(_Modifier);
-    Blink.Modifier = Modifier;
+    blink.Modifier = Modifier;
+    var Rule = (function (_super) {
+        __extends(Rule, _super);
+        function Rule() {
+            _super.apply(this, arguments);
+        }
+        return Rule;
+    })(_Rule);
+    blink.Rule = Rule;
 
-    Blink.config = new Configuration();
+    blink.config = new Configuration();
+})(blink || (blink = {}));
 
-    function compile(contents, callback, options) {
-        var compiler = new Compiler(new Configuration(options || {}));
-        compiler.compile(contents, callback);
-    }
-    Blink.compile = compile;
-})(Blink || (Blink = {}));
-
-module.exports = Blink;
+module.exports = blink;

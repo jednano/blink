@@ -4,11 +4,9 @@ var mod = require('module');
 import path = require('path');
 var through = require('through2');
 
-import a = require('./helpers/array');
 import CompilerForBrowser = require('./browser/Compiler');
 import Configuration = require('./Configuration');
 import ConfigurationForBrowser = require('./browser/Configuration');
-
 
 var PluginError = require('gulp-util').PluginError;
 var PLUGIN_NAME = 'blink';
@@ -77,8 +75,7 @@ class Compiler extends CompilerForBrowser {
 	private compileBuffer(data: Buffer, filepath: string,
 		callback: (err: Error, css?: string) => void) {
 		try {
-			var rules = a.flatten([mod._load(filepath)]);
-			super.compileRules(rules, callback);
+			super.compile(mod._load(filepath), callback);
 		} catch (err) {
 			callback(err);
 		}

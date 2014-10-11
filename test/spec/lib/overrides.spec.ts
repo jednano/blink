@@ -1,13 +1,17 @@
-﻿import sinonChai = require('../../sinon-chai');
-var expect = sinonChai.expect;
-import blink = require('../../../lib/blink');
+﻿import Compiler = require('../../../lib/Compiler');
+import Configuration = require('../../../lib/Configuration');
+import extenders = require('../../../lib/extenders/all');
+import overrides = require('../../../lib/overrides/all');
+import Rule = require('../../../lib/Rule');
+import sinonChai = require('../../sinon-chai');
 
-var config = blink.config;
-var overrides = config.overrides;
-var compiler = new blink.Compiler(config);
+var expect = sinonChai.expect;
 
 // ReSharper disable WrongExpressionStatement
 describe('overrides', () => {
+
+	var config = new Configuration();
+	var compiler = new Compiler(config);
 
 	describe('appearance', () => {
 
@@ -20,12 +24,35 @@ describe('overrides', () => {
 
 	});
 
+	describe('background', () => {
+
+		it('inserts shorthand declaration for all background properties', () => {
+			var result = overrides.background({
+				position: 'corge',
+				repeat: 'qux',
+				image: 'baz',
+				color: 'bar',
+				attachment: 'quux'
+			})(config);
+			expect(result).to.deep.equal([
+				['background', ['bar', 'baz', 'qux', 'quux', 'corge']]
+			]);
+		});
+
+		it('generates no declarations when no options are provided', () => {
+			var result = overrides.background({})(config);
+			expect(result).to.deep.equal([]);
+		});
+
+	});
+
 	describe('box', () => {
 
-		it('aliases box.sizing to boxSizing extender', () => {
-			var ext1 = overrides.box({ sizing: 'foo' });
-			var ext2 = overrides.boxSizing('foo');
-			expect(getName(ext1)).to.eq(getName(ext2));
+		it('aliases box.sizing to boxSizing override', () => {
+			checkAlias(
+				overrides.box({ sizing: 'foo' }),
+				overrides.boxSizing('foo')
+			);
 		});
 
 		it('generates a single box declaration when value is foo', () => {
@@ -73,30 +100,28 @@ describe('overrides', () => {
 
 	describe('clearfix', () => {
 
+		var clearfixDeclarations = [
+			['content', '""'],
+			['display', 'table'],
+			['clear', 'both']
+		];
+
 		it('generates clearfix declarations when value is true', () => {
-			expect(overrides.clearfix(true)(config)).to.deep.equal([
-				['content', '""'],
-				['display', 'table'],
-				['clear', 'both']
-			]);
+			expect(overrides.clearfix(true)(config)).to.deep.equal(clearfixDeclarations);
 		});
 
 		it('inserts clearfix declarations inside :after pseudo-selector', () => {
-			var rule = new blink.Rule('foo', {
+			var rule = new Rule('foo', {
 				clearfix: true
 			});
 			expect(compiler.resolveRules([rule])).to.deep.equal([
-				[['foo:after'], [
-					['content', '""'],
-					['display', 'table'],
-					['clear', 'both']
-				]]
+				[['foo:after'], clearfixDeclarations]
 			]);
 		});
 
 		it('generates nothing when value is false', () => {
 			expect(overrides.clearfix(false)(config)).to.deep.equal([]);
-			var rule = new blink.Rule('foo', {
+			var rule = new Rule('foo', {
 				clearfix: false
 			});
 			expect(compiler.resolveRules([rule])).to.deep.equal([]);
@@ -104,12 +129,96 @@ describe('overrides', () => {
 
 	});
 
+	describe('display', () => {
+
+		it('aliases display: inline-block to inlineBlock extender', () => {
+			checkAlias(
+				overrides.display('inline-block'),
+				extenders.inlineBlock()
+			);
+		});
+
+		it('returns display: none when none is the value', () => {
+			expect(overrides.display('none')(config)).to.deep.equal([
+				['display', 'none']
+			]);
+		});
+
+	});
+
+	describe('opacity', () => {
+
+		it('by default, generates -ms-filter, filter, -moz, opacity and zoom', () => {
+			expect(overrides.opacity(0)(config)).to.deep.equal([
+				['-ms-filter', 'progid:DXImageTransform.Microsoft.Alpha(Opacity=0)'],
+				['filter', 'alpha(opacity=0)'],
+				['-moz-opacity', 0],
+				['opacity', 0],
+				['zoom', 1]
+			]);
+		});
+
+		it('removes -moz prefix when firefox is version 0.9', () => {
+			config.firefox = 0.9;
+			expect(overrides.opacity(0)(config)).to.deep.equal([
+				['-ms-filter', 'progid:DXImageTransform.Microsoft.Alpha(Opacity=0)'],
+				['filter', 'alpha(opacity=0)'],
+				['opacity', 0],
+				['zoom', 1]
+			]);
+		});
+
+		it('multiplies opacity by 100 and rounds for filter alpha opacities', () => {
+			expect(overrides.opacity(0.415)(config)).to.deep.equal([
+				['-ms-filter', 'progid:DXImageTransform.Microsoft.Alpha(Opacity=42)'],
+				['filter', 'alpha(opacity=42)'],
+				['opacity', 0.415],
+				['zoom', 1]
+			]);
+		});
+
+		it('changes both filter alphas to "enabled=false" when opacity is 1', () => {
+			expect(overrides.opacity(1)(config)).to.deep.equal([
+				['-ms-filter', 'progid:DXImageTransform.Microsoft.Alpha(enabled=false)'],
+				['filter', 'alpha(enabled=false)'],
+				['opacity', 1],
+				['zoom', 1]
+			]);
+		});
+
+		it('removes filter declaration and zoom when IE and IE Mobile are version 8', () => {
+			config.ie = config.ieMobile = 8;
+			expect(overrides.opacity(1)(config)).to.deep.equal([
+				['-ms-filter', 'progid:DXImageTransform.Microsoft.Alpha(enabled=false)'],
+				['opacity', 1]
+			]);
+		});
+
+		it('removes -ms-filter declaration when IE and IE Mobile are version 9', () => {
+			config.ie = config.ieMobile = 9;
+			expect(overrides.opacity(1)(config)).to.deep.equal([
+				['opacity', 1]
+			]);
+		});
+
+		it('adds -khtml declaration when config.khtmlPrefix is enabled', () => {
+			config.khtmlPrefix = true;
+			expect(overrides.opacity(1)(config)).to.deep.equal([
+				['-khtml-opacity', 1],
+				['opacity', 1]
+			]);
+			config.khtmlPrefix = false;
+		});
+
+	});
+
 	describe('text', () => {
 
-		it('aliases text.size.adjust to textSizeAdjust extender', () => {
-			var ext1 = overrides.text({ size: { adjust: 'foo' } });
-			var ext2 = overrides.textSizeAdjust('foo');
-			expect(getName(ext1)).to.eq(getName(ext2));
+		it('aliases text.size.adjust to textSizeAdjust override', () => {
+			checkAlias(
+				overrides.text({ size: { adjust: 'foo' } }),
+				overrides.textSizeAdjust('foo')
+			);
 		});
 
 		it('generates a single text declaration when value is foo', () => {
@@ -132,8 +241,8 @@ describe('overrides', () => {
 
 	});
 
-	function getName(extender) {
-		return (<any>extender.args.callee).name;
+	function checkAlias(override, extender) {
+		expect(override(config)).to.deep.equal(extender(config));
 	}
 
 });

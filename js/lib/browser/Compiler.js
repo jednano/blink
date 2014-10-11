@@ -6,6 +6,7 @@ var Configuration = require('./Configuration');
 var ExtenderRegistry = require('../ExtenderRegistry');
 var Formatter = require('../Formatter');
 
+var o = require('../helpers/object');
 var Rule = require('../Rule');
 var s = require('../helpers/string');
 
@@ -23,18 +24,30 @@ var Compiler = (function () {
                 return;
             }
         }
-        rules = a.flatten([rules]);
-        this.compileRules(rules, callback);
+        rules = a.flatten([rules]).map(function (rule) {
+            if (o.isPlainObject(rule)) {
+                return createRulesFromObject(rule);
+            }
+            return rule;
+        });
+        this.compileRules(a.flatten(rules), callback);
+
+        function createRulesFromObject(obj) {
+            return Object.keys(obj).map(function (selectors) {
+                return new Rule(selectors, obj[selectors]);
+            });
+        }
     };
 
     Compiler.prototype.compileRules = function (rules, callback) {
         try  {
             var resolved = this.resolveRules(rules);
             var formatted = this.format(resolved);
-            callback(null, formatted);
         } catch (err) {
             callback(err);
+            return;
         }
+        callback(null, formatted);
     };
 
     Compiler.prototype.resolveRules = function (rules) {

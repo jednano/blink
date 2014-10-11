@@ -1,3 +1,4 @@
+var eventStream = require('event-stream');
 var gulp = require('gulp');
 var ts = require('gulp-typescript');
 
@@ -18,8 +19,10 @@ function scripts() {
 		})
 		.pipe(ts(project));
 
-	result.dts.pipe(gulp.dest('dist/d.ts'));
-	return result.js.pipe(gulp.dest('js'));
+	return eventStream.merge(
+		result.dts.pipe(gulp.dest('dist/d.ts')),
+		result.js.pipe(gulp.dest('js'))
+	);
 }
 
 module.exports = scripts;

@@ -1,17 +1,14 @@
 ﻿import os = require('os');
 
-import sinonChai = require('../../sinon-chai');
-var expect = sinonChai.expect;
 import Configuration = require('../../../lib/Configuration');
+import sinonChai = require('../../sinon-chai');
 
+var expect = sinonChai.expect;
 
 // ReSharper disable WrongExpressionStatement
 describe('Configuration', () => {
 
-	var config: Configuration;
-	beforeEach(() => {
-		config = new Configuration();
-	});
+	var config = new Configuration();
 
 	it('loads plugins', () => {
 		config.loadPlugins({

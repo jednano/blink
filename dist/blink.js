@@ -17,32 +17,15 @@ var _Modifier = require('../Modifier');
 
 var _Rule = require('../Rule');
 
-var Blink;
-(function (Blink) {
-    var Compiler = (function (_super) {
-        __extends(Compiler, _super);
-        function Compiler() {
-            _super.apply(this, arguments);
-        }
-        return Compiler;
-    })(_Compiler);
-    Blink.Compiler = Compiler;
-    var Configuration = (function (_super) {
-        __extends(Configuration, _super);
-        function Configuration() {
-            _super.apply(this, arguments);
-        }
-        return Configuration;
-    })(_Configuration);
-    Blink.Configuration = Configuration;
-    var Rule = (function (_super) {
-        __extends(Rule, _super);
-        function Rule() {
-            _super.apply(this, arguments);
-        }
-        return Rule;
-    })(_Rule);
-    Blink.Rule = Rule;
+
+function blink(contents, callback, options) {
+    var compiler = new blink.Compiler(new blink.Configuration(options || {}));
+    compiler.compile(contents, callback);
+}
+
+// ReSharper disable once InconsistentNaming
+var blink;
+(function (blink) {
     var Block = (function (_super) {
         __extends(Block, _super);
         function Block() {
@@ -50,7 +33,23 @@ var Blink;
         }
         return Block;
     })(_Block);
-    Blink.Block = Block;
+    blink.Block = Block;
+    var Compiler = (function (_super) {
+        __extends(Compiler, _super);
+        function Compiler() {
+            _super.apply(this, arguments);
+        }
+        return Compiler;
+    })(_Compiler);
+    blink.Compiler = Compiler;
+    var Configuration = (function (_super) {
+        __extends(Configuration, _super);
+        function Configuration() {
+            _super.apply(this, arguments);
+        }
+        return Configuration;
+    })(_Configuration);
+    blink.Configuration = Configuration;
     var Element = (function (_super) {
         __extends(Element, _super);
         function Element() {
@@ -58,7 +57,7 @@ var Blink;
         }
         return Element;
     })(_Element);
-    Blink.Element = Element;
+    blink.Element = Element;
     var MediaAtRule = (function (_super) {
         __extends(MediaAtRule, _super);
         function MediaAtRule() {
@@ -66,7 +65,7 @@ var Blink;
         }
         return MediaAtRule;
     })(_MediaAtRule);
-    Blink.MediaAtRule = MediaAtRule;
+    blink.MediaAtRule = MediaAtRule;
     var Modifier = (function (_super) {
         __extends(Modifier, _super);
         function Modifier() {
@@ -74,18 +73,20 @@ var Blink;
         }
         return Modifier;
     })(_Modifier);
-    Blink.Modifier = Modifier;
+    blink.Modifier = Modifier;
+    var Rule = (function (_super) {
+        __extends(Rule, _super);
+        function Rule() {
+            _super.apply(this, arguments);
+        }
+        return Rule;
+    })(_Rule);
+    blink.Rule = Rule;
 
-    Blink.config = new Configuration();
+    blink.config = new Configuration();
+})(blink || (blink = {}));
 
-    function compile(contents, callback, options) {
-        var compiler = new Compiler(new Configuration(options || {}));
-        compiler.compile(contents, callback);
-    }
-    Blink.compile = compile;
-})(Blink || (Blink = {}));
-
-module.exports = Blink;
+module.exports = blink;
 
 },{"../Block":3,"../Element":4,"../MediaAtRule":7,"../Modifier":8,"../Rule":9,"./Compiler":10,"./Configuration":11}],2:[function(require,module,exports){
 module.exports={
@@ -341,7 +342,7 @@ var Formatter = (function () {
 
 module.exports = Formatter;
 
-},{"./helpers/string":17}],7:[function(require,module,exports){
+},{"./helpers/string":18}],7:[function(require,module,exports){
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -601,7 +602,7 @@ var Rule = (function () {
 
 module.exports = Rule;
 
-},{"./Formatter":6,"./helpers/string":17,"node.extend":28}],10:[function(require,module,exports){
+},{"./Formatter":6,"./helpers/string":18,"node.extend":29}],10:[function(require,module,exports){
 /* jshint evil: true */
 /* tslint:disable:no-eval */
 var a = require('../helpers/array');
@@ -610,6 +611,7 @@ var Configuration = require('./Configuration');
 var ExtenderRegistry = require('../ExtenderRegistry');
 var Formatter = require('../Formatter');
 
+var o = require('../helpers/object');
 var Rule = require('../Rule');
 var s = require('../helpers/string');
 
@@ -627,18 +629,30 @@ var Compiler = (function () {
                 return;
             }
         }
-        rules = a.flatten([rules]);
-        this.compileRules(rules, callback);
+        rules = a.flatten([rules]).map(function (rule) {
+            if (o.isPlainObject(rule)) {
+                return createRulesFromObject(rule);
+            }
+            return rule;
+        });
+        this.compileRules(a.flatten(rules), callback);
+
+        function createRulesFromObject(obj) {
+            return Object.keys(obj).map(function (selectors) {
+                return new Rule(selectors, obj[selectors]);
+            });
+        }
     };
 
     Compiler.prototype.compileRules = function (rules, callback) {
         try  {
             var resolved = this.resolveRules(rules);
             var formatted = this.format(resolved);
-            callback(null, formatted);
         } catch (err) {
             callback(err);
+            return;
         }
+        callback(null, formatted);
     };
 
     Compiler.prototype.resolveRules = function (rules) {
@@ -762,7 +776,7 @@ var Compiler = (function () {
 
 module.exports = Compiler;
 
-},{"../ExtenderRegistry":5,"../Formatter":6,"../Rule":9,"../helpers/array":16,"../helpers/string":17,"./Configuration":11}],11:[function(require,module,exports){
+},{"../ExtenderRegistry":5,"../Formatter":6,"../Rule":9,"../helpers/array":16,"../helpers/object":17,"../helpers/string":18,"./Configuration":11}],11:[function(require,module,exports){
 var extend = require('node.extend');
 
 var _extenders = require('../extenders/all');
@@ -1270,7 +1284,7 @@ var Configuration = (function () {
 
 module.exports = Configuration;
 
-},{"../../defaults.browser.json":2,"../extenders/all":12,"../helpers/string":17,"../overrides/all":18,"node.extend":28}],12:[function(require,module,exports){
+},{"../../defaults.browser.json":2,"../extenders/all":12,"../helpers/string":18,"../overrides/all":19,"node.extend":29}],12:[function(require,module,exports){
 var experimental = require('./experimental');
 var inlineBlock = require('./inlineBlock');
 
@@ -1366,6 +1380,15 @@ function flatten(arr) {
 exports.flatten = flatten;
 
 },{}],17:[function(require,module,exports){
+function isPlainObject(o) {
+    if (typeof o === 'object' && o) {
+        return o.constructor === Object;
+    }
+    return false;
+}
+exports.isPlainObject = isPlainObject;
+
+},{}],18:[function(require,module,exports){
 // ReSharper disable InconsistentNaming
 var STRING_CAMELIZE = (/(\-|_|\.|\s)+(.)?/g);
 var STRING_DASHERIZE = /[ _]/g;
@@ -1413,7 +1436,7 @@ function decamelize(s) {
 }
 exports.decamelize = decamelize;
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 var appearance = require('./appearance');
 var background = require('./background');
 var box = require('./box');
@@ -1439,7 +1462,7 @@ var overrides = {
 
 module.exports = overrides;
 
-},{"./appearance":19,"./background":20,"./box":21,"./boxSizing":22,"./clearfix":23,"./display":24,"./opacity":25,"./text":26,"./textSizeAdjust":27}],19:[function(require,module,exports){
+},{"./appearance":20,"./background":21,"./box":22,"./boxSizing":23,"./clearfix":24,"./display":25,"./opacity":26,"./text":27,"./textSizeAdjust":28}],20:[function(require,module,exports){
 var experimental = require('../extenders/experimental');
 
 function appearance(value) {
@@ -1456,7 +1479,7 @@ function appearance(value) {
 
 module.exports = appearance;
 
-},{"../extenders/experimental":13}],20:[function(require,module,exports){
+},{"../extenders/experimental":13}],21:[function(require,module,exports){
 // ReSharper disable once UnusedLocals
 function background(options) {
     options = options || {};
@@ -1483,7 +1506,7 @@ function background(options) {
 
 module.exports = background;
 
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 var boxSizing = require('./boxSizing');
 
 // ReSharper disable once UnusedLocals
@@ -1502,7 +1525,7 @@ function box(value) {
 
 module.exports = box;
 
-},{"./boxSizing":22}],22:[function(require,module,exports){
+},{"./boxSizing":23}],23:[function(require,module,exports){
 var experimental = require('../extenders/experimental');
 
 // ReSharper disable once UnusedLocals
@@ -1521,7 +1544,7 @@ function boxSizing(value) {
 
 module.exports = boxSizing;
 
-},{"../extenders/experimental":13}],23:[function(require,module,exports){
+},{"../extenders/experimental":13}],24:[function(require,module,exports){
 var noop = require('../extenders/noop');
 
 var s = require('../helpers/string');
@@ -1548,7 +1571,7 @@ function clearfix(value) {
 
 module.exports = clearfix;
 
-},{"../extenders/noop":15,"../helpers/string":17}],24:[function(require,module,exports){
+},{"../extenders/noop":15,"../helpers/string":18}],25:[function(require,module,exports){
 var inlineBlock = require('../extenders/inlineBlock');
 
 // ReSharper disable once UnusedLocals
@@ -1568,7 +1591,7 @@ function display(value) {
 
 module.exports = display;
 
-},{"../extenders/inlineBlock":14}],25:[function(require,module,exports){
+},{"../extenders/inlineBlock":14}],26:[function(require,module,exports){
 var experimental = require('../extenders/experimental');
 
 
@@ -1611,7 +1634,7 @@ function opacity(value) {
 
 module.exports = opacity;
 
-},{"../extenders/experimental":13}],26:[function(require,module,exports){
+},{"../extenders/experimental":13}],27:[function(require,module,exports){
 var textSizeAdjust = require('./textSizeAdjust');
 
 // ReSharper disable once UnusedLocals
@@ -1633,7 +1656,7 @@ function text(value) {
 
 module.exports = text;
 
-},{"./textSizeAdjust":27}],27:[function(require,module,exports){
+},{"./textSizeAdjust":28}],28:[function(require,module,exports){
 var experimental = require('../extenders/experimental');
 
 // ReSharper disable once UnusedLocals
@@ -1652,11 +1675,11 @@ function textSizeAdjust(value) {
 
 module.exports = textSizeAdjust;
 
-},{"../extenders/experimental":13}],28:[function(require,module,exports){
+},{"../extenders/experimental":13}],29:[function(require,module,exports){
 module.exports = require('./lib/extend');
 
 
-},{"./lib/extend":29}],29:[function(require,module,exports){
+},{"./lib/extend":30}],30:[function(require,module,exports){
 /*!
  * node.extend
  * Copyright 2011, John Resig
@@ -1740,7 +1763,7 @@ extend.version = '1.0.8';
 module.exports = extend;
 
 
-},{"is":30}],30:[function(require,module,exports){
+},{"is":31}],31:[function(require,module,exports){
 
 /**!
  * is
@@ -1783,8 +1806,7 @@ var is = module.exports = {};
  * @api public
  */
 
-is.a =
-is.type = function (value, type) {
+is.a = is.type = function (value, type) {
   return typeof value === type;
 };
 
@@ -1798,7 +1820,7 @@ is.type = function (value, type) {
  */
 
 is.defined = function (value) {
-  return value !== undefined;
+  return typeof value !== 'undefined';
 };
 
 /**
@@ -1939,7 +1961,7 @@ is.nil = is['null'] = function (value) {
  */
 
 is.undef = is['undefined'] = function (value) {
-  return value === undefined;
+  return typeof value === 'undefined';
 };
 
 /**
@@ -2401,7 +2423,7 @@ is.within = function (value, start, finish) {
  */
 
 is.object = function (value) {
-  return value && '[object Object]' === toString.call(value);
+  return '[object Object]' === toString.call(value);
 };
 
 /**

@@ -1,3 +1,4 @@
+import _BackgroundOptions = require('../interfaces/css/BackgroundOptions');
 import _Block = require('../Block');
 import _BlockBody = require('../interfaces/BlockBody');
 import _Compiler = require('./Compiler');
@@ -12,14 +13,17 @@ import _ModifierBody = require('../interfaces/ModifierBody');
 import _Override = require('../interfaces/Override');
 import _Rule = require('../Rule');
 import _RuleBody = require('../interfaces/RuleBody');
-declare module Blink {
+declare function blink(contents: string, callback: blink.Callback, options?: blink.ConfigurationOptions): void;
+declare function blink(rules: {}, callback: blink.Callback, options?: blink.ConfigurationOptions): void;
+declare function blink(rule: blink.Rule, callback: blink.Callback, options?: blink.ConfigurationOptions): void;
+declare function blink(rules: blink.Rule[], callback: blink.Callback, options?: blink.ConfigurationOptions): void;
+declare function blink(block: blink.Block, callback: blink.Callback, options?: blink.ConfigurationOptions): void;
+declare module blink {
+    class Block extends _Block {
+    }
     class Compiler extends _Compiler {
     }
     class Configuration extends _Configuration {
-    }
-    class Rule extends _Rule {
-    }
-    class Block extends _Block {
     }
     class Element extends _Element {
     }
@@ -27,12 +31,13 @@ declare module Blink {
     }
     class Modifier extends _Modifier {
     }
-    interface CompileCallback {
-        (err: Error, css?: string): void;
+    class Rule extends _Rule {
     }
-    interface ConfigurationOptions extends _ConfigurationOptions {
+    interface BackgroundOptions extends _BackgroundOptions {
     }
     interface BlockBody extends _BlockBody {
+    }
+    interface ConfigurationOptions extends _ConfigurationOptions {
     }
     interface ElementBody extends _ElementBody {
     }
@@ -45,10 +50,8 @@ declare module Blink {
     interface RuleBody extends _RuleBody {
     }
     var config: Configuration;
-    function compile(contents: string, callback: CompileCallback, options?: ConfigurationOptions): void;
-    function compile(rule: Rule, callback: CompileCallback, options?: ConfigurationOptions): void;
-    function compile(rules: Rule[], callback: CompileCallback, options?: ConfigurationOptions): void;
-    function compile(block: Block, callback: CompileCallback, options?: ConfigurationOptions): void;
-    function compile(blocks: Block[], callback: CompileCallback, options?: ConfigurationOptions): void;
+    interface Callback {
+        (err: Error, css?: string): void;
+    }
 }
-export = Blink;
+export = blink;

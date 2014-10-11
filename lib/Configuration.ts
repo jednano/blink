@@ -1,6 +1,5 @@
 ﻿///<reference path="../bower_components/dt-node/node.d.ts"/>
 var extend = require('node.extend');
-var stripBom = require('strip-bom');
 import fs = require('fs');
 import os = require('os');
 import path = require('path');
