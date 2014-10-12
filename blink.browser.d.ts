@@ -1,4 +1,9 @@
-﻿declare module "blink" {
+﻿declare function blink(contents: string, callback: blink.Callback, options?: blink.ConfigurationOptions): void;
+declare function blink(rules: {}, callback: blink.Callback, options?: blink.ConfigurationOptions): void;
+declare function blink(rule: blink.Rule, callback: blink.Callback, options?: blink.ConfigurationOptions): void;
+declare function blink(rules: blink.Rule[], callback: blink.Callback, options?: blink.ConfigurationOptions): void;
+declare function blink(block: blink.Block, callback: blink.Callback, options?: blink.ConfigurationOptions): void;
+declare module blink {
 	class Block {
 		public name: string;
 		public body: BlockBody;
