@@ -15,7 +15,7 @@ export function repeat(s: string, n: number) {
 */
 export function camelize(s: string) {
 	return s.replace(STRING_CAMELIZE, (match, separator, chr) => {
-		return chr ? chr.toUpperCase() : '';
+		return chr.toUpperCase();
 	}).replace(/^([A-Z])/, (match) => {
 		return match.toLowerCase();
 	});

@@ -15,7 +15,7 @@ Returns the LowerCamelCase form of a string.
 */
 function camelize(s) {
     return s.replace(STRING_CAMELIZE, function (match, separator, chr) {
-        return chr ? chr.toUpperCase() : '';
+        return chr.toUpperCase();
     }).replace(/^([A-Z])/, function (match) {
         return match.toLowerCase();
     });

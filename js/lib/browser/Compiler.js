@@ -160,9 +160,7 @@ var Compiler = (function () {
                 result.push([[key], value]);
                 return;
             }
-            if (value) {
-                result.push([[key], _this.resolveTree(value)]);
-            }
+            result.push([[key], _this.resolveTree(value)]);
         });
         return result;
     };

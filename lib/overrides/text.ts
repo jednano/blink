@@ -10,6 +10,7 @@ function text(value: any) {
 		if (size.hasOwnProperty('adjust')) {
 			return textSizeAdjust(size.adjust);
 		}
+		throw new Error('Invalid property: text-size');
 	}
 
 	var override = <Override>(() => {

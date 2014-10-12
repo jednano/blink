@@ -164,7 +164,10 @@ class Rule {
 	private compilePrimitive(value: any) {
 		switch (typeof value) {
 			case 'number':
-				return value ? value + 'px' : value;
+				if (value === 0) {
+					return '0';
+				}
+				return value + 'px';
 			case 'function':
 				return this.compilePrimitive(value(this.config));
 			default:

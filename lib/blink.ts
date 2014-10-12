@@ -23,22 +23,22 @@ function blink(options?: blink.ConfigurationOptions): NodeJS.ReadWriteStream {
 // ReSharper disable once InconsistentNaming
 module blink {
 
-	export class Block extends _Block {}
-	export class Compiler extends _Compiler {}
+	export class Block         extends _Block {}
+	export class Compiler      extends _Compiler {}
 	export class Configuration extends _Configuration {}
-	export class Element extends _Element {}
-	export class MediaAtRule extends _MediaAtRule {}
-	export class Modifier extends _Modifier {}
-	export class Rule extends _Rule {}
+	export class Element       extends _Element {}
+	export class MediaAtRule   extends _MediaAtRule {}
+	export class Modifier      extends _Modifier {}
+	export class Rule          extends _Rule {}
 
-	export interface BackgroundOptions extends _BackgroundOptions {}
-	export interface BlockBody extends _BlockBody {}
+	export interface BackgroundOptions    extends _BackgroundOptions {}
+	export interface BlockBody            extends _BlockBody {}
 	export interface ConfigurationOptions extends _ConfigurationOptions {}
-	export interface ElementBody extends _ElementBody {}
-	export interface Extender extends _Extender {}
-	export interface ModifierBody extends _ModifierBody {}
-	export interface Override extends _Override {}
-	export interface RuleBody extends _RuleBody {}
+	export interface ElementBody          extends _ElementBody {}
+	export interface Extender             extends _Extender {}
+	export interface ModifierBody         extends _ModifierBody {}
+	export interface Override             extends _Override {}
+	export interface RuleBody             extends _RuleBody {}
 
 	export var config = new Configuration();
 

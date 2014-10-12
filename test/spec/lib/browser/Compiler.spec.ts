@@ -35,6 +35,30 @@ describe('Compiler for browser', () => {
 		});
 	});
 
+	it('compiles numeric values of 0 as unitless', done => {
+		blink({ foo: { bar: 0 } }, (err, css) => {
+			expect(err).to.be.null;
+			expect(css).to.eq([
+				'foo {',
+				'  bar: 0;',
+				'}'
+			].join(newline) + newline);
+			done();
+		});
+	});
+
+	it('compiles non-zero numeric values as px units', done => {
+		blink({ foo: { bar: 42 } }, (err, css) => {
+			expect(err).to.be.null;
+			expect(css).to.eq([
+				'foo {',
+				'  bar: 42px;',
+				'}'
+			].join(newline) + newline);
+			done();
+		});
+	});
+
 	it('compiles multiple rules from an object literal', done => {
 		var rules = {
 			foo: {

@@ -40,7 +40,7 @@ describe('overrides', () => {
 		});
 
 		it('generates no declarations when no options are provided', () => {
-			var result = overrides.background({})(config);
+			var result = overrides.background()(config);
 			expect(result).to.deep.equal([]);
 		});
 
@@ -219,6 +219,13 @@ describe('overrides', () => {
 				overrides.text({ size: { adjust: 'foo' } }),
 				overrides.textSizeAdjust('foo')
 			);
+		});
+
+		it('errors on text-size', () => {
+			var fn = () => {
+				overrides.text({ size: 'foo' })(config);
+			};
+			expect(fn).to.throw('Invalid property: text-size');
 		});
 
 		it('generates a single text declaration when value is foo', () => {

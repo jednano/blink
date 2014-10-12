@@ -166,9 +166,7 @@ class Compiler {
 				result.push([[key], value]);
 				return;
 			}
-			if (value) {
-				result.push([[key], this.resolveTree(value)]);
-			}
+			result.push([[key], this.resolveTree(value)]);
 		});
 		return result;
 	}
