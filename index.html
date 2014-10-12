@@ -33,10 +33,13 @@
       <section id="main_content" class="inner">
         <p><img src="https://github.com/blinkjs/blink/blob/master/artwork/blink_256_nobg.png?raw=true" width="256" height="256" alt="blink" align="right"></p>
 
+<p>Blink converts <a href="http://nodejs.org/">Node.js</a> modules into CSS.</p>
+
 <p><a href="http://travis-ci.org/blinkjs/blink"><img src="https://secure.travis-ci.org/blinkjs/blink.svg" alt="Build Status"></a>
-<a href="https://gemnasium.com/blinkjs/blink"><img src="https://gemnasium.com/blinkjs/blink.svg" alt="Dependency Status"></a>
-<a href="http://badge.fury.io/js/blink"><img src="https://badge.fury.io/js/blink.svg" alt="NPM version"></a>
-<a href="https://sourcegraph.com/github.com/blinkjs/blink"><img src="https://sourcegraph.com/api/repos/github.com/blinkjs/blink/counters/views-24h.png" alt="Views"></a>
+<a href="https://david-dm.org/blinkjs/blink"><img src="https://david-dm.org/blinkjs/blink.svg" alt="Dependency Status"></a>
+<a href="http://badge.fury.io/js/blink"><img src="https://badge.fury.io/js/blink.svg" alt="NPM version"></a></p>
+
+<p><a href="https://sourcegraph.com/github.com/blinkjs/blink"><img src="https://sourcegraph.com/api/repos/github.com/blinkjs/blink/counters/views-24h.png" alt="Views"></a>
 <a href="https://codeclimate.com/github/blinkjs/blink"><img src="https://codeclimate.com/github/blinkjs/blink/badges/gpa.svg" alt="Code Climate"></a>
 <a href="https://codeclimate.com/github/blinkjs/blink"><img src="https://codeclimate.com/github/blinkjs/blink/badges/coverage.svg" alt="Test Coverage"></a></p>
 
@@ -54,16 +57,13 @@
 <p>Blink is just getting started, so stay tuned for any updates.</p>
 
 <h2>
-<a name="requirements" class="anchor" href="#requirements"><span class="octicon octicon-link"></span></a>Requirements</h2>
-
-<ul>
-<li><a href="http://nodejs.org/">Node</a></li>
-</ul><h2>
 <a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a>Features</h2>
 
 <ul>
+<li><a href="https://codeclimate.com/github/blinkjs/blink">100% code coverage</a></li>
+<li><a href="https://codeclimate.com/github/blinkjs/blink">4.0 Code Climate GPA</a></li>
 <li><a href="#runs-on-node">Runs on Node</a></li>
-<li><a href="#gulp-friendly">gulpfriendly</a></li>
+<li><a href="#gulp-plugin">Gulp plugin</a></li>
 <li><a href="https://github.com/blinkjs/grunt-blink">Grunt plugin</a></li>
 <li><a href="https://github.com/blinkjs/blink-middleware">Middleware</a></li>
 <li><a href="#browserified">Browserified</a></li>
@@ -80,26 +80,61 @@
 <li><a href="https://github.com/blinkjs/blink/blob/master/blink.d.ts">API</a></li>
 <li><a href="https://github.com/blinkjs/blink-middleware">Express middleware</a></li>
 <li><a href="#spriting">Spriting</a></li>
-</ul><h3>
+</ul>
+
+<h2>
+<a name="getting-started" class="anchor" href="#getting-started"><span class="octicon octicon-link"></span></a>Getting started</h2>
+
+<h3>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h3>
+
+<ul>
+<li><a href="#library-usage">Node</a></li>
+<li><a href="#browserified">In the browser</a></li>
+</ul>
+
+<h3>
+<a name="example" class="anchor" href="#example"><span class="octicon octicon-link"></span></a>Example</h3>
+
+<p>At its simplest, blink lets you write CSS with a simple <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Working_with_Objects#Using_object_initializers">object initializer</a>.
+This object needs to be exported with either <code>module.exports</code> in Node or just <code>exports</code> in the browser.
+Here's a quick and dirty example:</p>
+
+<div class="highlight highlight-js"><pre><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">foo</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">bar</span><span class="o">:</span> <span class="s1">'baz'</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+
+<p>This would generate the following CSS:</p>
+
+<div class="highlight highlight-css"><pre><span class="nt">foo</span> <span class="p">{</span>
+  <span class="n">bar</span><span class="o">:</span> <span class="n">baz</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>From here, you'll want look at <a href="#features">the full list of features</a> for a comprehensive overview of what-all blink has to offer.</p>
+
+<h3>
 <a name="runs-on-node" class="anchor" href="#runs-on-node"><span class="octicon octicon-link"></span></a>Runs on Node</h3>
 
 <p>Unlike most CSS preprocessors out there, blink does not transpile a <a href="http://en.wikipedia.org/wiki/Domain-specific_language">DSL</a> into CSS. Blink code gets compiled directly as a <a href="http://nodejs.org/">Node</a> module, giving you access to all JavaScript syntax for free. This, of course, includes variables and functions, as well as <a href="http://nodejs.org/api/fs.html">file I/O</a>. The possibilities are endless.</p>
 
 <h3>
-<a name="gulp-friendly" class="anchor" href="#gulp-friendly"><span class="octicon octicon-link"></span></a>Gulp friendly</h3>
+<a name="gulp-plugin" class="anchor" href="#gulp-plugin"><span class="octicon octicon-link"></span></a>Gulp plugin</h3>
 
-<p>The <a href="https://github.com/blinkjs/blink/blob/master/lib/Compiler.ts#L22-L69">blink.compile() method</a>
-is written exactly like a gulp plugin. As such, blink will never write intermediate files unless
-you want it to do so. Files can be piped to other streams or <a href="http://gulpjs.com/plugins/">gulp plugins</a>
-before being written to their final destination. This gives blink some performance benefits as well as
-putting it in the <a href="https://www.npmjs.org/search?q=gulpfriendly">gulpfriendly</a> category. Blink supports <a href="https://github.com/wearefractal/vinyl">vinyl</a> files in both stream and buffer modes.</p>
+<p>Blink is itself a gulp plugin, supporting both stream and buffer <a href="https://github.com/wearefractal/vinyl">file modes</a>.
+As with any gulp plugin, files can be piped to other streams or <a href="http://gulpjs.com/plugins/">gulp plugins</a>
+before being written to their final destination.
+Blink supports <a href="">vinyl</a> files in both stream and buffer modes.</p>
 
 <div class="highlight highlight-js"><pre><span class="kd">var</span> <span class="nx">blink</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'blink'</span><span class="p">);</span>
 <span class="kd">var</span> <span class="nx">gulp</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'gulp'</span><span class="p">);</span>
 
 <span class="nx">gulp</span><span class="p">.</span><span class="nx">task</span><span class="p">(</span><span class="s1">'styles'</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
   <span class="k">return</span> <span class="nx">gulp</span><span class="p">.</span><span class="nx">src</span><span class="p">(</span><span class="s1">'styles/*.js'</span><span class="p">,</span> <span class="p">{</span> <span class="nx">buffer</span><span class="o">:</span> <span class="kc">false</span> <span class="p">})</span>
-    <span class="p">.</span><span class="nx">pipe</span><span class="p">(</span><span class="nx">blink</span><span class="p">.</span><span class="nx">compile</span><span class="p">(</span><span class="cm">/* options */</span><span class="p">))</span>
+    <span class="p">.</span><span class="nx">pipe</span><span class="p">(</span><span class="nx">blink</span><span class="p">(</span><span class="cm">/* options */</span><span class="p">))</span>
     <span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'error'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
       <span class="c1">// handle error</span>
     <span class="p">})</span>
@@ -126,7 +161,7 @@ using the blink module directly.</em></p>
 <p>Compile your block:</p>
 
 <div class="highlight highlight-js"><pre><span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">blink</span><span class="p">.</span><span class="nx">Block</span><span class="p">(</span><span class="s1">'foo'</span><span class="p">,</span> <span class="p">{</span> <span class="nx">bar</span><span class="o">:</span> <span class="s1">'baz'</span> <span class="p">});</span>
-<span class="nx">blink</span><span class="p">.</span><span class="nx">compile</span><span class="p">(</span><span class="nx">foo</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">css</span><span class="p">)</span> <span class="p">{</span>
+<span class="nx">blink</span><span class="p">(</span><span class="nx">foo</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">css</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">css</span><span class="p">);</span>
 <span class="p">});</span>
 </pre></div>
@@ -134,7 +169,7 @@ using the blink module directly.</em></p>
 <p>You can also compile a string of source code as long as you export the rule with <code>exports</code>.</p>
 
 <div class="highlight highlight-js"><pre><span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="s2">"exports = new blink.Block('foo', { bar: 'baz' });"</span><span class="p">;</span>
-<span class="nx">blink</span><span class="p">.</span><span class="nx">compile</span><span class="p">(</span><span class="nx">foo</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">css</span><span class="p">)</span> <span class="p">{</span>
+<span class="nx">blink</span><span class="p">(</span><span class="nx">foo</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">css</span><span class="p">)</span> <span class="p">{</span>
   <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">css</span><span class="p">);</span>
 <span class="p">});</span>
 </pre></div>
@@ -245,7 +280,7 @@ using the blink module directly.</em></p>
 <span class="c1">// ReSharper disable once UnusedLocals</span>
 <span class="kd">function</span> <span class="nx">fill() {</span>
 
-    <span class="kd">var</span> <span class="nx">extender</span> <span class="o">=</span> <span class="o">&lt;</span><span class="nx">blink</span><span class="p">.</span><span class="nx">IExtender</span><span class="o">&gt;</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">extender</span> <span class="o">=</span> <span class="o">&lt;</span><span class="nx">blink</span><span class="p">.</span><span class="nx">Extender</span><span class="o">&gt;</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
         <span class="k">return</span> <span class="p">[</span>
             <span class="p">[</span><span class="s1">'position'</span><span class="p">,</span> <span class="s1">'absolute'</span><span class="p">],</span>
             <span class="p">[</span><span class="s1">'top'</span><span class="p">,</span> <span class="s1">'0'</span><span class="p">],</span>
@@ -297,7 +332,7 @@ once. This keeps your CSS as lean as possible.</p>
 
 <span class="c1">// ReSharper disable once UnusedLocals</span>
 <span class="kd">function</span> <span class="nx">noop() {</span>
-    <span class="kd">var</span> <span class="nx">extender</span> <span class="o">=</span> <span class="o">&lt;</span><span class="nx">blink</span><span class="p">.</span><span class="nx">IExtender</span><span class="o">&gt;</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">[]);</span>
+    <span class="kd">var</span> <span class="nx">extender</span> <span class="o">=</span> <span class="o">&lt;</span><span class="nx">blink</span><span class="p">.</span><span class="nx">Extender</span><span class="o">&gt;</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">[]);</span>
     <span class="nx">extender</span><span class="p">.</span><span class="nx">args</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">;</span>
     <span class="k">return</span> <span class="nx">extender</span><span class="p">;</span>
 <span class="p">}</span>
@@ -316,7 +351,7 @@ The name, however, must be provided and must be unique.</p>
 
 <span class="c1">// ReSharper disable once UnusedLocals</span>
 <span class="kd">function</span> <span class="nx">inlineBlock() {</span>
-    <span class="kd">var</span> <span class="nx">extender</span> <span class="o">=</span> <span class="o">&lt;</span><span class="nx">blink</span><span class="p">.</span><span class="nx">IExtender</span><span class="o">&gt;</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">extender</span> <span class="o">=</span> <span class="o">&lt;</span><span class="nx">blink</span><span class="p">.</span><span class="nx">Extender</span><span class="o">&gt;</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
         <span class="k">return</span> <span class="p">[</span><span class="s1">'display'</span><span class="p">,</span> <span class="s1">'inline-block'</span><span class="p">];</span>
     <span class="p">});</span>
 <span class="p">}</span>
@@ -335,7 +370,7 @@ The name, however, must be provided and must be unique.</p>
 
     <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
 
-    <span class="kd">var</span> <span class="nx">extender</span> <span class="o">=</span> <span class="o">&lt;</span><span class="nx">blink</span><span class="p">.</span><span class="nx">IExtender</span><span class="o">&gt;</span><span class="p">((</span><span class="nx">config</span>: <span class="kt">blink.Configuration</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">extender</span> <span class="o">=</span> <span class="o">&lt;</span><span class="nx">blink</span><span class="p">.</span><span class="nx">Extender</span><span class="o">&gt;</span><span class="p">((</span><span class="nx">config</span>: <span class="kt">blink.Configuration</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">decs</span> <span class="o">=</span> <span class="p">[];</span>
 
         <span class="nx">decs</span><span class="p">.</span><span class="nx">push</span><span class="p">([</span><span class="s1">'display'</span><span class="p">,</span> <span class="s1">'inline-block'</span><span class="p">]);</span>
@@ -365,7 +400,7 @@ The name, however, must be provided and must be unique.</p>
 
     <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
 
-    <span class="kd">var</span> <span class="nx">extender</span> <span class="o">=</span> <span class="o">&lt;</span><span class="nx">blink</span><span class="p">.</span><span class="nx">IExtender</span><span class="o">&gt;</span><span class="p">((</span><span class="nx">config</span>: <span class="kt">blink.Configuration</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">extender</span> <span class="o">=</span> <span class="o">&lt;</span><span class="nx">blink</span><span class="p">.</span><span class="nx">Extender</span><span class="o">&gt;</span><span class="p">((</span><span class="nx">config</span>: <span class="kt">blink.Configuration</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
         <span class="kd">var</span> <span class="nx">decs</span> <span class="o">=</span> <span class="p">[];</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">firefox</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">)</span> <span class="p">{</span>
@@ -551,7 +586,7 @@ The name, however, must be provided and must be unique.</p>
 <p>BTW, you can write your blink files in <a href="http://www.typescriptlang.org/">TypeScript</a> or JavaScript. It really doesn't matter as long as it ends up in JavaScript.</p>
 
 <h2>
-<a name="getting-started" class="anchor" href="#getting-started"><span class="octicon octicon-link"></span></a>Getting Started</h2>
+<a name="getting-started-1" class="anchor" href="#getting-started-1"><span class="octicon octicon-link"></span></a>Getting Started</h2>
 
 <h3>
 <a name="cli-usage" class="anchor" href="#cli-usage"><span class="octicon octicon-link"></span></a>CLI Usage</h3>
