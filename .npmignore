@@ -9,7 +9,6 @@ artwork/
 bower_components/dt-chai
 bower_components/dt-mocha
 bower_components/dt-sinon*
-bower_components/dt-vinyl
 coverage/
 dist/d.ts/
 js/test/
