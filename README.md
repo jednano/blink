@@ -26,7 +26,8 @@ Blink is just getting started, so stay tuned for any updates.
 
 ## Features
 
-- 100% code coverage
+- [100% code coverage](https://codeclimate.com/github/blinkjs/blink)
+- [4.0 Code Climate GPA](https://codeclimate.com/github/blinkjs/blink)
 - [Runs on Node](#runs-on-node)
 - [Gulp plugin](#gulp-plugin)
 - [Grunt plugin](https://github.com/blinkjs/grunt-blink)
