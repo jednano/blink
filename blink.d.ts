@@ -1,4 +1,4 @@
-/// <reference path="./bower_components/dt-vinyl/vinyl.d.ts" />
+/// <reference path="./bower_components/dt-node/node.d.ts" />
 declare module "blink" {
 	function blink(options?: blink.ConfigurationOptions): NodeJS.ReadWriteStream;
 	module blink {
