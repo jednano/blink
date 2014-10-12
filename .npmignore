@@ -2,6 +2,7 @@
 *.sln*
 *.suo
 bower.json
+defaults*.json
 gulpfile.js
 tslint.json
 artwork/
@@ -10,8 +11,8 @@ bower_components/dt-mocha
 bower_components/dt-sinon*
 bower_components/dt-vinyl
 coverage/
-dist/
-js/
+dist/d.ts/
+js/test/
 lib/
 tasks/
 test/
