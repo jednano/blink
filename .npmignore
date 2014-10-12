@@ -2,7 +2,7 @@
 *.sln*
 *.suo
 bower.json
-defaults*.json
+./defaults*.json
 gulpfile.js
 tslint.json
 artwork/
