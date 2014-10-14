@@ -134,17 +134,17 @@ describe('Compiler for browser', () => {
 		});
 		extender.args = arguments;
 		var rules = [
-			new Rule(['.foo'], {
+			new Rule('foo', {
 				extend: [ extender ]
 			}),
-			new Rule(['.bar'], {
+			new Rule('bar', {
 				extend: [ extender ]
 			})
 		];
 		compiler.compileRules(rules, (err, css) => {
 			expect(err).to.be.null;
 			expect(css).to.eq([
-				'.foo, .bar {',
+				'foo, bar {',
 				'  baz: BAZ;',
 				'  qux: QUX;',
 				'}'
@@ -154,23 +154,23 @@ describe('Compiler for browser', () => {
 
 	it('compiles extenders with parameters', () => {
 		var rules = [
-			new Rule(['.foo'], {
+			new Rule('foo', {
 				extend: [ cap('quux') ]
 			}),
-			new Rule(['.bar'], {
+			new Rule('bar', {
 				extend: [ cap('corge') ]
 			}),
-			new Rule(['.baz'], {
+			new Rule('baz', {
 				extend: [ cap('quux') ]
 			})
 		];
 		compiler.compileRules(rules, (err, css) => {
 			expect(err).to.be.null;
 			expect(css).to.eq([
-				'.foo, .baz {',
+				'foo, baz {',
 				'  cap: QUUX;',
 				'}',
-				'.bar {',
+				'bar {',
 				'  cap: CORGE;',
 				'}'
 			].join(newline) + newline);
@@ -180,15 +180,15 @@ describe('Compiler for browser', () => {
 	it('compiles overrides', () => {
 		(<any>config.overrides).cap = cap;
 		var rules = [
-			new Rule(['.foo'], {
+			new Rule('foo', {
 				cap: 'qux',
 				waldo: 'WALDO'
 			}),
-			new Rule(['.bar'], {
+			new Rule('bar', {
 				cap: 'fred',
 				thud: 'THUD'
 			}),
-			new Rule(['.baz'], {
+			new Rule('baz', {
 				cap: 'qux',
 				garpley: 'GARPLEY'
 			})
@@ -196,19 +196,19 @@ describe('Compiler for browser', () => {
 		compiler.compileRules(rules, (err, css) => {
 			expect(err).to.be.null;
 			expect(css).to.eq([
-				'.foo, .baz {',
+				'foo, baz {',
 				'  cap: QUX;',
 				'}',
-				'.bar {',
+				'bar {',
 				'  cap: FRED;',
 				'}',
-				'.foo {',
+				'foo {',
 				'  waldo: WALDO;',
 				'}',
-				'.bar {',
+				'bar {',
 				'  thud: THUD;',
 				'}',
-				'.baz {',
+				'baz {',
 				'  garpley: GARPLEY;',
 				'}'
 			].join(newline) + newline);
