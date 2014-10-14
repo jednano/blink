@@ -8,7 +8,7 @@ function watch() {
 	gulp.watch([
 		'test/fixtures/*.js',
 		'test/expected/*.css'
-	], require('./test'));
+	], require('./test--watch'));
 }
 
 module.exports = watch;
