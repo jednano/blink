@@ -13,10 +13,6 @@ class Rule {
 	private config: Configuration;
 	private decs: any[][];
 
-	public get extenders() {
-		return this.body.extend;
-	}
-
 	public get includes() {
 		return this.body.include;
 	}
@@ -56,7 +52,6 @@ class Rule {
 		this.config = config;
 		var clone = this.clone();
 		var body = clone.body;
-		delete body.extend;
 		delete body.include;
 		delete body.respond;
 

@@ -99,9 +99,6 @@ var Compiler = (function () {
     Compiler.prototype.registerExtenders = function (extenders, rules) {
         var _this = this;
         rules.forEach(function (rule) {
-            (rule.extenders || []).forEach(function (extender) {
-                extenders.add(extender, rule.selectors);
-            });
             var overrides = _this.config.overrides;
             var body = rule.body;
             Object.keys(body).forEach(function (property) {

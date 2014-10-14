@@ -5,7 +5,6 @@ declare class Rule {
     public body: RuleBody;
     private config;
     private decs;
-    public extenders : any[];
     public includes : Function[];
     public responders : MediaAtRule[];
     private _selectors;

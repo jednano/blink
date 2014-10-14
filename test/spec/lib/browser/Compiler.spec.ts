@@ -18,6 +18,10 @@ describe('Compiler for browser', () => {
 	var config = compiler.config;
 	var newline = config.newline;
 
+	var overrides = <any>config.overrides;
+	overrides.upper = upper;
+	overrides.lower = lower;
+
 	it('compiles no rules into an empty string', done => {
 		blink([], (err, css) => {
 			expect(err).to.be.null;
@@ -128,60 +132,7 @@ describe('Compiler for browser', () => {
 		});
 	});
 
-	it('compiles extenders', () => {
-		var extender = <Extender>(() => {
-			return [
-				['baz', 'BAZ'],
-				['qux', 'QUX']
-			];
-		});
-		extender.args = arguments;
-		var rules = [
-			new Rule('foo', {
-				extend: [ extender ]
-			}),
-			new Rule('bar', {
-				extend: [ extender ]
-			})
-		];
-		compiler.compileRules(rules, (err, css) => {
-			expect(err).to.be.null;
-			expect(css).to.eq([
-				'foo, bar {',
-				'  baz: BAZ;',
-				'  qux: QUX;',
-				'}'
-			].join(newline) + newline);
-		});
-	});
-
-	it('compiles extenders with parameters', () => {
-		var rules = [
-			new Rule('foo', {
-				extend: [ upper('quux') ]
-			}),
-			new Rule('bar', {
-				extend: [ upper('corge') ]
-			}),
-			new Rule('baz', {
-				extend: [ upper('quux') ]
-			})
-		];
-		compiler.compileRules(rules, (err, css) => {
-			expect(err).to.be.null;
-			expect(css).to.eq([
-				'foo, baz {',
-				'  upper: QUUX;',
-				'}',
-				'bar {',
-				'  upper: CORGE;',
-				'}'
-			].join(newline) + newline);
-		});
-	});
-
 	it('compiles overrides', () => {
-		(<any>config.overrides).upper = upper;
 		var rules = [
 			new Rule('foo', {
 				upper: 'qux',
@@ -216,14 +167,11 @@ describe('Compiler for browser', () => {
 				'}'
 			].join(newline) + newline);
 		});
-		delete (<any>config.overrides).upper;
 	});
 
 	it('supports overrides with more overrides inside of them', () => {
-		var overrides = <any>config.overrides;
+
 		overrides.caser = caser;
-		overrides.upper = upper;
-		overrides.lower = lower;
 
 		var rules = [
 			new Rule('foo', {
@@ -262,8 +210,6 @@ describe('Compiler for browser', () => {
 		});
 
 		delete overrides.caser;
-		delete overrides.upper;
-		delete overrides.lower;
 
 		function caser(val: any) {
 			if (!o.isPlainObject(val)) {
@@ -359,19 +305,19 @@ describe('Compiler for browser', () => {
 			});
 		});
 
-		it('properly extends inside of a responder', () => {
+		it('properly overrides inside a responder', () => {
 			var rules = [
 				new Rule('foo', {
 					respond: [
 						new MediaAtRule('baz', {
-							extend: [upper('qux')]
+							upper: 'qux'
 						})
 					]
 				}),
 				new Rule('bar', {
 					respond: [
 						new MediaAtRule('baz', {
-							extend: [upper('qux')]
+							upper: 'qux'
 						})
 					]
 				})

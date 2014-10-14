@@ -9,14 +9,6 @@ var Rule = (function () {
         this.body = body;
         this.selectors = selectors;
     }
-    Object.defineProperty(Rule.prototype, "extenders", {
-        get: function () {
-            return this.body.extend;
-        },
-        enumerable: true,
-        configurable: true
-    });
-
     Object.defineProperty(Rule.prototype, "includes", {
         get: function () {
             return this.body.include;
@@ -63,7 +55,6 @@ var Rule = (function () {
         this.config = config;
         var clone = this.clone();
         var body = clone.body;
-        delete body.extend;
         delete body.include;
         delete body.respond;
 

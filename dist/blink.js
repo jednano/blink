@@ -416,14 +416,6 @@ var Rule = (function () {
         this.body = body;
         this.selectors = selectors;
     }
-    Object.defineProperty(Rule.prototype, "extenders", {
-        get: function () {
-            return this.body.extend;
-        },
-        enumerable: true,
-        configurable: true
-    });
-
     Object.defineProperty(Rule.prototype, "includes", {
         get: function () {
             return this.body.include;
@@ -470,7 +462,6 @@ var Rule = (function () {
         this.config = config;
         var clone = this.clone();
         var body = clone.body;
-        delete body.extend;
         delete body.include;
         delete body.respond;
 
@@ -709,9 +700,6 @@ var Compiler = (function () {
     Compiler.prototype.registerExtenders = function (extenders, rules) {
         var _this = this;
         rules.forEach(function (rule) {
-            (rule.extenders || []).forEach(function (extender) {
-                extenders.add(extender, rule.selectors);
-            });
             var overrides = _this.config.overrides;
             var body = rule.body;
             Object.keys(body).forEach(function (property) {

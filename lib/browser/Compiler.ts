@@ -106,9 +106,6 @@ class Compiler {
 
 	private registerExtenders(extenders: ExtenderRegistry, rules: Rule[]) {
 		rules.forEach(rule => {
-			(rule.extenders || []).forEach(extender => {
-				extenders.add(extender, rule.selectors);
-			});
 			var overrides = this.config.overrides;
 			var body = rule.body;
 			Object.keys(body).forEach(property => {
