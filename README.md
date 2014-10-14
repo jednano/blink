@@ -37,8 +37,8 @@ Blink is just getting started, so stay tuned for any updates.
 - [Rules](#rules)
 - [Includes](#includes)
 - [Mixins](#mixins)
-- [Extenders](#extenders)
 - [Overrides](#overrides)
+- [Extenders](#extenders)
 - [Responders](#responders)
 - [Plugins](#plugins)
 - [TypeScript Source](#typescript-source)
@@ -244,14 +244,107 @@ Still, if you find yourself needing an include, refer to [the Rule spec](https:/
 If you're coming from [Sass](http://sass-lang.com/), you might be familiar with [mixins](http://sass-lang.com/guide). Really, Sass mixins are no different than functions in JavaScript; thus, blink supports them. All you have to do is create a function that returns an array of declarations. This is, in fact, how [extenders](#extenders) and [overrides](#overrides) work.
 
 
-### Extenders
+### Overrides
 
-Extenders are named functions that return another function, complete with the original passed-in arguments as `args` and, optionally, `selectors`, for which you can find an example in [the clearfix extender](https://github.com/blinkjs/blink/blob/master/lib/extenders/clearfix.ts). An extender with no parameters always returns the same output. For example, here's an extender named `fill` that fills its container:
+Overrides are named function [factories](http://en.wikipedia.org/wiki/Factory_(object-oriented_programming).
+The function that is returned can be used for the purpose of generating any number of CSS declarations.
+This enables you to override existing CSS properties or create your own.
+For example, say you wanted to override the CSS `color` property to always convert colors into `hsl`. You could do that!
+Maybe you want to create a new `clearfix` property that, when set to true, generates 3 CSS declarations. Good news &ndash; [that one already exists](https://github.com/blinkjs/blink/blob/master/lib/overrides/clearfix.ts)!
+
+Let's take an in-depth look at the [box-sizing override](https://github.com/blinkjs/blink/blob/master/lib/overrides/boxSizing.ts).
+Here's how you would go about writing it from scratch.
+
+```ts
+function boxSizing() {}
+export = boxSizing;
+```
+
+Overrides must be named functions with a unique name.
+This name is what allows the blink compiler to reuse the override in other rules where it is called; thus, never generating the same code twice.
+If you're coming from Sass, you'll know that you have to go out of your way to get this kind of functionality with `@extend`.
+With blink, you get it for free.
+
+Let's return a function.
 
 ```ts
 import blink = require('blink');
 
-// ReSharper disable once UnusedLocals
+function boxSizing(value: string) {
+
+	var override = <blink.Override>((config: blink.Configuration) => {
+	});
+
+	override.args = arguments;
+	return override;
+
+}
+
+export = boxSizing;
+```
+
+We've imported the blink library to gain access to the [Override](https://github.com/blinkjs/blink/blob/master/lib/interfaces/Override.ts) interface, as well as the [Configuration](https://github.com/blinkjs/blink/blob/master/lib/Configuration.ts) class.
+We're accepting a `value: string` argument, because we know it can be one of `content-box`, `padding-box`, `border-box` or `inherit`. It doesn't accept numeric values or anything like that. See [box-sizing on MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/box-sizing?redirectlocale=en-US&redirectslug=CSS%2Fbox-sizing).
+Next, we created a new function and assigned it to the `override` variable.
+The function must be assigned `args` before it is returned. This copies the `arguments` that were originally sent to the override.
+Remember how I said your override never generates the same code twice? More accurately, your override, when called with the same arguments, never generates the same code twice.
+Copying the arguments is what allows this process to work properly.
+
+The `box-sizing` property is actually quite simple. All we need to do is add some vendor prefixes.
+Fortunately, blink has an [experimental extender](https://github.com/blinkjs/blink/blob/master/lib/extenders/experimental.ts) for that.
+Let's work it into this override.
+
+```ts
+import blink = require('blink');
+
+function boxSizing(value: string) {
+
+	var override = <blink.Override>((config: blink.Configuration) => {
+		return blink.config.extenders.experimental('box-sizing', value, {
+			official: true,
+			webkit: !(
+				config.chrome >= 10 &&
+				config.safari >= 5.1 &&
+				config.android >= 4
+			),
+			moz: !(
+				config.firefox >= 29 &&
+				config.firefoxMobile >= 29
+			)
+		})(config);
+	});
+
+	override.args = arguments;
+	return override;
+
+}
+
+export = boxSizing;
+```
+
+The experimental extender is quite handy, but we still need to know which vendor prefixes to generate.
+Refer to [MDN's box-sizing browser compatability table](https://developer.mozilla.org/en-US/docs/Web/CSS/box-sizing#Browser_compatibility) for just that information.
+Once you implement the correct browser versions, anyone using your override will only generate the vendor prefixes they intend to support.
+If they change their configuration file to drop support for older browsers, it could generate no vendor prefixes at all.
+It really depends on the configuration. This is a blink paradigm that you would do well to follow.
+
+Overrides are registered on the configuration object. If you wish to extend the configuration, you can do so by providing [a plugin module](#plugins).
+
+_Note: override names are dasherized for you (e.g., boxSizing overrides the `box-sizing` property)._
+
+
+### Extenders
+
+Extenders are named function factories, just like [overrides](#overrides).
+In fact, they are exactly the same. The only difference is how they are used.
+Extenders cannot be called directly from the rule body, like overrides.
+Instead, they are typically called other extenders or from overrides, as we did with the `box-sizing` override.
+The rules for extenders are just the same.
+Here's an example of a `fill` extender that fills its container:
+
+```ts
+import blink = require('blink');
+
 function fill() {
 
 	var extender = <blink.Extender>(() => {
@@ -272,62 +365,14 @@ function fill() {
 export = fill;
 ```
 
-Let's create two blocks named `.foo` and `bar` that both extend fill.
+Pretty simple, right? You might choose to create a `fill` override that, internally, calls this extender.
+This would make sense for a rule body of `{ fill: true }`.
 
-```ts
-var rules = [
-	new blink.Block('foo', {
-		extend: [ fill ]
-	}),
-	new blink.Block('bar', {
-		extend: [ fill ]
-	})
-];
-
-export = rules;
-```
-
-These two blocks share the same extender, so there's no reason to generate the same CSS twice. The above code would output the following:
-
-```css
-.foo, .bar {
-	position: absolute;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	left: 0;
-}
-```
-
-This is very powerful, especially when you want to spit-out multiple declarations. Why, you ask? Because you only have to spit-out those declarations once! You can extend it from hundreds of blocks, but those lines never get written more than
-once. This keeps your CSS as lean as possible.
-
-Now, let's talk about building your own extenders. The basic structure of an extender is thus:
+Now, let's talk about building your own extenders. Here's how you would go about building an `inlineBlock` extender.
 
 ```ts
 import blink = require('blink');
 
-// ReSharper disable once UnusedLocals
-function noop() {
-	var extender = <blink.Extender>(() => []);
-	extender.args = arguments;
-	return extender;
-}
-
-export = noop;
-```
-
-This extender, [as its name suggests, does nothing](http://www.urbandictionary.com/define.php?term=noop&defid=1183981).
-The name, however, must be provided and must be unique.
-
-In this case, the extender has no arguments; yet, they must also be returned for unique registration purposes.
-
-Let's see what a more complicated, `inlineBlock` extender would look like.
-
-```ts
-import blink = require('blink');
-
-// ReSharper disable once UnusedLocals
 function inlineBlock() {
 	var extender = <blink.Extender>(() => {
 		return ['display', 'inline-block'];
@@ -342,7 +387,6 @@ This is all fine and good, but it's pretty useless. We can add a `verticalAlign`
 ```ts
 import blink = require('blink');
 
-// ReSharper disable once UnusedLocals
 function inlineBlock(options?: {
 		verticalAlign?: string;
 	}) {
@@ -373,7 +417,6 @@ Great, but what about inline-block CSS hacks? Glad you asked! You can gain acces
 ```ts
 import blink = require('blink');
 
-// ReSharper disable once UnusedLocals
 function inlineBlock(options?: {
 		verticalAlign?: string;
 	}) {
@@ -411,99 +454,12 @@ export = inlineBlock;
 
 Now, that's a nice extender! Once you change your configuration to support newer browsers, the CSS hacks disappear. No need to change any of your source code. It's all about the configuration.
 
+As with overrides, extenders are registered on the configuration object. If you wish to extend the configuration, you can do so by providing [a plugin module](#plugins).
+
 
 #### Extender registration
 
 It's important for you to know that, behind the scenes, blink is really smart about extender registration. It doesn't just register your extender by function name, but also by the arguments you pass in. This means if you extend `inlineBlock({ verticalAlign: 'top' })` 50 times and `inlineBlock({ verticalAlign: 'bottom' })` 20 times, only two rules will be generated. Different input yields different output, so it has to generate two rules for this scenario.
-
-
-#### Extenders calling other extenders
-
-Extenders can call other extenders directly, but you must provide the extender with the configuration object.
-
-```ts
-import blink = require('blink');
-
-function boxSizing(value: string) {
-
-	var extender = <blink.Extender>(() => {
-		return blink.extenders.experimental('box-sizing', value, {
-			official: true,  // Opera/IE 8+
-			  webkit: true,  // Safari/Chrome, other WebKit
-			     moz: true   // Firefox, other Gecko
-		})(config);
-	});
-
-	extender.args = arguments;
-	return extender;
-
-}
-```
-
-In this particular case, however, `box-sizing` would be better suited as an [Override](#overrides).
-
-
-### Overrides
-
-Overrides are functions &ndash; no different than extenders &ndash; that allow you to override a single CSS declaration with any number of declarations. In fact, you can and often will register extenders _as_ overrides. Here's an example of the
-`box-sizing` extender above as an override:
-
-```ts
-import blink = require('blink');
-
-// ReSharper disable once UnusedLocals
-function boxSizing(value: string) {
-
-	var override = <blink.Override>((config: blink.Configuration) => {
-		return blink.config.extenders.experimental('box-sizing', value, {
-			official: true,  // Opera/IE 8+
-			  webkit: true,  // Safari/Chrome, other WebKit
-			     moz: true   // Firefox, other Gecko
-		})(config);
-	});
-
-	override.args = arguments;
-	return override;
-
-}
-
-export = boxSizing;
-```
-
-This is all fine and good, but it doesn't say when certain browser versions began to support this property without vendor prefixes. To do so, lookup the [box-sizing compatibility table on MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/box-sizing#Browser_compatibility) to locate the supported desktop and mobile versions. Here's how you implement them in the override:
-
-```ts
-import blink = require('blink');
-
-// ReSharper disable once UnusedLocals
-function boxSizing(value: string) {
-
-	var override = <blink.Override>((config: blink.Configuration) => {
-		return blink.config.extenders.experimental('box-sizing', value, {
-			official: true,
-			webkit: !(
-				config.chrome >= 10 &&
-				config.safari >= 5.1 &&
-				config.android >= 4
-			),
-			moz: !(
-				config.firefox >= 29 &&
-				config.firefoxMobile >= 29
-			)
-		})(config);
-	});
-
-	override.args = arguments;
-	return override;
-
-}
-
-export = boxSizing;
-```
-
-Overrides are registered on the configuration object. If you wish to extend the configuration, you can do so by providing [a plugin module](#plugins).
-
-_Note: override names are dasherized for you (e.g., boxSizing overrides the `box-sizing` property)._
 
 
 ### Responders
