@@ -1,8 +1,11 @@
-﻿import blink = require('../../../../lib/browser/blink');
+﻿var extend = require('node.extend');
+
+import blink = require('../../../../lib/browser/blink');
 import Compiler = require('../../../../lib/browser/Compiler');
 import Configuration = require('../../../../lib/browser/Configuration');
 import Extender = require('../../../../lib/interfaces/Extender');
 import MediaAtRule = require('../../../../lib/MediaAtRule');
+import o = require('../../../../lib/helpers/object');
 import Rule = require('../../../../lib/Rule');
 import sinonChai = require('../../../sinon-chai');
 
@@ -155,41 +158,41 @@ describe('Compiler for browser', () => {
 	it('compiles extenders with parameters', () => {
 		var rules = [
 			new Rule('foo', {
-				extend: [ cap('quux') ]
+				extend: [ upper('quux') ]
 			}),
 			new Rule('bar', {
-				extend: [ cap('corge') ]
+				extend: [ upper('corge') ]
 			}),
 			new Rule('baz', {
-				extend: [ cap('quux') ]
+				extend: [ upper('quux') ]
 			})
 		];
 		compiler.compileRules(rules, (err, css) => {
 			expect(err).to.be.null;
 			expect(css).to.eq([
 				'foo, baz {',
-				'  cap: QUUX;',
+				'  upper: QUUX;',
 				'}',
 				'bar {',
-				'  cap: CORGE;',
+				'  upper: CORGE;',
 				'}'
 			].join(newline) + newline);
 		});
 	});
 
 	it('compiles overrides', () => {
-		(<any>config.overrides).cap = cap;
+		(<any>config.overrides).upper = upper;
 		var rules = [
 			new Rule('foo', {
-				cap: 'qux',
+				upper: 'qux',
 				waldo: 'WALDO'
 			}),
 			new Rule('bar', {
-				cap: 'fred',
+				upper: 'fred',
 				thud: 'THUD'
 			}),
 			new Rule('baz', {
-				cap: 'qux',
+				upper: 'qux',
 				garpley: 'GARPLEY'
 			})
 		];
@@ -197,10 +200,10 @@ describe('Compiler for browser', () => {
 			expect(err).to.be.null;
 			expect(css).to.eq([
 				'foo, baz {',
-				'  cap: QUX;',
+				'  upper: QUX;',
 				'}',
 				'bar {',
-				'  cap: FRED;',
+				'  upper: FRED;',
 				'}',
 				'foo {',
 				'  waldo: WALDO;',
@@ -213,7 +216,87 @@ describe('Compiler for browser', () => {
 				'}'
 			].join(newline) + newline);
 		});
-		delete (<any>config.overrides).cap;
+		delete (<any>config.overrides).upper;
+	});
+
+	it('supports overrides with more overrides inside of them', () => {
+		var overrides = <any>config.overrides;
+		overrides.caser = caser;
+		overrides.upper = upper;
+		overrides.lower = lower;
+
+		var rules = [
+			new Rule('foo', {
+				caser: {
+					lower: 'BAR',
+					upper: 'baz'
+				}
+			}),
+			new Rule('qux', {
+				caser: {
+					lower: 'BAR',
+					upper: 'quux'
+				}
+			}),
+			new Rule('corge', {
+				caser: 'grault'
+			})
+		];
+
+		compiler.compileRules(rules, (err, css) => {
+			expect(err).to.be.null;
+			expect(css).to.eq([
+				'foo, qux {',
+				'  lower: bar;',
+				'}',
+				'foo {',
+				'  upper: BAZ;',
+				'}',
+				'qux {',
+				'  upper: QUUX;',
+				'}',
+				'corge {',
+				'  caser: grault;',
+				'}'
+			].join(newline) + newline);
+		});
+
+		delete overrides.caser;
+		delete overrides.upper;
+		delete overrides.lower;
+
+		function caser(val: any) {
+			if (!o.isPlainObject(val)) {
+				return [caserExtender(val)];
+			}
+			var result = [];
+			var cloned = extend({}, val);
+			var map = {
+				upper: upper,
+				lower: lower
+			};
+			Object.keys(cloned).forEach(key => {
+				if (map.hasOwnProperty(key)) {
+					result.push(map[key](cloned[key]));
+					delete cloned[key];
+				}
+			});
+			if (Object.keys(cloned).length) {
+				result.push(caserExtender(cloned));
+			}
+			return result;
+		}
+
+		function caserExtender(val: any) {
+			var fn = <Extender>(() => {
+				return [
+					['caser', val]
+				];
+			});
+			fn.args = arguments;
+			return fn;
+		}
+
 	});
 
 	describe('responders', () => {
@@ -281,14 +364,14 @@ describe('Compiler for browser', () => {
 				new Rule('foo', {
 					respond: [
 						new MediaAtRule('baz', {
-							extend: [cap('qux')]
+							extend: [upper('qux')]
 						})
 					]
 				}),
 				new Rule('bar', {
 					respond: [
 						new MediaAtRule('baz', {
-							extend: [cap('qux')]
+							extend: [upper('qux')]
 						})
 					]
 				})
@@ -298,7 +381,7 @@ describe('Compiler for browser', () => {
 				expect(css).to.eq([
 					'@media baz {',
 					'  foo, bar {',
-					'    cap: QUX;',
+					'    upper: QUX;',
 					'  }',
 					'}'
 				].join(newline) + newline);
@@ -389,14 +472,24 @@ describe('Compiler for browser', () => {
 
 	});
 
-	function cap(val: string) {
+	function upper(val: string) {
 		var fn = <Extender>(() => {
 			return [
-				['cap', val.toUpperCase()]
+				['upper', val.toUpperCase()]
 			];
 		});
 		fn.args = arguments;
 		return fn;
 	};
+
+	function lower(val: string) {
+		var fn = <Extender>(() => {
+			return [
+				['lower', val.toLowerCase()]
+			];
+		});
+		fn.args = arguments;
+		return fn;
+	}
 
 });

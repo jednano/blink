@@ -717,8 +717,10 @@ var Compiler = (function () {
             Object.keys(body).forEach(function (property) {
                 var override = overrides[s.camelize(property)];
                 if (override) {
-                    override = override(body[property]);
-                    extenders.add(override, rule.selectors);
+                    var overrideResult = override(body[property]);
+                    a.flatten([overrideResult]).forEach(function (innerOverride) {
+                        extenders.add(innerOverride, rule.selectors);
+                    });
                     delete body[property];
                 }
             });

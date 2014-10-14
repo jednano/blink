@@ -114,8 +114,10 @@ class Compiler {
 			Object.keys(body).forEach(property => {
 				var override = overrides[s.camelize(property)];
 				if (override) {
-					override = override(body[property]);
-					extenders.add(override, rule.selectors);
+					var overrideResult = override(body[property]);
+					a.flatten([overrideResult]).forEach(innerOverride => {
+						extenders.add(innerOverride, rule.selectors);
+					});
 					delete body[property];
 				}
 			});
