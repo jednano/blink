@@ -22,6 +22,10 @@ describe('Compiler for browser', () => {
 	overrides.upper = upper;
 	overrides.lower = lower;
 
+	it.skip('provides a configuration if you don\'t provide one', () => {
+		expect(new Compiler().config).to.deep.equal(new Configuration());
+	});
+
 	it('compiles no rules into an empty string', done => {
 		blink([], (err, css) => {
 			expect(err).to.be.null;

@@ -1,0 +1,17 @@
+{
+  "name": "dt-chalk",
+  "version": "0.4.0",
+  "ignore": [
+    "**/.*"
+  ],
+  "homepage": "https://github.com/jedmao/dt-chalk",
+  "_release": "0.4.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.4.0",
+    "commit": "2903a27a85319982612fc4ad4c84553dccbaed8e"
+  },
+  "_source": "git://github.com/jedmao/dt-chalk.git",
+  "_target": "^0.4",
+  "_originalSource": "dt-chalk"
+}

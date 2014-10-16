@@ -11,7 +11,7 @@
     "tag": "v0.11.13",
     "commit": "390428ec4782a33b4a1262c3c92450d6eb6e929e"
   },
-  "_source": "https://github.com/jedmao/dt-node.git",
-  "_target": "0.11.13",
-  "_originalSource": "https://github.com/jedmao/dt-node.git"
+  "_source": "git://github.com/jedmao/dt-node.git",
+  "_target": "~0.11.13",
+  "_originalSource": "dt-node-jedmao"
 }

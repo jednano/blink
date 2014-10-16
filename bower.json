@@ -35,12 +35,14 @@
     "test"
   ],
   "dependencies": {
-    "dt-node": "https://github.com/jedmao/dt-node.git",
-    "dt-vinyl": "~0.3.1"
+    "dt-gulp-util": "~3.0.0",
+    "dt-node": "https://github.com/jedmao/dt-node.git#0.11.13",
+    "dt-vinyl": "~0.4.3"
   },
   "devDependencies": {
     "dt-mocha": "~1.9.0",
     "dt-sinon": "~1.5.0",
-    "dt-sinon-chai": "~2.4.0"
+    "dt-sinon-chai": "~2.4.0",
+    "dt-vinyl-fs": "~0.3.0"
   }
 }

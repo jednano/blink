@@ -15,6 +15,5 @@
   },
   "_source": "git://github.com/jedhunsaker/dt-mocha.git",
   "_target": "~1.9.0",
-  "_originalSource": "dt-mocha",
-  "_direct": true
+  "_originalSource": "dt-mocha"
 }

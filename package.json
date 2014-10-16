@@ -30,7 +30,8 @@
     "concat-stream": "^1.4.6",
     "gulp-util": "^3.0.1",
     "node.extend": "^1.0.10",
-    "through2": "^0.6.1"
+    "through2": "^0.6.1",
+    "vinyl": "^0.4.3"
   },
   "devDependencies": {
     "browserify": "^5.11.2",

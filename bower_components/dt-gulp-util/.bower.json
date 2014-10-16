@@ -1,0 +1,22 @@
+{
+  "name": "dt-gulp-util",
+  "version": "3.0.0",
+  "ignore": [
+    "**/.*"
+  ],
+  "dependencies": {
+    "dt-vinyl": "^0.4",
+    "dt-chalk": "^0.4",
+    "dt-through2": "^0.4"
+  },
+  "homepage": "https://github.com/jedmao/dt-gulp-util",
+  "_release": "3.0.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v3.0.0",
+    "commit": "84f69fe54d9f99ce3615e20ed771b7f804801ed7"
+  },
+  "_source": "git://github.com/jedmao/dt-gulp-util.git",
+  "_target": "~3.0.0",
+  "_originalSource": "dt-gulp-util"
+}

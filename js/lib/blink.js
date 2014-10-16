@@ -7,7 +7,7 @@ var __extends = this.__extends || function (d, b) {
 };
 var _Block = require('./Block');
 
-var _Compiler = require('./Compiler');
+var _Compiler = require('./browser/Compiler');
 var _Configuration = require('./Configuration');
 
 var _Element = require('./Element');
@@ -17,10 +17,11 @@ var _Modifier = require('./Modifier');
 
 var _Rule = require('./Rule');
 
-// ReSharper disable once UnusedLocals
-function blink(options) {
-    var compiler = new blink.Compiler(new blink.Configuration(options || {}));
-    return compiler.compile();
+var bundle = require('./bundle');
+
+
+function blink(output, options) {
+    return bundle(output, options);
 }
 
 // ReSharper disable once InconsistentNaming

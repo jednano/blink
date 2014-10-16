@@ -1,5 +1,4 @@
-﻿import Compiler = require('../../../lib/Compiler');
-import Configuration = require('../../../lib/Configuration');
+﻿import Configuration = require('../../../lib/Configuration');
 import extenders = require('../../../lib/extenders/all');
 import Rule = require('../../../lib/Rule');
 import sinonChai = require('../../sinon-chai');

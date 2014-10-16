@@ -1,0 +1,10 @@
+{
+  "name": "dt-vinyl-fs",
+  "version": "0.3.0",
+  "ignore": [
+    "**/.*"
+  ],
+  "dependencies": {
+    "dt-vinyl": "^0.4"
+  }
+}

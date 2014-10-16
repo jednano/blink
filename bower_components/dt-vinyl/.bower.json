@@ -1,15 +1,14 @@
 {
   "name": "dt-vinyl",
   "homepage": "https://github.com/jedmao/dt-vinyl",
-  "version": "0.3.1",
-  "_release": "0.3.1",
+  "version": "0.4.3",
+  "_release": "0.4.3",
   "_resolution": {
     "type": "version",
-    "tag": "v0.3.1",
-    "commit": "2496cb9d97c2432213102143cc06142fa1122756"
+    "tag": "v0.4.3",
+    "commit": "33da61452326ac9857fef69137641152e9a00f1a"
   },
   "_source": "git://github.com/jedmao/dt-vinyl.git",
-  "_target": "~0.3.1",
-  "_originalSource": "dt-vinyl",
-  "_direct": true
+  "_target": "^0.4",
+  "_originalSource": "dt-vinyl"
 }

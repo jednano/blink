@@ -1,6 +1,9 @@
-///<reference path="./bower_components/dt-node/node.d.ts"/>
+///<reference path="./bower_components/dt-vinyl/vinyl.d.ts"/>
 declare module "blink" {
-	function blink(options?: blink.ConfigurationOptions): NodeJS.ReadWriteStream;
+	function blink(outputFilename: string, options?: blink.ConfigurationOptions): NodeJS.ReadWriteStream;
+	function blink(outputFile: File, options?: blink.ConfigurationOptions): NodeJS.ReadWriteStream;
+	function blink(output: { path: string }, options?: blink.ConfigurationOptions): NodeJS.ReadWriteStream;
+	function blink(output: any, options?: blink.ConfigurationOptions): NodeJS.ReadWriteStream;
 	module blink {
 		class Block {
 			public name: string;
@@ -10,16 +13,9 @@ declare module "blink" {
 			constructor(name: string, body?: BlockBody);
 			public resolve(config: Configuration): any[];
 		}
-		class Compiler extends CompilerForBrowser {
+		class Compiler {
 			public config: Configuration;
 			constructor(config?: Configuration);
-			public compile(): NodeJS.ReadWriteStream;
-			private renameExtToCss(file);
-			private compileBuffer(data, filepath, callback);
-		}
-		class CompilerForBrowser {
-			public config: ConfigurationForBrowser;
-			constructor(config?: ConfigurationForBrowser);
 			public compile(contents: string, callback: Callback): void;
 			public compile(rules: {}, callback: Callback): void;
 			public compile(rules: {}[], callback: Callback): void;
@@ -40,8 +36,8 @@ declare module "blink" {
 		}
 		class ConfigurationForBrowser implements ConfigurationOptions {
 			constructor(options?: ConfigurationOptions);
-			public clone(): Configuration;
-			public set(options: ConfigurationOptions): Configuration;
+			public clone(): ConfigurationForBrowser;
+			public set(options: ConfigurationOptions): ConfigurationForBrowser;
 			public raw: ConfigurationOptions;
 			public toString(): string;
 			/**

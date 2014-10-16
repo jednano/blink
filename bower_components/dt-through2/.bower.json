@@ -1,0 +1,17 @@
+{
+  "name": "dt-through2",
+  "version": "0.4.2",
+  "ignore": [
+    "**/.*"
+  ],
+  "homepage": "https://github.com/jedmao/dt-through2",
+  "_release": "0.4.2",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.4.2",
+    "commit": "e405c248364135c42ea02e4d48c4844dc3e5e0e8"
+  },
+  "_source": "git://github.com/jedmao/dt-through2.git",
+  "_target": "^0.4",
+  "_originalSource": "dt-through2"
+}

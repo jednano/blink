@@ -1,4 +1,4 @@
-﻿import Compiler = require('../../../lib/Compiler');
+﻿import Compiler = require('../../../lib/browser/Compiler');
 import Configuration = require('../../../lib/Configuration');
 import extenders = require('../../../lib/extenders/all');
 import overrides = require('../../../lib/overrides/all');

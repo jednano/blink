@@ -1,7 +1,10 @@
-﻿import _BackgroundOptions = require('./interfaces/css/BackgroundOptions');
+﻿///<reference path="../bower_components/dt-vinyl/vinyl.d.ts" />
+import File = require('vinyl');
+
+import _BackgroundOptions = require('./interfaces/css/BackgroundOptions');
 import _Block = require('./Block');
 import _BlockBody = require('./interfaces/BlockBody');
-import _Compiler = require('./Compiler');
+import _Compiler = require('./browser/Compiler');
 import _Configuration = require('./Configuration');
 import _ConfigurationOptions = require('./interfaces/ConfigurationOptions');
 import _Element = require('./Element');
@@ -13,11 +16,14 @@ import _ModifierBody = require('./interfaces/ModifierBody');
 import _Override = require('./interfaces/Override');
 import _Rule = require('./Rule');
 import _RuleBody = require('./interfaces/RuleBody');
+import bundle = require('./bundle');
 
 // ReSharper disable once UnusedLocals
-function blink(options?: blink.ConfigurationOptions): NodeJS.ReadWriteStream {
-	var compiler = new blink.Compiler(new blink.Configuration(options || {}));
-	return compiler.compile();
+function blink(outputFilename: string, options?: blink.ConfigurationOptions): NodeJS.ReadWriteStream;
+function blink(outputFile: File, options?: blink.ConfigurationOptions): NodeJS.ReadWriteStream;
+function blink(output: { path: string }, options?: blink.ConfigurationOptions): NodeJS.ReadWriteStream;
+function blink(output: any, options?: blink.ConfigurationOptions): NodeJS.ReadWriteStream {
+	return bundle(output, options);
 }
 
 // ReSharper disable once InconsistentNaming

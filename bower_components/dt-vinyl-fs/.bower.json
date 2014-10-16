@@ -1,0 +1,20 @@
+{
+  "name": "dt-vinyl-fs",
+  "version": "0.3.0",
+  "ignore": [
+    "**/.*"
+  ],
+  "dependencies": {
+    "dt-vinyl": "^0.4"
+  },
+  "homepage": "https://github.com/jedmao/dt-vinyl-fs",
+  "_release": "0.3.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.3.0",
+    "commit": "5a4e2e8e857b0a5c78981fce14543de15694dabb"
+  },
+  "_source": "git://github.com/jedmao/dt-vinyl-fs.git",
+  "_target": "~0.3.0",
+  "_originalSource": "dt-vinyl-fs"
+}
