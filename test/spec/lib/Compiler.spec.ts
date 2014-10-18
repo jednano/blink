@@ -1,13 +1,13 @@
 ﻿var extend = require('node.extend');
 
-import blink = require('../../../../lib/browser/blink');
-import Compiler = require('../../../../lib/browser/Compiler');
-import Configuration = require('../../../../lib/browser/Configuration');
-import Extender = require('../../../../lib/interfaces/Extender');
-import MediaAtRule = require('../../../../lib/MediaAtRule');
-import o = require('../../../../lib/helpers/object');
-import Rule = require('../../../../lib/Rule');
-import sinonChai = require('../../../sinon-chai');
+import blink = require('../../../lib/browser/blink');
+import Compiler = require('../../../lib/Compiler');
+import Configuration = require('../../../lib/browser/Configuration');
+import Extender = require('../../../lib/interfaces/Extender');
+import MediaAtRule = require('../../../lib/MediaAtRule');
+import o = require('../../../lib/helpers/object');
+import Rule = require('../../../lib/Rule');
+import sinonChai = require('../../sinon-chai');
 
 var expect = sinonChai.expect;
 

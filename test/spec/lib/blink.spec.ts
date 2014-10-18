@@ -1,6 +1,6 @@
 ﻿import blink = require('../../../lib/blink');
 import Block = require('../../../lib/Block');
-import Compiler = require('../../../lib/browser/Compiler');
+import Compiler = require('../../../lib/Compiler');
 import Configuration = require('../../../lib/Configuration');
 import Element = require('../../../lib/Element');
 import MediaAtRule = require('../../../lib/MediaAtRule');

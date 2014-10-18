@@ -1,15 +1,15 @@
 ﻿/* jshint evil: true */
 /* tslint:disable:no-eval */
-import a = require('../helpers/array');
+import a = require('./helpers/array');
 import blink = require('./blink');
-import Block = require('../Block');
-import Configuration = require('./Configuration');
-import ExtenderRegistry = require('../ExtenderRegistry');
-import Formatter = require('../Formatter');
-import MediaAtRule = require('../MediaAtRule');
-import o = require('../helpers/object');
-import Rule = require('../Rule');
-import s = require('../helpers/string');
+import Block = require('./Block');
+import Configuration = require('./browser/Configuration');
+import ExtenderRegistry = require('./ExtenderRegistry');
+import Formatter = require('./Formatter');
+import MediaAtRule = require('./MediaAtRule');
+import o = require('./helpers/object');
+import Rule = require('./Rule');
+import s = require('./helpers/string');
 
 class Compiler {
 
@@ -17,13 +17,13 @@ class Compiler {
 		this.config = config || new Configuration();
 	}
 
-	public compile(contents: string, callback: blink.Callback): void;
-	public compile(rules: {}, callback: blink.Callback): void;
-	public compile(rules: {}[], callback: blink.Callback): void;
-	public compile(rule: Rule, callback: blink.Callback): void;
-	public compile(rules: Rule[], callback: blink.Callback): void;
-	public compile(block: Block, callback: blink.Callback): void;
-	public compile(rules: any, callback: blink.Callback) {
+	public compile(contents: string, callback: { (err: Error, css?: string): void; }): void;
+	public compile(rules: {}, callback: { (err: Error, css?: string): void; }): void;
+	public compile(rules: {}[], callback: { (err: Error, css?: string): void; }): void;
+	public compile(rule: Rule, callback: { (err: Error, css?: string): void; }): void;
+	public compile(rules: Rule[], callback: { (err: Error, css?: string): void; }): void;
+	public compile(block: Block, callback: { (err: Error, css?: string): void; }): void;
+	public compile(rules: any, callback: { (err: Error, css?: string): void; }) {
 		if (typeof rules === 'string') {
 			try {
 				rules = eval(rules);

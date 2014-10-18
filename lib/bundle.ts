@@ -5,7 +5,7 @@ var mod = require('module');
 import path = require('path');
 import through = require('through2');
 
-import Compiler = require('./browser/Compiler');
+import Compiler = require('./Compiler');
 import Configuration = require('./Configuration');
 import ConfigurationOptions = require('./interfaces/ConfigurationOptions');
 

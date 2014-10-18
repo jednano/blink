@@ -7,7 +7,7 @@ var __extends = this.__extends || function (d, b) {
 };
 var _Block = require('./Block');
 
-var _Compiler = require('./browser/Compiler');
+var _Compiler = require('./Compiler');
 var _Configuration = require('./Configuration');
 
 var _Element = require('./Element');

@@ -5,7 +5,7 @@ var mod = require('module');
 var path = require('path');
 var through = require('through2');
 
-var Compiler = require('./browser/Compiler');
+var Compiler = require('./Compiler');
 var Configuration = require('./Configuration');
 
 var PLUGIN_NAME = 'blink';

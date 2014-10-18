@@ -1,14 +1,14 @@
 /* jshint evil: true */
 /* tslint:disable:no-eval */
-var a = require('../helpers/array');
+var a = require('./helpers/array');
 
-var Configuration = require('./Configuration');
-var ExtenderRegistry = require('../ExtenderRegistry');
-var Formatter = require('../Formatter');
+var Configuration = require('./browser/Configuration');
+var ExtenderRegistry = require('./ExtenderRegistry');
+var Formatter = require('./Formatter');
 
-var o = require('../helpers/object');
-var Rule = require('../Rule');
-var s = require('../helpers/string');
+var o = require('./helpers/object');
+var Rule = require('./Rule');
+var s = require('./helpers/string');
 
 var Compiler = (function () {
     function Compiler(config) {
