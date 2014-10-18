@@ -9,6 +9,6 @@
     "commit": "33da61452326ac9857fef69137641152e9a00f1a"
   },
   "_source": "git://github.com/jedmao/dt-vinyl.git",
-  "_target": "^0.4",
+  "_target": "~0.4.3",
   "_originalSource": "dt-vinyl"
 }
