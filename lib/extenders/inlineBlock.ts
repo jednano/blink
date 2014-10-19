@@ -3,9 +3,7 @@ import Extender = require('../interfaces/Extender');
 
 
 // ReSharper disable once UnusedLocals
-function inlineBlock(options?: {
-		verticalAlign?: string;
-	}) {
+function inlineBlock(options?: inlineBlock.Options) {
 
 	options = options || {};
 
@@ -33,6 +31,13 @@ function inlineBlock(options?: {
 
 	extender.args = arguments;
 	return extender;
+}
+
+// ReSharper disable once InconsistentNaming
+module inlineBlock {
+	export interface Options {
+		verticalAlign?: string;
+	}
 }
 
 export = inlineBlock;

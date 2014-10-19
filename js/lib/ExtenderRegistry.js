@@ -9,7 +9,7 @@ var ExtenderRegistry = (function () {
             this.extenders[key] = extender;
             this.selectors[key] = [];
         }
-        Array.prototype.push.apply(this.selectors[key], selectors);
+        [].push.apply(this.selectors[key], selectors);
     };
 
     ExtenderRegistry.prototype.createKey = function (extender) {

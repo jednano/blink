@@ -104,7 +104,12 @@ var Compiler = (function () {
             Object.keys(body).forEach(function (property) {
                 var override = overrides[s.camelize(property)];
                 if (override) {
-                    var overrideResult = override(body[property]);
+                    var overrideResult;
+                    if (Array.isArray(body[property])) {
+                        overrideResult = override.apply(_this, body[property]);
+                    } else {
+                        overrideResult = override(body[property]);
+                    }
                     a.flatten([overrideResult]).forEach(function (innerOverride) {
                         extenders.add(innerOverride, rule.selectors);
                     });

@@ -3,7 +3,7 @@ var File = require('vinyl');
 var gutil = require('gulp-util');
 var mod = require('module');
 var path = require('path');
-var through = require('through2');
+var through = require('through');
 
 var Compiler = require('./Compiler');
 var Configuration = require('./Configuration');
@@ -28,9 +28,8 @@ function bundle(output, options) {
     var rules = [];
 
     // ReSharper disable once DuplicatingLocalDeclaration
-    function bufferContents(file, enc, done) {
+    function bufferContents(file) {
         if (file.isNull()) {
-            done();
             return;
         }
         if (file.isStream()) {
@@ -43,9 +42,10 @@ function bundle(output, options) {
         try  {
             rules.push(compileModule(file));
         } catch (err) {
-            this.emit('error', new PluginError(PLUGIN_NAME, err.message));
+            this.emit('error', new PluginError(PLUGIN_NAME, err.message, {
+                showStack: true
+            }));
         }
-        done();
 
         function compileModule(f) {
             var m = new mod();
@@ -70,7 +70,9 @@ function bundle(output, options) {
         var config = new Configuration(options);
         new Compiler(config).compile(rules, function (err, css) {
             if (err) {
-                this.emit('error', new PluginError(PLUGIN_NAME, err.message));
+                this.emit('error', new PluginError(PLUGIN_NAME, err.message, {
+                    showStack: true
+                }));
                 return;
             }
             outputFile.contents = new Buffer(css);
@@ -79,7 +81,7 @@ function bundle(output, options) {
         }.bind(this));
     }
 
-    return through.obj(bufferContents, endStream);
+    return through(bufferContents, endStream);
 }
 
 module.exports = bundle;

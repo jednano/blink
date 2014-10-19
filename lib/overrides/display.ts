@@ -4,13 +4,16 @@ import Override = require('../interfaces/Override');
 
 
 // ReSharper disable once UnusedLocals
-function display(value: string) {
+function display(value: string, options?: inlineBlock.Options) {
 
 	var override = <Override>((config: Configuration) => {
 		switch (value) {
 			case 'inline-block':
-				return inlineBlock()(config);
+				return inlineBlock(options)(config);
 			default:
+				if (options) {
+					throw new Error('Unused options for display override');
+				}
 				return [['display', value]];
 		}
 	});

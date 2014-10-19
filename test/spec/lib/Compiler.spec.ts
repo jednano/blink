@@ -12,7 +12,7 @@ import sinonChai = require('../../sinon-chai');
 var expect = sinonChai.expect;
 
 // ReSharper disable WrongExpressionStatement
-describe('Compiler for browser', () => {
+describe('Compiler', () => {
 
 	var compiler = new Compiler();
 	var config = compiler.config;
@@ -22,7 +22,7 @@ describe('Compiler for browser', () => {
 	overrides.upper = upper;
 	overrides.lower = lower;
 
-	it.skip('provides a configuration if you don\'t provide one', () => {
+	it('provides a configuration if you don\'t provide one', () => {
 		expect(new Compiler().config).to.deep.equal(new Configuration());
 	});
 
@@ -95,7 +95,7 @@ describe('Compiler for browser', () => {
 
 	it('compiles an instance of Rule', done => {
 		var rule = new Rule('foo', { bar: 'baz' });
-		compiler.compileRules([rule], (err, css) => {
+		compiler.compile(rule, (err, css) => {
 			expect(err).to.be.null;
 			expect(css).to.eq([
 				'foo {',
@@ -108,7 +108,7 @@ describe('Compiler for browser', () => {
 
 	it('catches errors on compile', done => {
 		var rule = new Rule('foo', { '': 'baz' });
-		compiler.compileRules([rule], err => {
+		compiler.compile(rule, err => {
 			expect(err).to.exist.and.to.have.property('message',
 				'Invalid declaration property');
 			done();
@@ -151,7 +151,7 @@ describe('Compiler for browser', () => {
 				garpley: 'GARPLEY'
 			})
 		];
-		compiler.compileRules(rules, (err, css) => {
+		compiler.compile(rules, (err, css) => {
 			expect(err).to.be.null;
 			expect(css).to.eq([
 				'foo, baz {',
@@ -168,6 +168,35 @@ describe('Compiler for browser', () => {
 				'}',
 				'baz {',
 				'  garpley: GARPLEY;',
+				'}'
+			].join(newline) + newline);
+		});
+	});
+
+	it('compiles overrides with options', () => {
+		var rules = [
+			new Rule('foo', {
+				upper: ['qux', {
+					addFoo: true
+				}]
+			}),
+			new Rule('bar', {
+				upper: 'qux'
+			}),
+			new Rule('baz', {
+				upper: ['qux', {
+					addFoo: true
+				}]
+			})
+		];
+		compiler.compile(rules, (err, css) => {
+			expect(err).to.be.null;
+			expect(css).to.eq([
+				'foo, baz {',
+				'  upper: QUXFOO;',
+				'}',
+				'bar {',
+				'  upper: QUX;',
 				'}'
 			].join(newline) + newline);
 		});
@@ -195,7 +224,7 @@ describe('Compiler for browser', () => {
 			})
 		];
 
-		compiler.compileRules(rules, (err, css) => {
+		compiler.compile(rules, (err, css) => {
 			expect(err).to.be.null;
 			expect(css).to.eq([
 				'foo, qux {',
@@ -260,7 +289,7 @@ describe('Compiler for browser', () => {
 					})
 				]
 			});
-			compiler.compileRules([rule], (err, css) => {
+			compiler.compile(rule, (err, css) => {
 				expect(err).to.be.null;
 				expect(css).to.eq([
 					'foo {',
@@ -289,7 +318,7 @@ describe('Compiler for browser', () => {
 					})
 				]
 			});
-			compiler.compileRules([rule], (err, css) => {
+			compiler.compile(rule, (err, css) => {
 				expect(err).to.be.null;
 				expect(css).to.eq([
 					'foo {',
@@ -326,7 +355,7 @@ describe('Compiler for browser', () => {
 					]
 				})
 			];
-			compiler.compileRules(rules, (err, css) => {
+			compiler.compile(rules, (err, css) => {
 				expect(err).to.be.null;
 				expect(css).to.eq([
 					'@media baz {',
@@ -355,7 +384,7 @@ describe('Compiler for browser', () => {
 					]
 				})
 			];
-			compiler.compileRules(rules, (err, css) => {
+			compiler.compile(rules, (err, css) => {
 				expect(err).to.be.null;
 				expect(css).to.eq([
 					'@media baz {',
@@ -397,7 +426,7 @@ describe('Compiler for browser', () => {
 					]
 				})
 			];
-			compiler.compileRules(rules, (err, css) => {
+			compiler.compile(rules, (err, css) => {
 				expect(err).to.be.null;
 				expect(css).to.eq([
 					'@media baz {',
@@ -422,10 +451,15 @@ describe('Compiler for browser', () => {
 
 	});
 
-	function upper(val: string) {
+	function upper(val: string, options?: { addFoo: boolean }) {
+		options = options || <any>{};
 		var fn = <Extender>(() => {
+			var result = val.toUpperCase();
+			if (options.addFoo) {
+				result += 'FOO';
+			}
 			return [
-				['upper', val.toUpperCase()]
+				['upper', result]
 			];
 		});
 		fn.args = arguments;

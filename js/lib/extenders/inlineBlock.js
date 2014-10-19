@@ -28,4 +28,5 @@ function inlineBlock(options) {
     return extender;
 }
 
+
 module.exports = inlineBlock;

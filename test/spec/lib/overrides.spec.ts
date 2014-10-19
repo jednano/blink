@@ -138,6 +138,20 @@ describe('overrides', () => {
 			);
 		});
 
+		it('passes options to the inlineBlock extender', () => {
+			var options = { verticalAlign: 'top' };
+			var result = overrides.display('inline-block', options)(config);
+			var expected = extenders.inlineBlock(options)(config);
+			expect(result).to.deep.equal(expected);
+		});
+
+		it('errors when options are passed to the default display property', () => {
+			var fn = () => {
+				overrides.display('none', { foo: 'bar' })(config);
+			};
+			expect(fn).to.throw('Unused options for display override');
+		});
+
 		it('returns display: none when none is the value', () => {
 			expect(overrides.display('none')(config)).to.deep.equal([
 				['display', 'none']

@@ -10,7 +10,7 @@ declare class Compiler {
     public compile(rule: Rule, callback: (err: Error, css?: string) => void): void;
     public compile(rules: Rule[], callback: (err: Error, css?: string) => void): void;
     public compile(block: Block, callback: (err: Error, css?: string) => void): void;
-    public compileRules(rules: Rule[], callback: (err: Error, css?: string) => void): void;
+    private compileRules(rules, callback);
     public resolveRules(rules: Rule[]): any[];
     private format(rules);
     private resolveExtenders(rules);

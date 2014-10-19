@@ -165,7 +165,7 @@ class Rule {
 				return value + 'px';
 			case 'function':
 				return this.compilePrimitive(value(this.config));
-			default:
+			case 'string':
 				if (value === '') {
 					return s.repeat(this.config.quote, 2);
 				}
@@ -173,8 +173,8 @@ class Rule {
 					var quote = this.config.quote;
 					return quote + value.replace(new RegExp(quote, 'g'), '\\' + quote) + quote;
 				}
-				return value;
 		}
+		return value;
 	}
 
 	public compile(config: Configuration) {

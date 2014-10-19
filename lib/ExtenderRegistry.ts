@@ -13,7 +13,7 @@ class ExtenderRegistry {
 			this.extenders[key] = extender;
 			this.selectors[key] = [];
 		}
-		Array.prototype.push.apply(this.selectors[key], selectors);
+		[].push.apply(this.selectors[key], selectors);
 	}
 
 	private createKey(extender: Extender) {

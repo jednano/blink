@@ -287,7 +287,12 @@ var Compiler = (function () {
             Object.keys(body).forEach(function (property) {
                 var override = overrides[s.camelize(property)];
                 if (override) {
-                    var overrideResult = override(body[property]);
+                    var overrideResult;
+                    if (Array.isArray(body[property])) {
+                        overrideResult = override.apply(_this, body[property]);
+                    } else {
+                        overrideResult = override(body[property]);
+                    }
                     a.flatten([overrideResult]).forEach(function (innerOverride) {
                         extenders.add(innerOverride, rule.selectors);
                     });
@@ -401,7 +406,7 @@ var ExtenderRegistry = (function () {
             this.extenders[key] = extender;
             this.selectors[key] = [];
         }
-        Array.prototype.push.apply(this.selectors[key], selectors);
+        [].push.apply(this.selectors[key], selectors);
     };
 
     ExtenderRegistry.prototype.createKey = function (extender) {
@@ -749,7 +754,7 @@ var Rule = (function () {
                 return value + 'px';
             case 'function':
                 return this.compilePrimitive(value(this.config));
-            default:
+            case 'string':
                 if (value === '') {
                     return s.repeat(this.config.quote, 2);
                 }
@@ -757,8 +762,8 @@ var Rule = (function () {
                     var quote = this.config.quote;
                     return quote + value.replace(new RegExp(quote, 'g'), '\\' + quote) + quote;
                 }
-                return value;
         }
+        return value;
     };
 
     Rule.prototype.compile = function (config) {
@@ -1344,6 +1349,7 @@ function inlineBlock(options) {
     return extender;
 }
 
+
 module.exports = inlineBlock;
 
 },{}],15:[function(require,module,exports){
@@ -1568,12 +1574,15 @@ module.exports = clearfix;
 var inlineBlock = require('../extenders/inlineBlock');
 
 // ReSharper disable once UnusedLocals
-function display(value) {
+function display(value, options) {
     var override = (function (config) {
         switch (value) {
             case 'inline-block':
-                return inlineBlock()(config);
+                return inlineBlock(options)(config);
             default:
+                if (options) {
+                    throw new Error('Unused options for display override');
+                }
                 return [['display', value]];
         }
     });

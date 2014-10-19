@@ -47,7 +47,7 @@ class Compiler {
 		}
 	}
 
-	public compileRules(rules: Rule[],
+	private compileRules(rules: Rule[],
 		callback: (err: Error, css?: string) => void) {
 
 		var formatted: string;
@@ -111,7 +111,12 @@ class Compiler {
 			Object.keys(body).forEach(property => {
 				var override = overrides[s.camelize(property)];
 				if (override) {
-					var overrideResult = override(body[property]);
+					var overrideResult;
+					if (Array.isArray(body[property])) {
+						overrideResult = override.apply(this, body[property]);
+					} else {
+						overrideResult = override(body[property]);
+					}
 					a.flatten([overrideResult]).forEach(innerOverride => {
 						extenders.add(innerOverride, rule.selectors);
 					});
