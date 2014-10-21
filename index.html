@@ -71,8 +71,8 @@
 <li><a href="#rules">Rules</a></li>
 <li><a href="#includes">Includes</a></li>
 <li><a href="#mixins">Mixins</a></li>
-<li><a href="#extenders">Extenders</a></li>
 <li><a href="#overrides">Overrides</a></li>
+<li><a href="#extenders">Extenders</a></li>
 <li><a href="#responders">Responders</a></li>
 <li><a href="#plugins">Plugins</a></li>
 <li><a href="#typescript-source">TypeScript Source</a></li>
@@ -124,26 +124,24 @@ Here's a quick and dirty example:</p>
 <h3>
 <a name="gulp-plugin" class="anchor" href="#gulp-plugin"><span class="octicon octicon-link"></span></a>Gulp plugin</h3>
 
-<p>Blink is itself a gulp plugin, supporting both stream and buffer <a href="https://github.com/wearefractal/vinyl">file modes</a>.
-As with any gulp plugin, files can be piped to other streams or <a href="http://gulpjs.com/plugins/">gulp plugins</a>
-before being written to their final destination.
-Blink supports <a href="">vinyl</a> files in both stream and buffer modes.</p>
+<p>Blink is, itself, a gulp plugin.
+As with any gulp plugin, files can be piped to other <a href="http://gulpjs.com/plugins/">gulp plugins</a> before being written to their final destination.
+Blink supports <a href="https://github.com/wearefractal/vinyl">vinyl</a> files in buffer mode only (streams not supported).</p>
 
 <div class="highlight highlight-js"><pre><span class="kd">var</span> <span class="nx">blink</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'blink'</span><span class="p">);</span>
 <span class="kd">var</span> <span class="nx">gulp</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'gulp'</span><span class="p">);</span>
 
 <span class="nx">gulp</span><span class="p">.</span><span class="nx">task</span><span class="p">(</span><span class="s1">'styles'</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="nx">gulp</span><span class="p">.</span><span class="nx">src</span><span class="p">(</span><span class="s1">'styles/*.js'</span><span class="p">,</span> <span class="p">{</span> <span class="nx">buffer</span><span class="o">:</span> <span class="kc">false</span> <span class="p">})</span>
-    <span class="p">.</span><span class="nx">pipe</span><span class="p">(</span><span class="nx">blink</span><span class="p">(</span><span class="cm">/* options */</span><span class="p">))</span>
-    <span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'error'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
-      <span class="c1">// handle error</span>
-    <span class="p">})</span>
-    <span class="p">.</span><span class="nx">pipe</span><span class="p">(</span><span class="nx">gulp</span><span class="p">.</span><span class="nx">dest</span><span class="p">(</span><span class="s1">'dist/styles'</span><span class="p">));</span>
+    <span class="k">return</span> <span class="nx">gulp</span><span class="p">.</span><span class="nx">src</span><span class="p">(</span><span class="s1">'styles/**/*.js'</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">pipe</span><span class="p">(</span><span class="nx">blink</span><span class="p">(</span><span class="s1">'styles.css'</span><span class="p">,</span> <span class="cm">/* options */</span><span class="p">))</span>
+        <span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'error'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1">// handle error</span>
+        <span class="p">})</span>
+        <span class="p">.</span><span class="nx">pipe</span><span class="p">(</span><span class="nx">gulp</span><span class="p">.</span><span class="nx">dest</span><span class="p">(</span><span class="s1">'dist/styles'</span><span class="p">));</span>
 <span class="p">});</span>
 </pre></div>
 
-<p><em>Note: <a href="https://github.com/blinkjs/gulp-blink">gulp-blink</a> has been deprecated in favor of
-using the blink module directly.</em></p>
+<p><em>Note: <a href="https://github.com/blinkjs/gulp-blink">gulp-blink</a> has been deprecated in favor of using the blink module directly.</em></p>
 
 <h3>
 <a name="browserified" class="anchor" href="#browserified"><span class="octicon octicon-link"></span></a>Browserified</h3>
@@ -271,13 +269,103 @@ using the blink module directly.</em></p>
 <p>If you're coming from <a href="http://sass-lang.com/">Sass</a>, you might be familiar with <a href="http://sass-lang.com/guide">mixins</a>. Really, Sass mixins are no different than functions in JavaScript; thus, blink supports them. All you have to do is create a function that returns an array of declarations. This is, in fact, how <a href="#extenders">extenders</a> and <a href="#overrides">overrides</a> work.</p>
 
 <h3>
-<a name="extenders" class="anchor" href="#extenders"><span class="octicon octicon-link"></span></a>Extenders</h3>
+<a name="overrides" class="anchor" href="#overrides"><span class="octicon octicon-link"></span></a>Overrides</h3>
 
-<p>Extenders are named functions that return another function, complete with the original passed-in arguments as <code>args</code> and, optionally, <code>selectors</code>, for which you can find an example in <a href="https://github.com/blinkjs/blink/blob/master/lib/extenders/clearfix.ts">the clearfix extender</a>. An extender with no parameters always returns the same output. For example, here's an extender named <code>fill</code> that fills its container:</p>
+<p>Overrides are named function [factories](<a href="http://en.wikipedia.org/wiki/Factory_(object-oriented_programming)">http://en.wikipedia.org/wiki/Factory_(object-oriented_programming)</a>.
+The function that is returned can be used for the purpose of generating any number of CSS declarations.
+This enables you to override existing CSS properties or create your own.
+For example, say you wanted to override the CSS <code>color</code> property to always convert colors into <code>hsl</code>. You could do that!
+Maybe you want to create a new <code>clearfix</code> property that, when set to true, generates 3 CSS declarations. Good news – <a href="https://github.com/blinkjs/blink/blob/master/lib/overrides/clearfix.ts">that one already exists</a>!</p>
+
+<p>Let's take an in-depth look at the <a href="https://github.com/blinkjs/blink/blob/master/lib/overrides/boxSizing.ts">box-sizing override</a>.
+Here's how you would go about writing it from scratch.</p>
+
+<div class="highlight highlight-ts"><pre><span class="kd">function</span> <span class="nx">boxSizing() {</span><span class="p">}</span>
+<span class="kr">export</span> <span class="o">=</span> <span class="nx">boxSizing</span><span class="p">;</span>
+</pre></div>
+
+<p>Overrides must be named functions with a unique name.
+This name is what allows the blink compiler to reuse the override in other rules where it is called; thus, never generating the same code twice.
+If you're coming from Sass, you'll know that you have to go out of your way to get this kind of functionality with <code>@extend</code>.
+With blink, you get it for free.</p>
+
+<p>Let's return a function.</p>
 
 <div class="highlight highlight-ts"><pre><span class="kr">import</span> <span class="nx">blink</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'blink'</span><span class="p">);</span>
 
-<span class="c1">// ReSharper disable once UnusedLocals</span>
+<span class="kd">function</span> <span class="nx">boxSizing</span><span class="p">(</span><span class="nx">value</span>: <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="kd">var</span> <span class="nx">override</span> <span class="o">=</span> <span class="o">&lt;</span><span class="nx">blink</span><span class="p">.</span><span class="nx">Override</span><span class="o">&gt;</span><span class="p">((</span><span class="nx">config</span>: <span class="kt">blink.Configuration</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="p">});</span>
+
+    <span class="nx">override</span><span class="p">.</span><span class="nx">args</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">;</span>
+    <span class="k">return</span> <span class="nx">override</span><span class="p">;</span>
+
+<span class="p">}</span>
+
+<span class="kr">export</span> <span class="o">=</span> <span class="nx">boxSizing</span><span class="p">;</span>
+</pre></div>
+
+<p>We've imported the blink library to gain access to the <a href="https://github.com/blinkjs/blink/blob/master/lib/interfaces/Override.ts">Override</a> interface, as well as the <a href="https://github.com/blinkjs/blink/blob/master/lib/Configuration.ts">Configuration</a> class.
+We're accepting a <code>value: string</code> argument, because we know it can be one of <code>content-box</code>, <code>padding-box</code>, <code>border-box</code> or <code>inherit</code>. It doesn't accept numeric values or anything like that. See <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/box-sizing?redirectlocale=en-US&amp;redirectslug=CSS%2Fbox-sizing">box-sizing on MDN</a>.
+Next, we created a new function and assigned it to the <code>override</code> variable.
+The function must be assigned <code>args</code> before it is returned. This copies the <code>arguments</code> that were originally sent to the override.
+Remember how I said your override never generates the same code twice? More accurately, your override, when called with the same arguments, never generates the same code twice.
+Copying the arguments is what allows this process to work properly.</p>
+
+<p>The <code>box-sizing</code> property is actually quite simple. All we need to do is add some vendor prefixes.
+Fortunately, blink has an <a href="https://github.com/blinkjs/blink/blob/master/lib/extenders/experimental.ts">experimental extender</a> for that.
+Let's work it into this override.</p>
+
+<div class="highlight highlight-ts"><pre><span class="kr">import</span> <span class="nx">blink</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'blink'</span><span class="p">);</span>
+
+<span class="kd">function</span> <span class="nx">boxSizing</span><span class="p">(</span><span class="nx">value</span>: <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="kd">var</span> <span class="nx">override</span> <span class="o">=</span> <span class="o">&lt;</span><span class="nx">blink</span><span class="p">.</span><span class="nx">Override</span><span class="o">&gt;</span><span class="p">((</span><span class="nx">config</span>: <span class="kt">blink.Configuration</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">blink</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">extenders</span><span class="p">.</span><span class="nx">experimental</span><span class="p">(</span><span class="s1">'box-sizing'</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="p">{</span>
+            <span class="nx">official</span>: <span class="kt">true</span><span class="p">,</span>
+            <span class="nx">webkit</span><span class="o">:</span> <span class="o">!</span><span class="p">(</span>
+                <span class="nx">config</span><span class="p">.</span><span class="nx">chrome</span> <span class="o">&gt;=</span> <span class="mi">10</span> <span class="o">&amp;&amp;</span>
+                <span class="nx">config</span><span class="p">.</span><span class="nx">safari</span> <span class="o">&gt;=</span> <span class="mf">5.1</span> <span class="o">&amp;&amp;</span>
+                <span class="nx">config</span><span class="p">.</span><span class="nx">android</span> <span class="o">&gt;=</span> <span class="mi">4</span>
+            <span class="p">),</span>
+            <span class="nx">moz</span><span class="o">:</span> <span class="o">!</span><span class="p">(</span>
+                <span class="nx">config</span><span class="p">.</span><span class="nx">firefox</span> <span class="o">&gt;=</span> <span class="mi">29</span> <span class="o">&amp;&amp;</span>
+                <span class="nx">config</span><span class="p">.</span><span class="nx">firefoxMobile</span> <span class="o">&gt;=</span> <span class="mi">29</span>
+            <span class="p">)</span>
+        <span class="p">})(</span><span class="nx">config</span><span class="p">);</span>
+    <span class="p">});</span>
+
+    <span class="nx">override</span><span class="p">.</span><span class="nx">args</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">;</span>
+    <span class="k">return</span> <span class="nx">override</span><span class="p">;</span>
+
+<span class="p">}</span>
+
+<span class="kr">export</span> <span class="o">=</span> <span class="nx">boxSizing</span><span class="p">;</span>
+</pre></div>
+
+<p>The experimental extender is quite handy, but we still need to know which vendor prefixes to generate.
+Refer to <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/box-sizing#Browser_compatibility">MDN's box-sizing browser compatability table</a> for just that information.
+Once you implement the correct browser versions, anyone using your override will only generate the vendor prefixes they intend to support.
+If they change their configuration file to drop support for older browsers, it could generate no vendor prefixes at all.
+It really depends on the configuration. This is a blink paradigm that you would do well to follow.</p>
+
+<p>Overrides are registered on the configuration object. If you wish to extend the configuration, you can do so by providing <a href="#plugins">a plugin module</a>.</p>
+
+<p><em>Note: override names are dasherized for you (e.g., boxSizing overrides the <code>box-sizing</code> property).</em></p>
+
+<h3>
+<a name="extenders" class="anchor" href="#extenders"><span class="octicon octicon-link"></span></a>Extenders</h3>
+
+<p>Extenders are named function factories, just like <a href="#overrides">overrides</a>.
+In fact, they are exactly the same. The only difference is how they are used.
+Extenders cannot be called directly from the rule body, like overrides.
+Instead, they are typically called other extenders or from overrides, as we did with the <code>box-sizing</code> override.
+The rules for extenders are just the same.
+Here's an example of a <code>fill</code> extender that fills its container:</p>
+
+<div class="highlight highlight-ts"><pre><span class="kr">import</span> <span class="nx">blink</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'blink'</span><span class="p">);</span>
+
 <span class="kd">function</span> <span class="nx">fill() {</span>
 
     <span class="kd">var</span> <span class="nx">extender</span> <span class="o">=</span> <span class="o">&lt;</span><span class="nx">blink</span><span class="p">.</span><span class="nx">Extender</span><span class="o">&gt;</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
@@ -298,58 +386,13 @@ using the blink module directly.</em></p>
 <span class="kr">export</span> <span class="o">=</span> <span class="nx">fill</span><span class="p">;</span>
 </pre></div>
 
-<p>Let's create two blocks named <code>.foo</code> and <code>bar</code> that both extend fill.</p>
+<p>Pretty simple, right? You might choose to create a <code>fill</code> override that, internally, calls this extender.
+This would make sense for a rule body of <code>{ fill: true }</code>.</p>
 
-<div class="highlight highlight-ts"><pre><span class="kd">var</span> <span class="nx">rules</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="k">new</span> <span class="nx">blink</span><span class="p">.</span><span class="nx">Block</span><span class="p">(</span><span class="s1">'foo'</span><span class="p">,</span> <span class="p">{</span>
-        <span class="nx">extend</span><span class="o">:</span> <span class="p">[</span> <span class="nx">fill</span> <span class="p">]</span>
-    <span class="p">}),</span>
-    <span class="k">new</span> <span class="nx">blink</span><span class="p">.</span><span class="nx">Block</span><span class="p">(</span><span class="s1">'bar'</span><span class="p">,</span> <span class="p">{</span>
-        <span class="nx">extend</span><span class="o">:</span> <span class="p">[</span> <span class="nx">fill</span> <span class="p">]</span>
-    <span class="p">})</span>
-<span class="p">];</span>
-
-<span class="kr">export</span> <span class="o">=</span> <span class="nx">rules</span><span class="p">;</span>
-</pre></div>
-
-<p>These two blocks share the same extender, so there's no reason to generate the same CSS twice. The above code would output the following:</p>
-
-<div class="highlight highlight-css"><pre><span class="nc">.foo</span><span class="o">,</span> <span class="nc">.bar</span> <span class="p">{</span>
-    <span class="k">position</span><span class="o">:</span> <span class="k">absolute</span><span class="p">;</span>
-    <span class="k">top</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
-    <span class="k">right</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
-    <span class="k">bottom</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
-    <span class="k">left</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
-<span class="p">}</span>
-</pre></div>
-
-<p>This is very powerful, especially when you want to spit-out multiple declarations. Why, you ask? Because you only have to spit-out those declarations once! You can extend it from hundreds of blocks, but those lines never get written more than
-once. This keeps your CSS as lean as possible.</p>
-
-<p>Now, let's talk about building your own extenders. The basic structure of an extender is thus:</p>
+<p>Now, let's talk about building your own extenders. Here's how you would go about building an <code>inlineBlock</code> extender.</p>
 
 <div class="highlight highlight-ts"><pre><span class="kr">import</span> <span class="nx">blink</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'blink'</span><span class="p">);</span>
 
-<span class="c1">// ReSharper disable once UnusedLocals</span>
-<span class="kd">function</span> <span class="nx">noop() {</span>
-    <span class="kd">var</span> <span class="nx">extender</span> <span class="o">=</span> <span class="o">&lt;</span><span class="nx">blink</span><span class="p">.</span><span class="nx">Extender</span><span class="o">&gt;</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">[]);</span>
-    <span class="nx">extender</span><span class="p">.</span><span class="nx">args</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">;</span>
-    <span class="k">return</span> <span class="nx">extender</span><span class="p">;</span>
-<span class="p">}</span>
-
-<span class="kr">export</span> <span class="o">=</span> <span class="nx">noop</span><span class="p">;</span>
-</pre></div>
-
-<p>This extender, <a href="http://www.urbandictionary.com/define.php?term=noop&amp;defid=1183981">as its name suggests, does nothing</a>.
-The name, however, must be provided and must be unique.</p>
-
-<p>In this case, the extender has no arguments; yet, they must also be returned for unique registration purposes.</p>
-
-<p>Let's see what a more complicated, <code>inlineBlock</code> extender would look like.</p>
-
-<div class="highlight highlight-ts"><pre><span class="kr">import</span> <span class="nx">blink</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'blink'</span><span class="p">);</span>
-
-<span class="c1">// ReSharper disable once UnusedLocals</span>
 <span class="kd">function</span> <span class="nx">inlineBlock() {</span>
     <span class="kd">var</span> <span class="nx">extender</span> <span class="o">=</span> <span class="o">&lt;</span><span class="nx">blink</span><span class="p">.</span><span class="nx">Extender</span><span class="o">&gt;</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
         <span class="k">return</span> <span class="p">[</span><span class="s1">'display'</span><span class="p">,</span> <span class="s1">'inline-block'</span><span class="p">];</span>
@@ -363,7 +406,6 @@ The name, however, must be provided and must be unique.</p>
 
 <div class="highlight highlight-ts"><pre><span class="kr">import</span> <span class="nx">blink</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'blink'</span><span class="p">);</span>
 
-<span class="c1">// ReSharper disable once UnusedLocals</span>
 <span class="kd">function</span> <span class="nx">inlineBlock</span><span class="p">(</span><span class="nx">options</span><span class="o">?:</span> <span class="p">{</span>
         <span class="nx">verticalAlign?</span>: <span class="kt">string</span><span class="p">;</span>
     <span class="p">})</span> <span class="p">{</span>
@@ -393,7 +435,6 @@ The name, however, must be provided and must be unique.</p>
 
 <div class="highlight highlight-ts"><pre><span class="kr">import</span> <span class="nx">blink</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'blink'</span><span class="p">);</span>
 
-<span class="c1">// ReSharper disable once UnusedLocals</span>
 <span class="kd">function</span> <span class="nx">inlineBlock</span><span class="p">(</span><span class="nx">options</span><span class="o">?:</span> <span class="p">{</span>
         <span class="nx">verticalAlign?</span>: <span class="kt">string</span><span class="p">;</span>
     <span class="p">})</span> <span class="p">{</span>
@@ -431,96 +472,12 @@ The name, however, must be provided and must be unique.</p>
 
 <p>Now, that's a nice extender! Once you change your configuration to support newer browsers, the CSS hacks disappear. No need to change any of your source code. It's all about the configuration.</p>
 
+<p>As with overrides, extenders are registered on the configuration object. If you wish to extend the configuration, you can do so by providing <a href="#plugins">a plugin module</a>.</p>
+
 <h4>
 <a name="extender-registration" class="anchor" href="#extender-registration"><span class="octicon octicon-link"></span></a>Extender registration</h4>
 
 <p>It's important for you to know that, behind the scenes, blink is really smart about extender registration. It doesn't just register your extender by function name, but also by the arguments you pass in. This means if you extend <code>inlineBlock({ verticalAlign: 'top' })</code> 50 times and <code>inlineBlock({ verticalAlign: 'bottom' })</code> 20 times, only two rules will be generated. Different input yields different output, so it has to generate two rules for this scenario.</p>
-
-<h4>
-<a name="extenders-calling-other-extenders" class="anchor" href="#extenders-calling-other-extenders"><span class="octicon octicon-link"></span></a>Extenders calling other extenders</h4>
-
-<p>Extenders can call other extenders directly, but you must provide the extender with the configuration object.</p>
-
-<div class="highlight highlight-ts"><pre><span class="kr">import</span> <span class="nx">blink</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'blink'</span><span class="p">);</span>
-
-<span class="kd">function</span> <span class="nx">boxSizing</span><span class="p">(</span><span class="nx">value</span>: <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
-
-    <span class="kd">var</span> <span class="nx">extender</span> <span class="o">=</span> <span class="o">&lt;</span><span class="nx">blink</span><span class="p">.</span><span class="nx">Extender</span><span class="o">&gt;</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">blink</span><span class="p">.</span><span class="nx">extenders</span><span class="p">.</span><span class="nx">experimental</span><span class="p">(</span><span class="s1">'box-sizing'</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="p">{</span>
-            <span class="nx">official</span>: <span class="kt">true</span><span class="p">,</span>  <span class="c1">// Opera/IE 8+</span>
-              <span class="nx">webkit</span>: <span class="kt">true</span><span class="p">,</span>  <span class="c1">// Safari/Chrome, other WebKit</span>
-                 <span class="nx">moz</span>: <span class="kt">true</span>   <span class="c1">// Firefox, other Gecko</span>
-        <span class="p">})(</span><span class="nx">config</span><span class="p">);</span>
-    <span class="p">});</span>
-
-    <span class="nx">extender</span><span class="p">.</span><span class="nx">args</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">;</span>
-    <span class="k">return</span> <span class="nx">extender</span><span class="p">;</span>
-
-<span class="p">}</span>
-</pre></div>
-
-<p>In this particular case, however, <code>box-sizing</code> would be better suited as an <a href="#overrides">Override</a>.</p>
-
-<h3>
-<a name="overrides" class="anchor" href="#overrides"><span class="octicon octicon-link"></span></a>Overrides</h3>
-
-<p>Overrides are functions – no different than extenders – that allow you to override a single CSS declaration with any number of declarations. In fact, you can and often will register extenders <em>as</em> overrides. Here's an example of the
-<code>box-sizing</code> extender above as an override:</p>
-
-<div class="highlight highlight-ts"><pre><span class="kr">import</span> <span class="nx">blink</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'blink'</span><span class="p">);</span>
-
-<span class="c1">// ReSharper disable once UnusedLocals</span>
-<span class="kd">function</span> <span class="nx">boxSizing</span><span class="p">(</span><span class="nx">value</span>: <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
-
-    <span class="kd">var</span> <span class="nx">override</span> <span class="o">=</span> <span class="o">&lt;</span><span class="nx">blink</span><span class="p">.</span><span class="nx">Override</span><span class="o">&gt;</span><span class="p">((</span><span class="nx">config</span>: <span class="kt">blink.Configuration</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">blink</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">extenders</span><span class="p">.</span><span class="nx">experimental</span><span class="p">(</span><span class="s1">'box-sizing'</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="p">{</span>
-            <span class="nx">official</span>: <span class="kt">true</span><span class="p">,</span>  <span class="c1">// Opera/IE 8+</span>
-              <span class="nx">webkit</span>: <span class="kt">true</span><span class="p">,</span>  <span class="c1">// Safari/Chrome, other WebKit</span>
-                 <span class="nx">moz</span>: <span class="kt">true</span>   <span class="c1">// Firefox, other Gecko</span>
-        <span class="p">})(</span><span class="nx">config</span><span class="p">);</span>
-    <span class="p">});</span>
-
-    <span class="nx">override</span><span class="p">.</span><span class="nx">args</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">;</span>
-    <span class="k">return</span> <span class="nx">override</span><span class="p">;</span>
-
-<span class="p">}</span>
-
-<span class="kr">export</span> <span class="o">=</span> <span class="nx">boxSizing</span><span class="p">;</span>
-</pre></div>
-
-<p>This is all fine and good, but it doesn't say when certain browser versions began to support this property without vendor prefixes. To do so, lookup the <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/box-sizing#Browser_compatibility">box-sizing compatibility table on MDN</a> to locate the supported desktop and mobile versions. Here's how you implement them in the override:</p>
-
-<div class="highlight highlight-ts"><pre><span class="kr">import</span> <span class="nx">blink</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'blink'</span><span class="p">);</span>
-
-<span class="c1">// ReSharper disable once UnusedLocals</span>
-<span class="kd">function</span> <span class="nx">boxSizing</span><span class="p">(</span><span class="nx">value</span>: <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
-
-    <span class="kd">var</span> <span class="nx">override</span> <span class="o">=</span> <span class="o">&lt;</span><span class="nx">blink</span><span class="p">.</span><span class="nx">Override</span><span class="o">&gt;</span><span class="p">((</span><span class="nx">config</span>: <span class="kt">blink.Configuration</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-        <span class="k">return</span> <span class="nx">blink</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">extenders</span><span class="p">.</span><span class="nx">experimental</span><span class="p">(</span><span class="s1">'box-sizing'</span><span class="p">,</span> <span class="nx">value</span><span class="p">,</span> <span class="p">{</span>
-            <span class="nx">official</span>: <span class="kt">true</span><span class="p">,</span>
-            <span class="nx">webkit</span><span class="o">:</span> <span class="o">!</span><span class="p">(</span>
-                <span class="nx">config</span><span class="p">.</span><span class="nx">chrome</span> <span class="o">&gt;=</span> <span class="mi">10</span> <span class="o">&amp;&amp;</span>
-                <span class="nx">config</span><span class="p">.</span><span class="nx">safari</span> <span class="o">&gt;=</span> <span class="mf">5.1</span> <span class="o">&amp;&amp;</span>
-                <span class="nx">config</span><span class="p">.</span><span class="nx">android</span> <span class="o">&gt;=</span> <span class="mi">4</span>
-            <span class="p">),</span>
-            <span class="nx">moz</span><span class="o">:</span> <span class="o">!</span><span class="p">(</span>
-                <span class="nx">config</span><span class="p">.</span><span class="nx">firefox</span> <span class="o">&gt;=</span> <span class="mi">29</span> <span class="o">&amp;&amp;</span>
-                <span class="nx">config</span><span class="p">.</span><span class="nx">firefoxMobile</span> <span class="o">&gt;=</span> <span class="mi">29</span>
-            <span class="p">)</span>
-        <span class="p">})(</span><span class="nx">config</span><span class="p">);</span>
-    <span class="p">});</span>
-
-    <span class="nx">override</span><span class="p">.</span><span class="nx">args</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">;</span>
-    <span class="k">return</span> <span class="nx">override</span><span class="p">;</span>
-
-<span class="p">}</span>
-
-<span class="kr">export</span> <span class="o">=</span> <span class="nx">boxSizing</span><span class="p">;</span>
-</pre></div>
-
-<p>Overrides are registered on the configuration object. If you wish to extend the configuration, you can do so by providing <a href="#plugins">a plugin module</a>.</p>
-
-<p><em>Note: override names are dasherized for you (e.g., boxSizing overrides the <code>box-sizing</code> property).</em></p>
 
 <h3>
 <a name="responders" class="anchor" href="#responders"><span class="octicon octicon-link"></span></a>Responders</h3>
