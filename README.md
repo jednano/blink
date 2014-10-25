@@ -559,8 +559,6 @@ As blink is built on Node.js, any spriting tools available for Node.js can be im
 
 Released under the MIT license.
 
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/blinkjs/blink/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
-
 
 
 [Node.js]: http://nodejs.org/
