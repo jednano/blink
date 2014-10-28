@@ -6,9 +6,9 @@
     "url": "https://github.com/blinkjs/blink.git"
   },
   "authors": [
-    "Jed Mao <jed.hunsaker+npm@gmail.com>"
+    "Jed Mao <jedmao@outlook.com>"
   ],
-  "description": "Blink converts Node.js modules into CSS and provides a CSS Authoring Framework, with BEM support.",
+  "description": "Blink converts Node.js modules into CSS.",
   "main": [
     "dist/blink.js"
   ],

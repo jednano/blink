@@ -117,10 +117,12 @@ class Compiler {
 					} else {
 						overrideResult = override(body[property]);
 					}
-					a.flatten([overrideResult]).forEach(innerOverride => {
-						extenders.add(innerOverride, rule.selectors);
-					});
-					delete body[property];
+					if (typeof overrideResult !== 'undefined') {
+						a.flatten([overrideResult]).forEach(innerOverride => {
+							extenders.add(innerOverride, rule.selectors);
+						});
+						delete body[property];
+					}
 				}
 			});
 		});

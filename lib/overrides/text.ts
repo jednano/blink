@@ -10,15 +10,9 @@ function text(value: any) {
 		if (size.hasOwnProperty('adjust')) {
 			return textSizeAdjust(size.adjust);
 		}
-		throw new Error('Invalid property: text-size');
 	}
 
-	var override = <Override>(() => {
-		return [['text', value]];
-	});
-
-	override.args = arguments;
-	return override;
+	// ReSharper disable once NotAllPathsReturnValue
 
 }
 

@@ -9,12 +9,7 @@ function box(value: any) {
 		return boxSizing(value.sizing);
 	}
 
-	var override = <Override>(() => {
-		return [['box', value]];
-	});
-
-	override.args = arguments;
-	return override;
+	// ReSharper disable once NotAllPathsReturnValue
 
 }
 

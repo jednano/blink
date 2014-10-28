@@ -55,10 +55,8 @@ describe('overrides', () => {
 			);
 		});
 
-		it('generates a single box declaration when value is foo', () => {
-			expect(overrides.box('foo')(config)).to.deep.equal([
-				['box', 'foo']
-			]);
+		it('returns undefined when value is foo', () => {
+			expect(overrides.box('foo')).to.be.undefined;
 		});
 
 	});
@@ -235,17 +233,12 @@ describe('overrides', () => {
 			);
 		});
 
-		it('errors on text-size', () => {
-			var fn = () => {
-				overrides.text({ size: 'foo' })(config);
-			};
-			expect(fn).to.throw('Invalid property: text-size');
+		it('returns undefined when text-size property is supplied', () => {
+			expect(overrides.text({ size: 'foo' })).to.be.undefined;
 		});
 
-		it('generates a single text declaration when value is foo', () => {
-			expect(overrides.text('foo')(config)).to.deep.equal([
-				['text', 'foo']
-			]);
+		it('returns undefined when text value is foo', () => {
+			expect(overrides.text('foo')).to.be.undefined;
 		});
 
 	});

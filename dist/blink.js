@@ -293,10 +293,12 @@ var Compiler = (function () {
                     } else {
                         overrideResult = override(body[property]);
                     }
-                    a.flatten([overrideResult]).forEach(function (innerOverride) {
-                        extenders.add(innerOverride, rule.selectors);
-                    });
-                    delete body[property];
+                    if (typeof overrideResult !== 'undefined') {
+                        a.flatten([overrideResult]).forEach(function (innerOverride) {
+                            extenders.add(innerOverride, rule.selectors);
+                        });
+                        delete body[property];
+                    }
                 }
             });
         });
@@ -1513,13 +1515,7 @@ function box(value) {
     if (value.hasOwnProperty('sizing')) {
         return boxSizing(value.sizing);
     }
-
-    var override = (function () {
-        return [['box', value]];
-    });
-
-    override.args = arguments;
-    return override;
+    // ReSharper disable once NotAllPathsReturnValue
 }
 
 module.exports = box;
@@ -1646,15 +1642,8 @@ function text(value) {
         if (size.hasOwnProperty('adjust')) {
             return textSizeAdjust(size.adjust);
         }
-        throw new Error('Invalid property: text-size');
     }
-
-    var override = (function () {
-        return [['text', value]];
-    });
-
-    override.args = arguments;
-    return override;
+    // ReSharper disable once NotAllPathsReturnValue
 }
 
 module.exports = text;
