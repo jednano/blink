@@ -2,7 +2,7 @@
 function experimental(property, value, options) {
     options = options || {};
 
-    var extender = (function (config) {
+    return (function (config) {
         var decs = [];
         ['webkit', 'khtml', 'moz', 'ms', 'o'].forEach(function (vendor) {
             if (options[vendor] && config[vendor + 'Prefix']) {
@@ -14,9 +14,6 @@ function experimental(property, value, options) {
         }
         return decs;
     });
-
-    extender.args = arguments;
-    return extender;
 }
 
 module.exports = experimental;

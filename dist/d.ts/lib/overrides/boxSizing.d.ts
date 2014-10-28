@@ -1,3 +1,3 @@
-import Override = require('../interfaces/Override');
-declare function boxSizing(value: string): Override;
+import Configuration = require('../Configuration');
+declare function boxSizing(value: string): (config: Configuration) => any[];
 export = boxSizing;

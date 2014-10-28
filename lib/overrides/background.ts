@@ -1,12 +1,11 @@
-﻿import Override = require('../interfaces/Override');
-import BackgroundOptions = require('../interfaces/css/BackgroundOptions');
+﻿import BackgroundOptions = require('../interfaces/css/BackgroundOptions');
 
 // ReSharper disable once UnusedLocals
 function background(options?: BackgroundOptions) {
 
 	options = options || {};
 
-	var override = <Override>(() => {
+	return (() => {
 
 		var values = [];
 
@@ -22,9 +21,6 @@ function background(options?: BackgroundOptions) {
 
 		return [];
 	});
-
-	override.args = arguments;
-	return override;
 
 }
 

@@ -1,13 +1,12 @@
 ﻿import Configuration = require('../Configuration');
 import experimental = require('../extenders/experimental');
-import Override = require('../interfaces/Override');
 
 // ReSharper disable once UnusedLocals
-function opacity(value: number): Override;
-function opacity(value: string): Override;
+function opacity(value: number): Function;
+function opacity(value: string): Function;
 function opacity(value: any) {
 
-	var override = <Override>((config: Configuration) => {
+	return ((config: Configuration) => {
 		var decs = [];
 
 		if (config.ie < 9 || config.ieMobile < 9) {
@@ -43,9 +42,6 @@ function opacity(value: any) {
 
 		return decs;
 	});
-
-	override.args = arguments;
-	return override;
 
 }
 

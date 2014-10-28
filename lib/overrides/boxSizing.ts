@@ -1,11 +1,10 @@
 ﻿import Configuration = require('../Configuration');
 import experimental = require('../extenders/experimental');
-import Override = require('../interfaces/Override');
 
 // ReSharper disable once UnusedLocals
 function boxSizing(value: string) {
 
-	var override = <Override>((config: Configuration) => {
+	return ((config: Configuration) => {
 		return experimental('box-sizing', value, {
 			official: true,
 			webkit: !(
@@ -19,9 +18,6 @@ function boxSizing(value: string) {
 			)
 		})(config);
 	});
-
-	override.args = arguments;
-	return override;
 
 }
 

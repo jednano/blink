@@ -1,4 +1,4 @@
-import Extender = require('./Extender');
-interface Override extends Extender {
+interface Override {
+    selectors?: string[];
 }
 export = Override;

@@ -1,13 +1,11 @@
 ﻿import Configuration = require('../Configuration');
-import Extender = require('../interfaces/Extender');
-
 
 // ReSharper disable once UnusedLocals
 function inlineBlock(options?: inlineBlock.Options) {
 
 	options = options || {};
 
-	var extender = <Extender>((config: Configuration) => {
+	return ((config: Configuration) => {
 		var decs = [];
 
 		if (config.firefox < 3) {
@@ -28,9 +26,6 @@ function inlineBlock(options?: inlineBlock.Options) {
 
 		return decs;
 	});
-
-	extender.args = arguments;
-	return extender;
 }
 
 // ReSharper disable once InconsistentNaming

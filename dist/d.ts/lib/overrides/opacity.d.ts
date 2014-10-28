@@ -1,4 +1,4 @@
-import Override = require('../interfaces/Override');
-declare function opacity(value: number): Override;
-declare function opacity(value: string): Override;
+import Configuration = require('../Configuration');
+declare function opacity(value: number): Function;
+declare function opacity(value: string): Function;
 export = opacity;

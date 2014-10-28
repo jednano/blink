@@ -11,10 +11,10 @@ declare class Compiler {
     public compile(rules: Rule[], callback: (err: Error, css?: string) => void): void;
     public compile(block: Block, callback: (err: Error, css?: string) => void): void;
     private compileRules(rules, callback);
-    public resolveRules(rules: Rule[]): any[];
+    public resolve(rule: Rule): any[];
+    public resolve(rules: Rule[]): any[];
+    private resolveRules(rules);
     private format(rules);
-    private resolveExtenders(rules);
-    private registerExtenders(extenders, rules);
     private resolveResponders(responders);
     private registerResponders(registry, selectors, responders);
     private resolveTree(tree);

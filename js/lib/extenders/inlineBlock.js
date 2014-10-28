@@ -2,7 +2,7 @@
 function inlineBlock(options) {
     options = options || {};
 
-    var extender = (function (config) {
+    return (function (config) {
         var decs = [];
 
         if (config.firefox < 3) {
@@ -23,9 +23,6 @@ function inlineBlock(options) {
 
         return decs;
     });
-
-    extender.args = arguments;
-    return extender;
 }
 
 

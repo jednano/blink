@@ -89,7 +89,7 @@ var blink;
 
 module.exports = blink;
 
-},{"../Block":3,"../Compiler":4,"../Element":5,"../MediaAtRule":8,"../Modifier":9,"../Rule":10,"./Configuration":11}],2:[function(require,module,exports){
+},{"../Block":3,"../Compiler":4,"../Element":5,"../MediaAtRule":7,"../Modifier":8,"../Rule":9,"./Configuration":10}],2:[function(require,module,exports){
 module.exports={
   "quiet": false,
   "trace": false,
@@ -180,18 +180,16 @@ var Block = (function () {
 
 module.exports = Block;
 
-},{"./Rule":10}],4:[function(require,module,exports){
+},{"./Rule":9}],4:[function(require,module,exports){
 /* jshint evil: true */
 /* tslint:disable:no-eval */
 var a = require('./helpers/array');
 
 var Configuration = require('./browser/Configuration');
-var ExtenderRegistry = require('./ExtenderRegistry');
 var Formatter = require('./Formatter');
 
 var o = require('./helpers/object');
 var Rule = require('./Rule');
-var s = require('./helpers/string');
 
 var Compiler = (function () {
     function Compiler(config) {
@@ -225,7 +223,7 @@ var Compiler = (function () {
     Compiler.prototype.compileRules = function (rules, callback) {
         var formatted;
         try  {
-            var resolved = this.resolveRules(rules);
+            var resolved = this.resolve(rules);
             formatted = this.format(resolved);
         } catch (err) {
             callback(err);
@@ -234,15 +232,17 @@ var Compiler = (function () {
         callback(null, formatted);
     };
 
+    Compiler.prototype.resolve = function (rules) {
+        if (!Array.isArray(rules)) {
+            rules = [rules];
+        }
+        return this.resolveRules(rules);
+    };
+
     Compiler.prototype.resolveRules = function (rules) {
         var _this = this;
         var resolved = [];
 
-        this.resolveExtenders(rules).forEach(function (extended) {
-            if (typeof extended[0] !== 'undefined') {
-                resolved.push(extended[0]);
-            }
-        });
         rules.forEach(function (rule) {
             push(rule.resolve(_this.config));
         });
@@ -261,49 +261,6 @@ var Compiler = (function () {
         return new Formatter().format(this.config, rules);
     };
 
-    Compiler.prototype.resolveExtenders = function (rules) {
-        var _this = this;
-        var extenders = new ExtenderRegistry();
-        this.registerExtenders(extenders, rules);
-        return extenders.map(function (extender, selectors) {
-            var body = {};
-            if (extender.selectors) {
-                extender.selectors.forEach(function (selector) {
-                    body[selector] = { include: [extender] };
-                });
-            } else {
-                body.include = [extender];
-            }
-            var r = new Rule(selectors, body);
-            return r.resolve(_this.config);
-        });
-    };
-
-    Compiler.prototype.registerExtenders = function (extenders, rules) {
-        var _this = this;
-        rules.forEach(function (rule) {
-            var overrides = _this.config.overrides;
-            var body = rule.body;
-            Object.keys(body).forEach(function (property) {
-                var override = overrides[s.camelize(property)];
-                if (override) {
-                    var overrideResult;
-                    if (Array.isArray(body[property])) {
-                        overrideResult = override.apply(_this, body[property]);
-                    } else {
-                        overrideResult = override(body[property]);
-                    }
-                    if (typeof overrideResult !== 'undefined') {
-                        a.flatten([overrideResult]).forEach(function (innerOverride) {
-                            extenders.add(innerOverride, rule.selectors);
-                        });
-                        delete body[property];
-                    }
-                }
-            });
-        });
-    };
-
     Compiler.prototype.resolveResponders = function (responders) {
         var _this = this;
         var registry = {};
@@ -319,8 +276,6 @@ var Compiler = (function () {
             var condition = responder.condition;
             var scope = registry[condition] = registry[condition] || {};
             responder.selectors = selectors;
-            scope.__extended = scope.__extended || new ExtenderRegistry();
-            _this.registerExtenders(scope.__extended, responders);
             var resolved = responder.resolve(_this.config);
             if (resolved.length) {
                 resolved = resolved[0];
@@ -333,16 +288,6 @@ var Compiler = (function () {
     Compiler.prototype.resolveTree = function (tree) {
         var _this = this;
         var result = [];
-        Object.keys(tree).forEach(function (key) {
-            var value = tree[key];
-            if (value instanceof ExtenderRegistry) {
-                value.forEach(function (extender, selectors) {
-                    var r = new Rule(selectors, { include: [extender] });
-                    result.push(r.resolve(_this.config)[0]);
-                });
-                delete tree[key];
-            }
-        });
         Object.keys(tree).forEach(function (key) {
             var value = tree[key];
             if (Array.isArray(value)) {
@@ -358,7 +303,7 @@ var Compiler = (function () {
 
 module.exports = Compiler;
 
-},{"./ExtenderRegistry":6,"./Formatter":7,"./Rule":10,"./browser/Configuration":11,"./helpers/array":16,"./helpers/object":17,"./helpers/string":18}],5:[function(require,module,exports){
+},{"./Formatter":6,"./Rule":9,"./browser/Configuration":10,"./helpers/array":14,"./helpers/object":15}],5:[function(require,module,exports){
 var Rule = require('./Rule');
 
 var Element = (function () {
@@ -396,48 +341,7 @@ var Element = (function () {
 
 module.exports = Element;
 
-},{"./Rule":10}],6:[function(require,module,exports){
-var ExtenderRegistry = (function () {
-    function ExtenderRegistry() {
-        this.extenders = {};
-        this.selectors = {};
-    }
-    ExtenderRegistry.prototype.add = function (extender, selectors) {
-        var key = this.createKey(extender);
-        if (!this.extenders.hasOwnProperty(key)) {
-            this.extenders[key] = extender;
-            this.selectors[key] = [];
-        }
-        [].push.apply(this.selectors[key], selectors);
-    };
-
-    ExtenderRegistry.prototype.createKey = function (extender) {
-        var args = extender.args;
-        var extenderName = args.callee.name;
-        var serializedArgs = JSON.stringify(Array.prototype.slice.call(args, 0));
-        return extenderName + serializedArgs;
-    };
-
-    ExtenderRegistry.prototype.forEach = function (callback) {
-        var _this = this;
-        Object.keys(this.extenders).forEach(function (key) {
-            callback(_this.extenders[key], _this.selectors[key]);
-        });
-    };
-
-    ExtenderRegistry.prototype.map = function (callback) {
-        var result = [];
-        this.forEach(function (extender, selectors) {
-            result.push(callback(extender, selectors));
-        });
-        return result;
-    };
-    return ExtenderRegistry;
-})();
-
-module.exports = ExtenderRegistry;
-
-},{}],7:[function(require,module,exports){
+},{"./Rule":9}],6:[function(require,module,exports){
 var s = require('./helpers/string');
 
 var Formatter = (function () {
@@ -521,7 +425,7 @@ var Formatter = (function () {
 
 module.exports = Formatter;
 
-},{"./helpers/string":18}],8:[function(require,module,exports){
+},{"./helpers/string":16}],7:[function(require,module,exports){
 /* istanbul ignore next: TypeScript extend */
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -544,7 +448,7 @@ var MediaAtRule = (function (_super) {
 
 module.exports = MediaAtRule;
 
-},{"./Rule":10}],9:[function(require,module,exports){
+},{"./Rule":9}],8:[function(require,module,exports){
 var Rule = require('./Rule');
 
 var Modifier = (function () {
@@ -582,7 +486,7 @@ var Modifier = (function () {
 
 module.exports = Modifier;
 
-},{"./Rule":10}],10:[function(require,module,exports){
+},{"./Rule":9}],9:[function(require,module,exports){
 var extend = require('node.extend');
 
 var Formatter = require('./Formatter');
@@ -594,14 +498,6 @@ var Rule = (function () {
         this.body = body;
         this.selectors = selectors;
     }
-    Object.defineProperty(Rule.prototype, "includes", {
-        get: function () {
-            return this.body.include;
-        },
-        enumerable: true,
-        configurable: true
-    });
-
     Object.defineProperty(Rule.prototype, "responders", {
         get: function () {
             return this.body.respond;
@@ -640,7 +536,6 @@ var Rule = (function () {
         this.config = config;
         var clone = this.clone();
         var body = clone.body;
-        delete body.include;
         delete body.respond;
 
         var resolved = [];
@@ -654,8 +549,7 @@ var Rule = (function () {
             }
         });
 
-        var includes = this.resolveIncludes();
-        var resolvedBody = extend(includes, this.resolveBody([], '', body));
+        var resolvedBody = this.resolveBody([], '', body);
         if (!resolvedBody || !resolvedBody.length) {
             return resolved;
         }
@@ -678,31 +572,15 @@ var Rule = (function () {
         return new Rule(extend([], this.selectors), extend({}, this.body));
     };
 
-    Rule.prototype.resolveIncludes = function () {
-        var _this = this;
-        var includes = this.includes;
-        if (!includes || !includes.length) {
-            return [];
-        }
-        var result = [];
-        includes.forEach(function (fn) {
-            var decs = fn(_this.config);
-            if (!decs.length) {
-                return;
-            }
-            [].push.apply(result, decs.map(function (dec) {
-                return [dec[0], _this.compileDeclarationValue(dec[1])];
-            }));
-        });
-        return result;
-    };
-
     Rule.prototype.resolveBody = function (seed, key, body) {
         var _this = this;
         Object.keys(body).forEach(function (k2) {
             var k1 = key || '';
             key = s.dasherize(_this.combineKeys(k1, k2));
-            var value = body[k2];
+            var value = _this.resolveOverride(key, body[k2]);
+            if (typeof value === 'undefined') {
+                return;
+            }
             if (_this.isDeclarationValue(value)) {
                 seed.push([key, _this.compileDeclarationValue(value)]);
             } else {
@@ -711,6 +589,27 @@ var Rule = (function () {
             key = k1;
         });
         return seed;
+    };
+
+    Rule.prototype.resolveOverride = function (key, value) {
+        var override = this.config.overrides[s.camelize(key)];
+        switch (typeof override) {
+            case 'function':
+                var fn;
+                if (Array.isArray(value)) {
+                    fn = override(value[0], value[1]);
+                } else {
+                    fn = override(value);
+                }
+                if (typeof fn !== 'function') {
+                    throw new Error('Override "' + key + '" must return a function');
+                }
+                return fn(this.config);
+            case 'undefined':
+                return value;
+            default:
+                throw new Error('Override "' + key + '" must be of type: Function');
+        }
     };
 
     Rule.prototype.combineKeys = function (k1, k2) {
@@ -776,7 +675,7 @@ var Rule = (function () {
 
 module.exports = Rule;
 
-},{"./Formatter":7,"./helpers/string":18,"node.extend":29}],11:[function(require,module,exports){
+},{"./Formatter":6,"./helpers/string":16,"node.extend":27}],10:[function(require,module,exports){
 var extend = require('node.extend');
 
 var _extenders = require('../extenders/all');
@@ -1284,7 +1183,7 @@ var Configuration = (function () {
 
 module.exports = Configuration;
 
-},{"../../defaults.browser.json":2,"../extenders/all":12,"../helpers/string":18,"../overrides/all":19,"node.extend":29}],12:[function(require,module,exports){
+},{"../../defaults.browser.json":2,"../extenders/all":11,"../helpers/string":16,"../overrides/all":17,"node.extend":27}],11:[function(require,module,exports){
 var experimental = require('./experimental');
 var inlineBlock = require('./inlineBlock');
 
@@ -1296,12 +1195,12 @@ var extenders = {
 
 module.exports = extenders;
 
-},{"./experimental":13,"./inlineBlock":14}],13:[function(require,module,exports){
+},{"./experimental":12,"./inlineBlock":13}],12:[function(require,module,exports){
 // ReSharper disable once UnusedLocals
 function experimental(property, value, options) {
     options = options || {};
 
-    var extender = (function (config) {
+    return (function (config) {
         var decs = [];
         ['webkit', 'khtml', 'moz', 'ms', 'o'].forEach(function (vendor) {
             if (options[vendor] && config[vendor + 'Prefix']) {
@@ -1313,19 +1212,16 @@ function experimental(property, value, options) {
         }
         return decs;
     });
-
-    extender.args = arguments;
-    return extender;
 }
 
 module.exports = experimental;
 
-},{}],14:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 // ReSharper disable once UnusedLocals
 function inlineBlock(options) {
     options = options || {};
 
-    var extender = (function (config) {
+    return (function (config) {
         var decs = [];
 
         if (config.firefox < 3) {
@@ -1346,27 +1242,12 @@ function inlineBlock(options) {
 
         return decs;
     });
-
-    extender.args = arguments;
-    return extender;
 }
 
 
 module.exports = inlineBlock;
 
-},{}],15:[function(require,module,exports){
-// ReSharper disable once UnusedLocals
-function noop() {
-    var extender = (function () {
-        return [];
-    });
-    extender.args = arguments;
-    return extender;
-}
-
-module.exports = noop;
-
-},{}],16:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 function flatten(arr) {
     var flat = [];
     arr.forEach(function (item) {
@@ -1380,7 +1261,7 @@ function flatten(arr) {
 }
 exports.flatten = flatten;
 
-},{}],17:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 function isPlainObject(o) {
     if (typeof o === 'object' && o) {
         return o.constructor === Object;
@@ -1389,7 +1270,7 @@ function isPlainObject(o) {
 }
 exports.isPlainObject = isPlainObject;
 
-},{}],18:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 // ReSharper disable InconsistentNaming
 var STRING_CAMELIZE = (/(\-|_|\.|\s)+(.)?/g);
 var STRING_DASHERIZE = /[ _]/g;
@@ -1437,7 +1318,7 @@ function decamelize(s) {
 }
 exports.decamelize = decamelize;
 
-},{}],19:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 var appearance = require('./appearance');
 var background = require('./background');
 var box = require('./box');
@@ -1463,29 +1344,26 @@ var overrides = {
 
 module.exports = overrides;
 
-},{"./appearance":20,"./background":21,"./box":22,"./boxSizing":23,"./clearfix":24,"./display":25,"./opacity":26,"./text":27,"./textSizeAdjust":28}],20:[function(require,module,exports){
+},{"./appearance":18,"./background":19,"./box":20,"./boxSizing":21,"./clearfix":22,"./display":23,"./opacity":24,"./text":25,"./textSizeAdjust":26}],18:[function(require,module,exports){
 var experimental = require('../extenders/experimental');
 
 function appearance(value) {
-    var override = (function (config) {
+    return (function (config) {
         return experimental('appearance', value, {
             webkit: true,
             moz: true
         })(config);
     });
-
-    override.args = arguments;
-    return override;
 }
 
 module.exports = appearance;
 
-},{"../extenders/experimental":13}],21:[function(require,module,exports){
+},{"../extenders/experimental":12}],19:[function(require,module,exports){
 // ReSharper disable once UnusedLocals
 function background(options) {
     options = options || {};
 
-    var override = (function () {
+    return (function () {
         var values = [];
 
         ['color', 'image', 'repeat', 'attachment', 'position'].forEach(function (prop) {
@@ -1500,14 +1378,11 @@ function background(options) {
 
         return [];
     });
-
-    override.args = arguments;
-    return override;
 }
 
 module.exports = background;
 
-},{}],22:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 var boxSizing = require('./boxSizing');
 
 // ReSharper disable once UnusedLocals
@@ -1520,37 +1395,32 @@ function box(value) {
 
 module.exports = box;
 
-},{"./boxSizing":23}],23:[function(require,module,exports){
+},{"./boxSizing":21}],21:[function(require,module,exports){
 var experimental = require('../extenders/experimental');
 
 // ReSharper disable once UnusedLocals
 function boxSizing(value) {
-    var override = (function (config) {
+    return (function (config) {
         return experimental('box-sizing', value, {
             official: true,
             webkit: !(config.chrome >= 10 && config.safari >= 5.1 && config.android >= 4),
             moz: !(config.firefox >= 29 && config.firefoxMobile >= 29)
         })(config);
     });
-
-    override.args = arguments;
-    return override;
 }
 
 module.exports = boxSizing;
 
-},{"../extenders/experimental":13}],24:[function(require,module,exports){
-var noop = require('../extenders/noop');
-
+},{"../extenders/experimental":12}],22:[function(require,module,exports){
 var s = require('../helpers/string');
 
 // ReSharper disable once UnusedLocals
 function clearfix(value) {
-    if (!value) {
-        return noop();
-    }
-
     var override = (function (config) {
+        if (!value) {
+            // ReSharper disable once InconsistentFunctionReturns
+            return;
+        }
         return [
             ['content', s.repeat(config.quote, 2)],
             ['display', 'table'],
@@ -1558,7 +1428,6 @@ function clearfix(value) {
         ];
     });
 
-    override.args = arguments;
     override.selectors = [':after'];
 
     return override;
@@ -1566,12 +1435,12 @@ function clearfix(value) {
 
 module.exports = clearfix;
 
-},{"../extenders/noop":15,"../helpers/string":18}],25:[function(require,module,exports){
+},{"../helpers/string":16}],23:[function(require,module,exports){
 var inlineBlock = require('../extenders/inlineBlock');
 
 // ReSharper disable once UnusedLocals
 function display(value, options) {
-    var override = (function (config) {
+    return (function (config) {
         switch (value) {
             case 'inline-block':
                 return inlineBlock(options)(config);
@@ -1582,19 +1451,16 @@ function display(value, options) {
                 return [['display', value]];
         }
     });
-
-    override.args = arguments;
-    return override;
 }
 
 module.exports = display;
 
-},{"../extenders/inlineBlock":14}],26:[function(require,module,exports){
+},{"../extenders/inlineBlock":13}],24:[function(require,module,exports){
 var experimental = require('../extenders/experimental');
 
 
 function opacity(value) {
-    var override = (function (config) {
+    return (function (config) {
         var decs = [];
 
         if (config.ie < 9 || config.ieMobile < 9) {
@@ -1625,14 +1491,11 @@ function opacity(value) {
 
         return decs;
     });
-
-    override.args = arguments;
-    return override;
 }
 
 module.exports = opacity;
 
-},{"../extenders/experimental":13}],27:[function(require,module,exports){
+},{"../extenders/experimental":12}],25:[function(require,module,exports){
 var textSizeAdjust = require('./textSizeAdjust');
 
 // ReSharper disable once UnusedLocals
@@ -1648,30 +1511,27 @@ function text(value) {
 
 module.exports = text;
 
-},{"./textSizeAdjust":28}],28:[function(require,module,exports){
+},{"./textSizeAdjust":26}],26:[function(require,module,exports){
 var experimental = require('../extenders/experimental');
 
 // ReSharper disable once UnusedLocals
 function textSizeAdjust(value) {
-    var override = (function (config) {
+    return (function (config) {
         return experimental('text-size-adjust', value, {
             webkit: true,
             moz: true,
             ms: true
         })(config);
     });
-
-    override.args = arguments;
-    return override;
 }
 
 module.exports = textSizeAdjust;
 
-},{"../extenders/experimental":13}],29:[function(require,module,exports){
+},{"../extenders/experimental":12}],27:[function(require,module,exports){
 module.exports = require('./lib/extend');
 
 
-},{"./lib/extend":30}],30:[function(require,module,exports){
+},{"./lib/extend":28}],28:[function(require,module,exports){
 /*!
  * node.extend
  * Copyright 2011, John Resig
@@ -1755,7 +1615,7 @@ extend.version = '1.0.8';
 module.exports = extend;
 
 
-},{"is":31}],31:[function(require,module,exports){
+},{"is":29}],29:[function(require,module,exports){
 
 /**!
  * is

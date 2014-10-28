@@ -4,7 +4,6 @@ import a = require('./helpers/array');
 import blink = require('./blink');
 import Block = require('./Block');
 import Configuration = require('./browser/Configuration');
-import ExtenderRegistry = require('./ExtenderRegistry');
 import Formatter = require('./Formatter');
 import MediaAtRule = require('./MediaAtRule');
 import o = require('./helpers/object');
@@ -52,7 +51,7 @@ class Compiler {
 
 		var formatted: string;
 		try {
-			var resolved = this.resolveRules(rules);
+			var resolved = this.resolve(rules);
 			formatted = this.format(resolved);
 		} catch (err) {
 			callback(err);
@@ -61,14 +60,18 @@ class Compiler {
 		callback(null, formatted);
 	}
 
-	public resolveRules(rules: Rule[]) {
+	public resolve(rule: Rule): any[];
+	public resolve(rules: Rule[]): any[];
+	public resolve(rules: any) {
+		if (!Array.isArray(rules)) {
+			rules = [rules];
+		}
+		return this.resolveRules(rules);
+	}
+
+	private resolveRules(rules: Rule[]) {
 		var resolved = [];
 
-		this.resolveExtenders(rules).forEach(extended => {
-			if (typeof extended[0] !== 'undefined') {
-				resolved.push(extended[0]);
-			}
-		});
 		rules.forEach(rule => {
 			push(rule.resolve(this.config));
 		});
@@ -87,47 +90,6 @@ class Compiler {
 		return new Formatter().format(this.config, rules);
 	}
 
-	private resolveExtenders(rules: Rule[]) {
-		var extenders = new ExtenderRegistry();
-		this.registerExtenders(extenders, rules);
-		return extenders.map((extender, selectors) => {
-			var body: any = {};
-			if (extender.selectors) {
-				extender.selectors.forEach(selector => {
-					body[selector] = { include: [extender] };
-				});
-			} else {
-				body.include = [extender];
-			}
-			var r = new Rule(selectors, body);
-			return r.resolve(this.config);
-		});
-	}
-
-	private registerExtenders(extenders: ExtenderRegistry, rules: Rule[]) {
-		rules.forEach(rule => {
-			var overrides = this.config.overrides;
-			var body = rule.body;
-			Object.keys(body).forEach(property => {
-				var override = overrides[s.camelize(property)];
-				if (override) {
-					var overrideResult;
-					if (Array.isArray(body[property])) {
-						overrideResult = override.apply(this, body[property]);
-					} else {
-						overrideResult = override(body[property]);
-					}
-					if (typeof overrideResult !== 'undefined') {
-						a.flatten([overrideResult]).forEach(innerOverride => {
-							extenders.add(innerOverride, rule.selectors);
-						});
-						delete body[property];
-					}
-				}
-			});
-		});
-	}
-
 	private resolveResponders(responders: Rule[]) {
 		var registry: any = {};
 		responders.forEach(responder => {
@@ -143,8 +105,6 @@ class Compiler {
 			var condition = responder.condition;
 			var scope = registry[condition] = registry[condition] || {};
 			responder.selectors = selectors;
-			scope.__extended = scope.__extended || new ExtenderRegistry();
-			this.registerExtenders(scope.__extended, responders);
 			var resolved = responder.resolve(this.config);
 			if (resolved.length) {
 				resolved = resolved[0];
@@ -156,16 +116,6 @@ class Compiler {
 
 	private resolveTree(tree: any): any[][] {
 		var result = [];
-		Object.keys(tree).forEach(key => {
-			var value = tree[key];
-			if (value instanceof ExtenderRegistry) {
-				value.forEach((extender, selectors) => {
-					var r = new Rule(selectors, { include: [extender] });
-					result.push(r.resolve(this.config)[0]);
-				});
-				delete tree[key];
-			}
-		});
 		Object.keys(tree).forEach(key => {
 			var value = tree[key];
 			if (Array.isArray(value)) {

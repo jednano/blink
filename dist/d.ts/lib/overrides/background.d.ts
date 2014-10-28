@@ -1,4 +1,3 @@
-import Override = require('../interfaces/Override');
 import BackgroundOptions = require('../interfaces/css/BackgroundOptions');
-declare function background(options?: BackgroundOptions): Override;
+declare function background(options?: BackgroundOptions): () => {}[][];
 export = background;

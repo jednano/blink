@@ -3,6 +3,7 @@ import Configuration = require('../../../lib/Configuration');
 import extenders = require('../../../lib/extenders/all');
 import overrides = require('../../../lib/overrides/all');
 import Rule = require('../../../lib/Rule');
+import s = require('../../../lib/helpers/string');
 import sinonChai = require('../../sinon-chai');
 
 var expect = sinonChai.expect;
@@ -98,31 +99,27 @@ describe('overrides', () => {
 
 	describe('clearfix', () => {
 
-		var clearfixDeclarations = [
-			['content', '""'],
+		var expected = [
+			['content', s.repeat(config.quote, 2)],
 			['display', 'table'],
 			['clear', 'both']
 		];
 
 		it('generates clearfix declarations when value is true', () => {
-			expect(overrides.clearfix(true)(config)).to.deep.equal(clearfixDeclarations);
+			expect(overrides.clearfix(true)(config)).to.deep.equal(expected);
 		});
 
-		it('inserts clearfix declarations inside :after pseudo-selector', () => {
+		it.skip('inserts clearfix declarations inside :after pseudo-selector', () => {
 			var rule = new Rule('foo', {
 				clearfix: true
 			});
-			expect(compiler.resolveRules([rule])).to.deep.equal([
-				[['foo:after'], clearfixDeclarations]
+			expect(compiler.resolve(rule)).to.deep.equal([
+				[['foo:after'], expected]
 			]);
 		});
 
-		it('generates nothing when value is false', () => {
-			expect(overrides.clearfix(false)(config)).to.deep.equal([]);
-			var rule = new Rule('foo', {
-				clearfix: false
-			});
-			expect(compiler.resolveRules([rule])).to.deep.equal([]);
+		it('returns undefined when value is false', () => {
+			expect(overrides.clearfix(false)(config)).to.be.undefined;
 		});
 
 	});

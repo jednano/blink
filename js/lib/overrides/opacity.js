@@ -2,7 +2,7 @@ var experimental = require('../extenders/experimental');
 
 
 function opacity(value) {
-    var override = (function (config) {
+    return (function (config) {
         var decs = [];
 
         if (config.ie < 9 || config.ieMobile < 9) {
@@ -33,9 +33,6 @@ function opacity(value) {
 
         return decs;
     });
-
-    override.args = arguments;
-    return override;
 }
 
 module.exports = opacity;

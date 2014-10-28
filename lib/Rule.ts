@@ -13,10 +13,6 @@ class Rule {
 	private config: Configuration;
 	private decs: any[][];
 
-	public get includes() {
-		return this.body.include;
-	}
-
 	public get responders() {
 		return this.body.respond;
 	}
@@ -52,7 +48,6 @@ class Rule {
 		this.config = config;
 		var clone = this.clone();
 		var body = clone.body;
-		delete body.include;
 		delete body.respond;
 
 		var resolved = [];
@@ -66,8 +61,7 @@ class Rule {
 			}
 		});
 
-		var includes = this.resolveIncludes();
-		var resolvedBody = extend(includes, this.resolveBody([], '', body));
+		var resolvedBody = this.resolveBody([], '', body);
 		if (!resolvedBody || !resolvedBody.length) {
 			return resolved;
 		}
@@ -90,29 +84,14 @@ class Rule {
 		return new Rule(extend([], this.selectors), extend({}, this.body));
 	}
 
-	private resolveIncludes() {
-		var includes = this.includes;
-		if (!includes || !includes.length) {
-			return [];
-		}
-		var result = [];
-		includes.forEach(fn => {
-			var decs = fn(this.config);
-			if (!decs.length) {
-				return;
-			}
-			[].push.apply(result, decs.map(dec => {
-				return [dec[0], this.compileDeclarationValue(dec[1])];
-			}));
-		});
-		return result;
-	}
-
 	private resolveBody(seed: any[][], key: string, body: any) {
 		Object.keys(body).forEach(k2 => {
 			var k1 = key || '';
 			key = s.dasherize(this.combineKeys(k1, k2));
-			var value = body[k2];
+			var value = this.resolveOverride(key, body[k2]);
+			if (typeof value === 'undefined') {
+				return;
+			}
 			if (this.isDeclarationValue(value)) {
 				seed.push([key, this.compileDeclarationValue(value)]);
 			} else {
@@ -121,6 +100,27 @@ class Rule {
 			key = k1;
 		});
 		return seed;
+	}
+
+	private resolveOverride(key: string, value: any) {
+		var override = this.config.overrides[s.camelize(key)];
+		switch (typeof override) {
+			case 'function':
+				var fn: Function;
+				if (Array.isArray(value)) {
+					fn = override(value[0], value[1]);
+				} else {
+					fn = override(value);
+				}
+				if (typeof fn !== 'function') {
+					throw new Error('Override "' + key + '" must return a function');
+				}
+				return fn(this.config);
+			case 'undefined':
+				return value;
+			default:
+				throw new Error('Override "' + key + '" must be of type: Function');
+		}
 	}
 
 	private combineKeys(k1: string, k2: string) {

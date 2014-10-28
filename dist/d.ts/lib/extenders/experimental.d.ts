@@ -1,4 +1,4 @@
-import Extender = require('../interfaces/Extender');
+import Configuration = require('../Configuration');
 declare function experimental(property: string, value: any, options?: {
     official?: boolean;
     webkit?: boolean;
@@ -6,5 +6,5 @@ declare function experimental(property: string, value: any, options?: {
     moz?: boolean;
     ms?: boolean;
     o?: boolean;
-}): Extender;
+}): (config: Configuration) => any[];
 export = experimental;

@@ -1,3 +1,3 @@
-import Override = require('../interfaces/Override');
-declare function box(value: any): Override;
+import Configuration = require('../Configuration');
+declare function box(value: any): (config: Configuration) => any[];
 export = box;

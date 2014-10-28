@@ -2,7 +2,7 @@
 function background(options) {
     options = options || {};
 
-    var override = (function () {
+    return (function () {
         var values = [];
 
         ['color', 'image', 'repeat', 'attachment', 'position'].forEach(function (prop) {
@@ -17,9 +17,6 @@ function background(options) {
 
         return [];
     });
-
-    override.args = arguments;
-    return override;
 }
 
 module.exports = background;

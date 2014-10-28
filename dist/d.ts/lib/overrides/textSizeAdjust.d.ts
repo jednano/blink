@@ -1,3 +1,3 @@
-import Override = require('../interfaces/Override');
-declare function textSizeAdjust(value: any): Override;
+import Configuration = require('../Configuration');
+declare function textSizeAdjust(value: any): (config: Configuration) => any[];
 export = textSizeAdjust;

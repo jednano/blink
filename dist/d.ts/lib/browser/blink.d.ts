@@ -6,11 +6,9 @@ import _Configuration = require('./Configuration');
 import _ConfigurationOptions = require('../interfaces/ConfigurationOptions');
 import _Element = require('../Element');
 import _ElementBody = require('../interfaces/ElementBody');
-import _Extender = require('../interfaces/Extender');
 import _MediaAtRule = require('../MediaAtRule');
 import _Modifier = require('../Modifier');
 import _ModifierBody = require('../interfaces/ModifierBody');
-import _Override = require('../interfaces/Override');
 import _Rule = require('../Rule');
 import _RuleBody = require('../interfaces/RuleBody');
 declare function blink(contents: string, callback: blink.Callback, options?: blink.ConfigurationOptions): void;
@@ -41,11 +39,7 @@ declare module blink {
     }
     interface ElementBody extends _ElementBody {
     }
-    interface Extender extends _Extender {
-    }
     interface ModifierBody extends _ModifierBody {
-    }
-    interface Override extends _Override {
     }
     interface RuleBody extends _RuleBody {
     }

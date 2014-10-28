@@ -1,6 +1,5 @@
-﻿import Override = require('../interfaces/Override');
+﻿import Configuration = require('../Configuration');
 import textSizeAdjust = require('./textSizeAdjust');
-
 
 // ReSharper disable once UnusedLocals
 function text(value: any) {

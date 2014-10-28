@@ -6,11 +6,9 @@ import _Configuration = require('./Configuration');
 import _ConfigurationOptions = require('../interfaces/ConfigurationOptions');
 import _Element = require('../Element');
 import _ElementBody = require('../interfaces/ElementBody');
-import _Extender = require('../interfaces/Extender');
 import _MediaAtRule = require('../MediaAtRule');
 import _Modifier = require('../Modifier');
 import _ModifierBody = require('../interfaces/ModifierBody');
-import _Override = require('../interfaces/Override');
 import _Rule = require('../Rule');
 import _RuleBody = require('../interfaces/RuleBody');
 
@@ -40,9 +38,7 @@ module blink {
 	export interface BlockBody            extends _BlockBody {}
 	export interface ConfigurationOptions extends _ConfigurationOptions {}
 	export interface ElementBody          extends _ElementBody {}
-	export interface Extender             extends _Extender {}
 	export interface ModifierBody         extends _ModifierBody {}
-	export interface Override             extends _Override {}
 	export interface RuleBody             extends _RuleBody {}
 
 	export var config = new Configuration();

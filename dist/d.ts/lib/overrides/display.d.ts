@@ -1,4 +1,4 @@
+import Configuration = require('../Configuration');
 import inlineBlock = require('../extenders/inlineBlock');
-import Override = require('../interfaces/Override');
-declare function display(value: string, options?: inlineBlock.Options): Override;
+declare function display(value: string, options?: inlineBlock.Options): (config: Configuration) => any[];
 export = display;

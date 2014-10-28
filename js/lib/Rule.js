@@ -9,14 +9,6 @@ var Rule = (function () {
         this.body = body;
         this.selectors = selectors;
     }
-    Object.defineProperty(Rule.prototype, "includes", {
-        get: function () {
-            return this.body.include;
-        },
-        enumerable: true,
-        configurable: true
-    });
-
     Object.defineProperty(Rule.prototype, "responders", {
         get: function () {
             return this.body.respond;
@@ -55,7 +47,6 @@ var Rule = (function () {
         this.config = config;
         var clone = this.clone();
         var body = clone.body;
-        delete body.include;
         delete body.respond;
 
         var resolved = [];
@@ -69,8 +60,7 @@ var Rule = (function () {
             }
         });
 
-        var includes = this.resolveIncludes();
-        var resolvedBody = extend(includes, this.resolveBody([], '', body));
+        var resolvedBody = this.resolveBody([], '', body);
         if (!resolvedBody || !resolvedBody.length) {
             return resolved;
         }
@@ -93,31 +83,15 @@ var Rule = (function () {
         return new Rule(extend([], this.selectors), extend({}, this.body));
     };
 
-    Rule.prototype.resolveIncludes = function () {
-        var _this = this;
-        var includes = this.includes;
-        if (!includes || !includes.length) {
-            return [];
-        }
-        var result = [];
-        includes.forEach(function (fn) {
-            var decs = fn(_this.config);
-            if (!decs.length) {
-                return;
-            }
-            [].push.apply(result, decs.map(function (dec) {
-                return [dec[0], _this.compileDeclarationValue(dec[1])];
-            }));
-        });
-        return result;
-    };
-
     Rule.prototype.resolveBody = function (seed, key, body) {
         var _this = this;
         Object.keys(body).forEach(function (k2) {
             var k1 = key || '';
             key = s.dasherize(_this.combineKeys(k1, k2));
-            var value = body[k2];
+            var value = _this.resolveOverride(key, body[k2]);
+            if (typeof value === 'undefined') {
+                return;
+            }
             if (_this.isDeclarationValue(value)) {
                 seed.push([key, _this.compileDeclarationValue(value)]);
             } else {
@@ -126,6 +100,27 @@ var Rule = (function () {
             key = k1;
         });
         return seed;
+    };
+
+    Rule.prototype.resolveOverride = function (key, value) {
+        var override = this.config.overrides[s.camelize(key)];
+        switch (typeof override) {
+            case 'function':
+                var fn;
+                if (Array.isArray(value)) {
+                    fn = override(value[0], value[1]);
+                } else {
+                    fn = override(value);
+                }
+                if (typeof fn !== 'function') {
+                    throw new Error('Override "' + key + '" must return a function');
+                }
+                return fn(this.config);
+            case 'undefined':
+                return value;
+            default:
+                throw new Error('Override "' + key + '" must be of type: Function');
+        }
     };
 
     Rule.prototype.combineKeys = function (k1, k2) {
