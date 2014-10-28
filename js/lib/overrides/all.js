@@ -7,7 +7,6 @@ var display = require('./display');
 var opacity = require('./opacity');
 var text = require('./text');
 var textSizeAdjust = require('./textSizeAdjust');
-
 // ReSharper disable once UnusedLocals
 var overrides = {
     appearance: appearance,
@@ -20,5 +19,4 @@ var overrides = {
     text: text,
     textSizeAdjust: textSizeAdjust
 };
-
 module.exports = overrides;

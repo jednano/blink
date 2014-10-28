@@ -1,8 +1,7 @@
 var inlineBlock = require('../extenders/inlineBlock');
-
 // ReSharper disable once UnusedLocals
 function display(value, options) {
-    return (function (config) {
+    return function (config) {
         switch (value) {
             case 'inline-block':
                 return inlineBlock(options)(config);
@@ -10,9 +9,8 @@ function display(value, options) {
                 if (options) {
                     throw new Error('Unused options for display override');
                 }
-                return [['display', value]];
+                return value;
         }
-    });
+    };
 }
-
 module.exports = display;

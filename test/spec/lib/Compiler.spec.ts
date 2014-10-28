@@ -10,13 +10,9 @@ var expect = sinonChai.expect;
 // ReSharper disable WrongExpressionStatement
 describe('Compiler', () => {
 
-	var compiler = new Compiler();
-	var config = compiler.config;
+	var config = new Configuration();
+	var compiler = new Compiler(config);
 	var newline = config.newline;
-
-	it('provides a configuration if you don\'t provide one', () => {
-		expect(new Compiler().config).to.deep.equal(new Configuration());
-	});
 
 	it('compiles no rules into an empty string', done => {
 		blink([], (err, css) => {
@@ -185,6 +181,18 @@ describe('Compiler', () => {
 					'  }',
 					'}'
 				].join(newline) + newline);
+			});
+		});
+
+		it('compiles an empty responder', () => {
+			var rule = new Rule('foo', {
+				respond: [
+					new MediaAtRule('baz', {})
+				]
+			});
+			compiler.compile(rule, (err, css) => {
+				expect(err).to.be.null;
+				expect(css).to.be.empty;
 			});
 		});
 

@@ -1,8 +1,8 @@
 ﻿import _BackgroundOptions = require('../interfaces/css/BackgroundOptions');
 import _Block = require('../Block');
 import _BlockBody = require('../interfaces/BlockBody');
+import _BrowserConfiguration = require('./Configuration');
 import _Compiler = require('../Compiler');
-import _Configuration = require('./Configuration');
 import _ConfigurationOptions = require('../interfaces/ConfigurationOptions');
 import _Element = require('../Element');
 import _ElementBody = require('../interfaces/ElementBody');
@@ -27,8 +27,8 @@ function blink(contents: any, callback: blink.Callback, options?: blink.Configur
 module blink {
 
 	export class Block         extends _Block {}
-	export class Compiler      extends _Compiler {}
-	export class Configuration extends _Configuration {}
+	export class Compiler      extends _Compiler<Configuration> {}
+	export class Configuration extends _BrowserConfiguration {}
 	export class Element       extends _Element {}
 	export class MediaAtRule   extends _MediaAtRule {}
 	export class Modifier      extends _Modifier {}

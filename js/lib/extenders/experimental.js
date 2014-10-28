@@ -1,7 +1,6 @@
 // ReSharper disable once UnusedLocals
 function experimental(property, value, options) {
     options = options || {};
-
     return (function (config) {
         var decs = [];
         ['webkit', 'khtml', 'moz', 'ms', 'o'].forEach(function (vendor) {
@@ -15,5 +14,4 @@ function experimental(property, value, options) {
         return decs;
     });
 }
-
 module.exports = experimental;

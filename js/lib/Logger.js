@@ -7,7 +7,6 @@ var __extends = this.__extends || function (d, b) {
 };
 ///<reference path="../bower_components/dt-node/node.d.ts" />
 var events = require('events');
-
 var Logger = (function (_super) {
     __extends(Logger, _super);
     function Logger() {
@@ -16,19 +15,15 @@ var Logger = (function (_super) {
     Logger.prototype.debug = function (message) {
         this.emit('debug', message);
     };
-
     Logger.prototype.info = function (message) {
         this.emit('info', message);
     };
-
     Logger.prototype.warn = function (message) {
         this.emit('warn', message);
     };
-
     Logger.prototype.error = function (err) {
         this.emit('error', err);
     };
     return Logger;
 })(events.EventEmitter);
-
 module.exports = Logger;

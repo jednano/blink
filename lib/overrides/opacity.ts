@@ -6,7 +6,7 @@ function opacity(value: number): Function;
 function opacity(value: string): Function;
 function opacity(value: any) {
 
-	return ((config: Configuration) => {
+	return (config: Configuration) => {
 		var decs = [];
 
 		if (config.ie < 9 || config.ieMobile < 9) {
@@ -41,7 +41,7 @@ function opacity(value: any) {
 		}
 
 		return decs;
-	});
+	};
 
 }
 

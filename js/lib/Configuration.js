@@ -7,17 +7,13 @@ var __extends = this.__extends || function (d, b) {
 };
 ///<reference path="../bower_components/dt-node/node.d.ts"/>
 var extend = require('node.extend');
-
 var os = require('os');
-
 var ConfigurationForBrowser = require('./browser/Configuration');
-
 var newlines = {
     os: os.EOL,
     lf: '\n',
     crlf: '\r\n'
 };
-
 var Configuration = (function (_super) {
     __extends(Configuration, _super);
     function Configuration(options) {
@@ -35,15 +31,14 @@ var Configuration = (function (_super) {
         }.bind(this));
         return result;
     };
-
     Configuration.prototype.tryLoadingPlugin = function (pluginPath) {
-        try  {
+        try {
             return require(pluginPath);
-        } catch (err) {
+        }
+        catch (err) {
             throw new Error('Invalid plugin. Path not found: ' + pluginPath);
         }
     };
-
     Object.defineProperty(Configuration.prototype, "newline", {
         get: function () {
             switch (this.style) {
@@ -64,8 +59,6 @@ var Configuration = (function (_super) {
         enumerable: true,
         configurable: true
     });
-
     return Configuration;
 })(ConfigurationForBrowser);
-
 module.exports = Configuration;

@@ -1,24 +1,24 @@
-﻿import appearance = require('../overrides/appearance');
-import background = require('../overrides/background');
-import box = require('../overrides/box');
-import boxSizing = require('../overrides/boxSizing');
-import clearfix = require('../overrides/clearfix');
-import display = require('../overrides/display');
-import opacity = require('../overrides/opacity');
-import text = require('../overrides/text');
-import textSizeAdjust = require('../overrides/textSizeAdjust');
+﻿import _appearance = require('../overrides/appearance');
+import _background = require('../overrides/background');
+import _box = require('../overrides/box');
+import _boxSizing = require('../overrides/boxSizing');
+import _clearfix = require('../overrides/clearfix');
+import _display = require('../overrides/display');
+import _opacity = require('../overrides/opacity');
+import _text = require('../overrides/text');
+import _textSizeAdjust = require('../overrides/textSizeAdjust');
 
 
 interface Overrides {
-	appearance: typeof appearance;
-	background: typeof background;
-	box: typeof box;
-	boxSizing: typeof boxSizing;
-	clearfix: typeof clearfix;
-	display: typeof display;
-	opacity: typeof opacity;
-	text: typeof text;
-	textSizeAdjust: typeof textSizeAdjust;
+	appearance: typeof _appearance;
+	background: typeof _background;
+	box: typeof _box;
+	boxSizing: typeof _boxSizing;
+	clearfix: typeof _clearfix;
+	display: typeof _display;
+	opacity: typeof _opacity;
+	text: typeof _text;
+	textSizeAdjust: typeof _textSizeAdjust;
 }
 
 export = Overrides;

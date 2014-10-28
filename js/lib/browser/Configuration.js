@@ -1,29 +1,22 @@
 var extend = require('node.extend');
-
 var _extenders = require('../extenders/all');
 var _overrides = require('../overrides/all');
-
 var s = require('../helpers/string');
-
 var ONE_INDENT = /(\d+)([st])/;
-
 var styles = {
     nested: null,
     expanded: null,
     compact: null,
     compressed: null
 };
-
 var newlines = {
     lf: '\n',
     crlf: '\r\n'
 };
-
 var quotes = {
     'double': '"',
     'single': "'"
 };
-
 var Configuration = (function () {
     function Configuration(options) {
         this.raw = {};
@@ -35,20 +28,17 @@ var Configuration = (function () {
         clone.overrides = this.overrides;
         return clone;
     };
-
     Configuration.prototype.set = function (options) {
         extend(this.raw, options || {});
         return this;
     };
-
     Configuration.prototype.toString = function () {
         return JSON.stringify(this.raw);
     };
-
     Object.defineProperty(Configuration.prototype, "config", {
         /**
-        * The location of the config file
-        */
+         * The location of the config file
+         */
         get: function () {
             return this.raw.config;
         },
@@ -58,8 +48,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "quiet", {
         get: function () {
             return this.raw.quiet;
@@ -70,8 +58,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "trace", {
         get: function () {
             return this.raw.trace;
@@ -82,8 +68,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "force", {
         get: function () {
             return this.raw.force;
@@ -94,8 +78,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "boring", {
         get: function () {
             return this.raw.boring;
@@ -106,8 +88,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "style", {
         get: function () {
             return this.raw.style;
@@ -122,8 +102,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "oneIndent", {
         get: function () {
             switch (this.style) {
@@ -152,8 +130,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "newline", {
         get: function () {
             switch (this.style) {
@@ -174,8 +150,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "quote", {
         get: function () {
             return quotes[this.raw.quote];
@@ -190,8 +164,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "oneSpace", {
         get: function () {
             return (this.style === 'compressed') ? '' : ' ';
@@ -199,7 +171,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
     Object.defineProperty(Configuration.prototype, "declarationSeparator", {
         get: function () {
             switch (this.style) {
@@ -214,7 +185,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
     Object.defineProperty(Configuration.prototype, "ruleSeparator", {
         get: function () {
             switch (this.style) {
@@ -229,7 +199,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
     Object.defineProperty(Configuration.prototype, "block", {
         get: function () {
             return this.raw.block;
@@ -243,8 +212,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "element", {
         get: function () {
             return this.raw.element;
@@ -258,8 +225,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "modifier", {
         get: function () {
             return this.raw.modifier;
@@ -273,8 +238,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "chrome", {
         get: function () {
             return this.raw.chrome;
@@ -288,8 +251,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "firefox", {
         get: function () {
             return this.raw.firefox;
@@ -303,8 +264,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "ie", {
         get: function () {
             return this.raw.ie;
@@ -318,8 +277,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "opera", {
         get: function () {
             return this.raw.opera;
@@ -333,8 +290,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "safari", {
         get: function () {
             return this.raw.safari;
@@ -348,8 +303,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "android", {
         get: function () {
             return this.raw.android;
@@ -363,8 +316,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "firefoxMobile", {
         get: function () {
             return this.raw.firefoxMobile;
@@ -378,8 +329,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "ieMobile", {
         get: function () {
             return this.raw.ieMobile;
@@ -393,8 +342,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "operaMobile", {
         get: function () {
             return this.raw.operaMobile;
@@ -408,8 +355,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "safariMobile", {
         get: function () {
             return this.raw.safariMobile;
@@ -423,8 +368,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "webkitPrefix", {
         get: function () {
             return this.raw.webkitPrefix;
@@ -435,8 +378,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "khtmlPrefix", {
         get: function () {
             return this.raw.khtmlPrefix;
@@ -447,8 +388,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "mozPrefix", {
         get: function () {
             return this.raw.mozPrefix;
@@ -459,8 +398,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "msPrefix", {
         get: function () {
             return this.raw.msPrefix;
@@ -471,8 +408,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "oPrefix", {
         get: function () {
             return this.raw.oPrefix;
@@ -483,8 +418,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "extenders", {
         get: function () {
             return _extenders;
@@ -492,7 +425,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
     Object.defineProperty(Configuration.prototype, "overrides", {
         get: function () {
             return _overrides;
@@ -502,5 +434,4 @@ var Configuration = (function () {
     });
     return Configuration;
 })();
-
 module.exports = Configuration;

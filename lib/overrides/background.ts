@@ -1,11 +1,13 @@
 ﻿import BackgroundOptions = require('../interfaces/css/BackgroundOptions');
+import Configuration = require('../Configuration');
 
 // ReSharper disable once UnusedLocals
 function background(options?: BackgroundOptions) {
 
 	options = options || {};
 
-	return (() => {
+	// ReSharper disable once UnusedParameter
+	return (config: Configuration) => {
 
 		var values = [];
 
@@ -16,11 +18,12 @@ function background(options?: BackgroundOptions) {
 		});
 
 		if (values.length) {
-			return [['background', values]];
+			return [['background', values.join(' ')]];
 		}
 
 		return [];
-	});
+
+	};
 
 }
 

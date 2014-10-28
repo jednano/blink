@@ -46,60 +46,66 @@ class Rule {
 
 	public resolve(config: Configuration) {
 		this.config = config;
-		var clone = this.clone();
-		var body = clone.body;
+		var body = this.clone().body;
 		delete body.respond;
-
-		var resolved = [];
-
-		Object.keys(body).forEach(key => {
-			if (key[0] === ':') {
-				var selectors = this.joinSelectors(this.selectors, this.splitSelectors(key));
-				var pseudoRule = new Rule(selectors, body[key]);
-				delete body[key];
-				[].push.apply(resolved, pseudoRule.resolve(this.config));
-			}
+		var rules = this.resolveTree(this.selectors.join(), {}, '', body);
+		return Object.keys(rules).map(key => {
+			return [this.splitSelectors(key), rules[key]];
 		});
-
-		var resolvedBody = this.resolveBody([], '', body);
-		if (!resolvedBody || !resolvedBody.length) {
-			return resolved;
-		}
-
-		resolved.unshift([this.selectors, resolvedBody]);
-		return resolved;
 	}
 
-	private joinSelectors(left: string[], right: string[]) {
+	private resolveTree(selectors: string, seed: any, key: string, body: any) {
+		Object.keys(body).forEach(k2 => {
+			if (k2[0] === ':') {
+				this.resolveTree(
+					this.joinSelectors(selectors, k2),
+					seed, '', body[k2]
+				);
+				return;
+			}
+			var k1 = key || '';
+			var joinedKey = this.combineKeys(k1, k2);
+			var result = this.resolveOverride(s.camelize(joinedKey), body[k2]);
+			var value = result.value;
+			if (result.isOverrideResult) {
+				if (Array.isArray(value)) {
+					seed[selectors] = seed[selectors] || [];
+					[].push.apply(seed[selectors], value);
+					return;
+				}
+				Object.keys(value).forEach(s2 => {
+					var s3 = this.joinSelectors(selectors, s2);
+					seed[s3] = seed[s3] || [];
+					[].push.apply(seed[s3], value[s2]);
+				});
+				return;
+			}
+			if (this.isDeclarationValue(value)) {
+				seed[selectors] = seed[selectors] || [];
+				seed[selectors].push([
+					s.dasherize(joinedKey),
+					this.compileDeclarationValue(value)
+				]);
+				return;
+			}
+			this.resolveTree(selectors, seed, joinedKey, value);
+			key = k1;
+		});
+		return seed;
+	}
+
+	private joinSelectors(left: string, right: string) {
 		var result = [];
-		left.forEach(s1 => {
-			right.forEach(s2 => {
+		this.splitSelectors(left).forEach(s1 => {
+			this.splitSelectors(right).forEach(s2 => {
 				result.push(s1 + s2);
 			});
 		});
-		return result;
+		return result.join();
 	}
 
 	public clone() {
 		return new Rule(extend([], this.selectors), extend({}, this.body));
-	}
-
-	private resolveBody(seed: any[][], key: string, body: any) {
-		Object.keys(body).forEach(k2 => {
-			var k1 = key || '';
-			key = s.dasherize(this.combineKeys(k1, k2));
-			var value = this.resolveOverride(key, body[k2]);
-			if (typeof value === 'undefined') {
-				return;
-			}
-			if (this.isDeclarationValue(value)) {
-				seed.push([key, this.compileDeclarationValue(value)]);
-			} else {
-				this.resolveBody(seed, key, value);
-			}
-			key = k1;
-		});
-		return seed;
 	}
 
 	private resolveOverride(key: string, value: any) {
@@ -115,9 +121,15 @@ class Rule {
 				if (typeof fn !== 'function') {
 					throw new Error('Override "' + key + '" must return a function');
 				}
-				return fn(this.config);
+				return {
+					isOverrideResult: true,
+					value: fn(this.config)
+				};
 			case 'undefined':
-				return value;
+				return {
+					isOverrideResult: false,
+					value: value
+				};
 			default:
 				throw new Error('Override "' + key + '" must be of type: Function');
 		}

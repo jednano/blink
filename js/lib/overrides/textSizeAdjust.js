@@ -1,5 +1,4 @@
 var experimental = require('../extenders/experimental');
-
 // ReSharper disable once UnusedLocals
 function textSizeAdjust(value) {
     return (function (config) {
@@ -10,5 +9,4 @@ function textSizeAdjust(value) {
         })(config);
     });
 }
-
 module.exports = textSizeAdjust;

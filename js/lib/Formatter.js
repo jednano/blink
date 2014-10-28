@@ -1,5 +1,4 @@
 var s = require('./helpers/string');
-
 var Formatter = (function () {
     function Formatter() {
     }
@@ -10,14 +9,12 @@ var Formatter = (function () {
         this.config = config;
         return this.formatRules(rules, 0);
     };
-
     Formatter.prototype.formatRules = function (rules, level) {
         var _this = this;
         return rules.map(function (rule) {
             return _this.formatRule(rule, level);
         }).join('');
     };
-
     Formatter.prototype.formatRule = function (rule, level) {
         var selectors = this.joinSelectors(rule[0]);
         var body = this.formatBody(rule[1], level + 1);
@@ -31,7 +28,6 @@ var Formatter = (function () {
         css += indent + '}' + config.newline;
         return css;
     };
-
     Formatter.prototype.joinSelectors = function (selectors) {
         var joined = selectors.join(',' + this.config.oneSpace);
         if (joined === '') {
@@ -39,31 +35,24 @@ var Formatter = (function () {
         }
         return joined;
     };
-
     Formatter.prototype.formatBody = function (body, level) {
         var firstPair = body[0];
         if (!firstPair || !firstPair.length) {
             return '';
         }
-
         var firstKey = firstPair[0];
         if (!firstKey) {
             throw new Error('Invalid declaration property');
         }
-
         var firstVal = firstPair[1];
-
         if (firstKey[0] === '@' || !this.isDeclarationValue(firstVal)) {
             return this.formatRules(body, level);
         }
-
         return this.formatDeclarations(body, level);
     };
-
     Formatter.prototype.isDeclarationValue = function (value) {
         return typeof value === 'string';
     };
-
     Formatter.prototype.formatDeclarations = function (decs, level) {
         var _this = this;
         var indent = s.repeat(this.config.oneIndent, level);
@@ -78,5 +67,4 @@ var Formatter = (function () {
     };
     return Formatter;
 })();
-
 module.exports = Formatter;

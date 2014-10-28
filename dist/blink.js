@@ -7,23 +7,16 @@ var __extends = this.__extends || function (d, b) {
     d.prototype = new __();
 };
 var _Block = require('../Block');
-
+var _BrowserConfiguration = require('./Configuration');
 var _Compiler = require('../Compiler');
-var _Configuration = require('./Configuration');
-
 var _Element = require('../Element');
-
 var _MediaAtRule = require('../MediaAtRule');
 var _Modifier = require('../Modifier');
-
 var _Rule = require('../Rule');
-
-
 function blink(contents, callback, options) {
     var compiler = new blink.Compiler(new blink.Configuration(options || {}));
     compiler.compile(contents, callback);
 }
-
 // ReSharper disable once InconsistentNaming
 var blink;
 (function (blink) {
@@ -49,7 +42,7 @@ var blink;
             _super.apply(this, arguments);
         }
         return Configuration;
-    })(_Configuration);
+    })(_BrowserConfiguration);
     blink.Configuration = Configuration;
     var Element = (function (_super) {
         __extends(Element, _super);
@@ -83,10 +76,8 @@ var blink;
         return Rule;
     })(_Rule);
     blink.Rule = Rule;
-
     blink.config = new Configuration();
 })(blink || (blink = {}));
-
 module.exports = blink;
 
 },{"../Block":3,"../Compiler":4,"../Element":5,"../MediaAtRule":7,"../Modifier":8,"../Rule":9,"./Configuration":10}],2:[function(require,module,exports){
@@ -126,7 +117,6 @@ module.exports={
 
 },{}],3:[function(require,module,exports){
 var Rule = require('./Rule');
-
 var Block = (function () {
     function Block(name, body) {
         this.name = name;
@@ -142,8 +132,6 @@ var Block = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Block.prototype, "modifiers", {
         get: function () {
             return this.body.modifiers || [];
@@ -154,8 +142,6 @@ var Block = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Block.prototype.resolve = function (config) {
         var elements = this.elements;
         delete this.body.elements;
@@ -165,42 +151,35 @@ var Block = (function () {
         var resolved = new Rule(selector, this.body).resolve(config);
         this.elements = elements;
         this.modifiers = modifiers;
-
         elements.forEach(function (element) {
             [].push.apply(resolved, element.resolve(selector, config));
         });
         modifiers.forEach(function (modifier) {
             [].push.apply(resolved, modifier.resolve(selector, config));
         });
-
         return resolved;
     };
     return Block;
 })();
-
 module.exports = Block;
 
 },{"./Rule":9}],4:[function(require,module,exports){
 /* jshint evil: true */
 /* tslint:disable:no-eval */
 var a = require('./helpers/array');
-
-var Configuration = require('./browser/Configuration');
 var Formatter = require('./Formatter');
-
 var o = require('./helpers/object');
 var Rule = require('./Rule');
-
 var Compiler = (function () {
     function Compiler(config) {
         this.config = config;
-        this.config = config || new Configuration();
     }
     Compiler.prototype.compile = function (rules, callback) {
         if (typeof rules === 'string') {
-            try  {
+            try {
                 rules = eval(rules);
-            } catch (err) {
+            }
+            catch (err) {
                 callback(err);
                 return;
             }
@@ -212,55 +191,41 @@ var Compiler = (function () {
             return rule;
         });
         this.compileRules(a.flatten(rules), callback);
-
         function createRulesFromObject(obj) {
             return Object.keys(obj).map(function (selectors) {
                 return new Rule(selectors, obj[selectors]);
             });
         }
     };
-
     Compiler.prototype.compileRules = function (rules, callback) {
         var formatted;
-        try  {
+        try {
             var resolved = this.resolve(rules);
             formatted = this.format(resolved);
-        } catch (err) {
+        }
+        catch (err) {
             callback(err);
             return;
         }
         callback(null, formatted);
     };
-
     Compiler.prototype.resolve = function (rules) {
-        if (!Array.isArray(rules)) {
-            rules = [rules];
-        }
-        return this.resolveRules(rules);
-    };
-
-    Compiler.prototype.resolveRules = function (rules) {
         var _this = this;
         var resolved = [];
-
         rules.forEach(function (rule) {
             push(rule.resolve(_this.config));
         });
         push(this.resolveResponders(rules));
-
         function push(val) {
             if (val && val.length) {
                 resolved.push(val[0]);
             }
         }
-
         return resolved;
     };
-
     Compiler.prototype.format = function (rules) {
         return new Formatter().format(this.config, rules);
     };
-
     Compiler.prototype.resolveResponders = function (responders) {
         var _this = this;
         var registry = {};
@@ -269,7 +234,6 @@ var Compiler = (function () {
         });
         return this.resolveTree(registry);
     };
-
     Compiler.prototype.registerResponders = function (registry, selectors, responders) {
         var _this = this;
         (responders || []).forEach(function (responder) {
@@ -284,7 +248,6 @@ var Compiler = (function () {
             _this.registerResponders(scope, selectors, responder.responders);
         });
     };
-
     Compiler.prototype.resolveTree = function (tree) {
         var _this = this;
         var result = [];
@@ -300,12 +263,10 @@ var Compiler = (function () {
     };
     return Compiler;
 })();
-
 module.exports = Compiler;
 
-},{"./Formatter":6,"./Rule":9,"./browser/Configuration":10,"./helpers/array":14,"./helpers/object":15}],5:[function(require,module,exports){
+},{"./Formatter":6,"./Rule":9,"./helpers/array":14,"./helpers/object":15}],5:[function(require,module,exports){
 var Rule = require('./Rule');
-
 var Element = (function () {
     function Element(name, body) {
         this.name = name;
@@ -321,29 +282,23 @@ var Element = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Element.prototype.resolve = function (base, config) {
         var modifiers = this.modifiers;
         delete this.body.modifiers;
         var selector = base + config.element.replace('%s', this.name);
         var resolved = new Rule(selector, this.body).resolve(config);
         this.modifiers = modifiers;
-
         modifiers.forEach(function (modifier) {
             [].push.apply(resolved, modifier.resolve(selector, config));
         });
-
         return resolved;
     };
     return Element;
 })();
-
 module.exports = Element;
 
 },{"./Rule":9}],6:[function(require,module,exports){
 var s = require('./helpers/string');
-
 var Formatter = (function () {
     function Formatter() {
     }
@@ -354,14 +309,12 @@ var Formatter = (function () {
         this.config = config;
         return this.formatRules(rules, 0);
     };
-
     Formatter.prototype.formatRules = function (rules, level) {
         var _this = this;
         return rules.map(function (rule) {
             return _this.formatRule(rule, level);
         }).join('');
     };
-
     Formatter.prototype.formatRule = function (rule, level) {
         var selectors = this.joinSelectors(rule[0]);
         var body = this.formatBody(rule[1], level + 1);
@@ -375,7 +328,6 @@ var Formatter = (function () {
         css += indent + '}' + config.newline;
         return css;
     };
-
     Formatter.prototype.joinSelectors = function (selectors) {
         var joined = selectors.join(',' + this.config.oneSpace);
         if (joined === '') {
@@ -383,31 +335,24 @@ var Formatter = (function () {
         }
         return joined;
     };
-
     Formatter.prototype.formatBody = function (body, level) {
         var firstPair = body[0];
         if (!firstPair || !firstPair.length) {
             return '';
         }
-
         var firstKey = firstPair[0];
         if (!firstKey) {
             throw new Error('Invalid declaration property');
         }
-
         var firstVal = firstPair[1];
-
         if (firstKey[0] === '@' || !this.isDeclarationValue(firstVal)) {
             return this.formatRules(body, level);
         }
-
         return this.formatDeclarations(body, level);
     };
-
     Formatter.prototype.isDeclarationValue = function (value) {
         return typeof value === 'string';
     };
-
     Formatter.prototype.formatDeclarations = function (decs, level) {
         var _this = this;
         var indent = s.repeat(this.config.oneIndent, level);
@@ -422,7 +367,6 @@ var Formatter = (function () {
     };
     return Formatter;
 })();
-
 module.exports = Formatter;
 
 },{"./helpers/string":16}],7:[function(require,module,exports){
@@ -434,7 +378,6 @@ var __extends = this.__extends || function (d, b) {
     d.prototype = new __();
 };
 var Rule = require('./Rule');
-
 var MediaAtRule = (function (_super) {
     __extends(MediaAtRule, _super);
     function MediaAtRule(condition, body) {
@@ -445,12 +388,10 @@ var MediaAtRule = (function (_super) {
     }
     return MediaAtRule;
 })(Rule);
-
 module.exports = MediaAtRule;
 
 },{"./Rule":9}],8:[function(require,module,exports){
 var Rule = require('./Rule');
-
 var Modifier = (function () {
     function Modifier(name, body) {
         this.name = name;
@@ -466,33 +407,25 @@ var Modifier = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Modifier.prototype.resolve = function (base, config) {
         var elements = this.elements;
         delete this.body.elements;
         var selector = base + config.modifier.replace('%s', this.name);
         var resolved = new Rule(selector, this.body).resolve(config);
         this.elements = elements;
-
         this.elements.forEach(function (element) {
             [].push.apply(resolved, element.resolve(selector, config));
         });
-
         return resolved;
     };
     return Modifier;
 })();
-
 module.exports = Modifier;
 
 },{"./Rule":9}],9:[function(require,module,exports){
 var extend = require('node.extend');
-
 var Formatter = require('./Formatter');
-
 var s = require('./helpers/string');
-
 var Rule = (function () {
     function Rule(selectors, body) {
         this.body = body;
@@ -505,7 +438,6 @@ var Rule = (function () {
         enumerable: true,
         configurable: true
     });
-
     Object.defineProperty(Rule.prototype, "selectors", {
         get: function () {
             return this._selectors;
@@ -525,72 +457,69 @@ var Rule = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Rule.prototype.splitSelectors = function (selectors) {
         return selectors.split(/ *, */);
     };
-
     Rule.prototype.resolve = function (config) {
         var _this = this;
         this.config = config;
-        var clone = this.clone();
-        var body = clone.body;
+        var body = this.clone().body;
         delete body.respond;
-
-        var resolved = [];
-
-        Object.keys(body).forEach(function (key) {
-            if (key[0] === ':') {
-                var selectors = _this.joinSelectors(_this.selectors, _this.splitSelectors(key));
-                var pseudoRule = new Rule(selectors, body[key]);
-                delete body[key];
-                [].push.apply(resolved, pseudoRule.resolve(_this.config));
-            }
+        var rules = this.resolveTree(this.selectors.join(), {}, '', body);
+        return Object.keys(rules).map(function (key) {
+            return [_this.splitSelectors(key), rules[key]];
         });
-
-        var resolvedBody = this.resolveBody([], '', body);
-        if (!resolvedBody || !resolvedBody.length) {
-            return resolved;
-        }
-
-        resolved.unshift([this.selectors, resolvedBody]);
-        return resolved;
     };
-
-    Rule.prototype.joinSelectors = function (left, right) {
-        var result = [];
-        left.forEach(function (s1) {
-            right.forEach(function (s2) {
-                result.push(s1 + s2);
-            });
-        });
-        return result;
-    };
-
-    Rule.prototype.clone = function () {
-        return new Rule(extend([], this.selectors), extend({}, this.body));
-    };
-
-    Rule.prototype.resolveBody = function (seed, key, body) {
+    Rule.prototype.resolveTree = function (selectors, seed, key, body) {
         var _this = this;
         Object.keys(body).forEach(function (k2) {
+            if (k2[0] === ':') {
+                _this.resolveTree(_this.joinSelectors(selectors, k2), seed, '', body[k2]);
+                return;
+            }
             var k1 = key || '';
-            key = s.dasherize(_this.combineKeys(k1, k2));
-            var value = _this.resolveOverride(key, body[k2]);
-            if (typeof value === 'undefined') {
+            var joinedKey = _this.combineKeys(k1, k2);
+            var result = _this.resolveOverride(s.camelize(joinedKey), body[k2]);
+            var value = result.value;
+            if (result.isOverrideResult) {
+                if (Array.isArray(value)) {
+                    seed[selectors] = seed[selectors] || [];
+                    [].push.apply(seed[selectors], value);
+                    return;
+                }
+                Object.keys(value).forEach(function (s2) {
+                    var s3 = _this.joinSelectors(selectors, s2);
+                    seed[s3] = seed[s3] || [];
+                    [].push.apply(seed[s3], value[s2]);
+                });
                 return;
             }
             if (_this.isDeclarationValue(value)) {
-                seed.push([key, _this.compileDeclarationValue(value)]);
-            } else {
-                _this.resolveBody(seed, key, value);
+                seed[selectors] = seed[selectors] || [];
+                seed[selectors].push([
+                    s.dasherize(joinedKey),
+                    _this.compileDeclarationValue(value)
+                ]);
+                return;
             }
+            _this.resolveTree(selectors, seed, joinedKey, value);
             key = k1;
         });
         return seed;
     };
-
+    Rule.prototype.joinSelectors = function (left, right) {
+        var _this = this;
+        var result = [];
+        this.splitSelectors(left).forEach(function (s1) {
+            _this.splitSelectors(right).forEach(function (s2) {
+                result.push(s1 + s2);
+            });
+        });
+        return result.join();
+    };
+    Rule.prototype.clone = function () {
+        return new Rule(extend([], this.selectors), extend({}, this.body));
+    };
     Rule.prototype.resolveOverride = function (key, value) {
         var override = this.config.overrides[s.camelize(key)];
         switch (typeof override) {
@@ -598,27 +527,32 @@ var Rule = (function () {
                 var fn;
                 if (Array.isArray(value)) {
                     fn = override(value[0], value[1]);
-                } else {
+                }
+                else {
                     fn = override(value);
                 }
                 if (typeof fn !== 'function') {
                     throw new Error('Override "' + key + '" must return a function');
                 }
-                return fn(this.config);
+                return {
+                    isOverrideResult: true,
+                    value: fn(this.config)
+                };
             case 'undefined':
-                return value;
+                return {
+                    isOverrideResult: false,
+                    value: value
+                };
             default:
                 throw new Error('Override "' + key + '" must be of type: Function');
         }
     };
-
     Rule.prototype.combineKeys = function (k1, k2) {
         if (k1 !== '' && k2[0] !== ':') {
             return k1 + '-' + k2;
         }
         return k1 + k2;
     };
-
     Rule.prototype.isDeclarationValue = function (value) {
         if (Array.isArray(value)) {
             return true;
@@ -631,21 +565,18 @@ var Rule = (function () {
         }
         return false;
     };
-
     Rule.prototype.compileDeclarationValue = function (value) {
         if (Array.isArray(value)) {
             return this.compileArray(value);
         }
         return this.compilePrimitive(value);
     };
-
     Rule.prototype.compileArray = function (arr) {
         var _this = this;
         return arr.map(function (primitive) {
             return _this.compilePrimitive(primitive);
         }).join(' ');
     };
-
     Rule.prototype.compilePrimitive = function (value) {
         switch (typeof value) {
             case 'number':
@@ -666,42 +597,33 @@ var Rule = (function () {
         }
         return value;
     };
-
     Rule.prototype.compile = function (config) {
         return new Formatter().format(config, this.resolve(config));
     };
     return Rule;
 })();
-
 module.exports = Rule;
 
 },{"./Formatter":6,"./helpers/string":16,"node.extend":27}],10:[function(require,module,exports){
 var extend = require('node.extend');
-
 var _extenders = require('../extenders/all');
 var _overrides = require('../overrides/all');
-
 var s = require('../helpers/string');
-
 var ONE_INDENT = /(\d+)([st])/;
-
 var styles = {
     nested: null,
     expanded: null,
     compact: null,
     compressed: null
 };
-
 var newlines = {
     lf: '\n',
     crlf: '\r\n'
 };
-
 var quotes = {
     'double': '"',
     'single': "'"
 };
-
 var Configuration = (function () {
     function Configuration(options) {
         this.raw = {};
@@ -713,20 +635,17 @@ var Configuration = (function () {
         clone.overrides = this.overrides;
         return clone;
     };
-
     Configuration.prototype.set = function (options) {
         extend(this.raw, options || {});
         return this;
     };
-
     Configuration.prototype.toString = function () {
         return JSON.stringify(this.raw);
     };
-
     Object.defineProperty(Configuration.prototype, "config", {
         /**
-        * The location of the config file
-        */
+         * The location of the config file
+         */
         get: function () {
             return this.raw.config;
         },
@@ -736,8 +655,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "quiet", {
         get: function () {
             return this.raw.quiet;
@@ -748,8 +665,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "trace", {
         get: function () {
             return this.raw.trace;
@@ -760,8 +675,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "force", {
         get: function () {
             return this.raw.force;
@@ -772,8 +685,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "boring", {
         get: function () {
             return this.raw.boring;
@@ -784,8 +695,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "style", {
         get: function () {
             return this.raw.style;
@@ -800,8 +709,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "oneIndent", {
         get: function () {
             switch (this.style) {
@@ -830,8 +737,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "newline", {
         get: function () {
             switch (this.style) {
@@ -852,8 +757,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "quote", {
         get: function () {
             return quotes[this.raw.quote];
@@ -868,8 +771,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "oneSpace", {
         get: function () {
             return (this.style === 'compressed') ? '' : ' ';
@@ -877,7 +778,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
     Object.defineProperty(Configuration.prototype, "declarationSeparator", {
         get: function () {
             switch (this.style) {
@@ -892,7 +792,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
     Object.defineProperty(Configuration.prototype, "ruleSeparator", {
         get: function () {
             switch (this.style) {
@@ -907,7 +806,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
     Object.defineProperty(Configuration.prototype, "block", {
         get: function () {
             return this.raw.block;
@@ -921,8 +819,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "element", {
         get: function () {
             return this.raw.element;
@@ -936,8 +832,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "modifier", {
         get: function () {
             return this.raw.modifier;
@@ -951,8 +845,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "chrome", {
         get: function () {
             return this.raw.chrome;
@@ -966,8 +858,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "firefox", {
         get: function () {
             return this.raw.firefox;
@@ -981,8 +871,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "ie", {
         get: function () {
             return this.raw.ie;
@@ -996,8 +884,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "opera", {
         get: function () {
             return this.raw.opera;
@@ -1011,8 +897,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "safari", {
         get: function () {
             return this.raw.safari;
@@ -1026,8 +910,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "android", {
         get: function () {
             return this.raw.android;
@@ -1041,8 +923,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "firefoxMobile", {
         get: function () {
             return this.raw.firefoxMobile;
@@ -1056,8 +936,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "ieMobile", {
         get: function () {
             return this.raw.ieMobile;
@@ -1071,8 +949,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "operaMobile", {
         get: function () {
             return this.raw.operaMobile;
@@ -1086,8 +962,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "safariMobile", {
         get: function () {
             return this.raw.safariMobile;
@@ -1101,8 +975,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "webkitPrefix", {
         get: function () {
             return this.raw.webkitPrefix;
@@ -1113,8 +985,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "khtmlPrefix", {
         get: function () {
             return this.raw.khtmlPrefix;
@@ -1125,8 +995,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "mozPrefix", {
         get: function () {
             return this.raw.mozPrefix;
@@ -1137,8 +1005,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "msPrefix", {
         get: function () {
             return this.raw.msPrefix;
@@ -1149,8 +1015,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "oPrefix", {
         get: function () {
             return this.raw.oPrefix;
@@ -1161,8 +1025,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Configuration.prototype, "extenders", {
         get: function () {
             return _extenders;
@@ -1170,7 +1032,6 @@ var Configuration = (function () {
         enumerable: true,
         configurable: true
     });
-
     Object.defineProperty(Configuration.prototype, "overrides", {
         get: function () {
             return _overrides;
@@ -1180,26 +1041,22 @@ var Configuration = (function () {
     });
     return Configuration;
 })();
-
 module.exports = Configuration;
 
 },{"../../defaults.browser.json":2,"../extenders/all":11,"../helpers/string":16,"../overrides/all":17,"node.extend":27}],11:[function(require,module,exports){
 var experimental = require('./experimental');
 var inlineBlock = require('./inlineBlock');
-
 // ReSharper disable once UnusedLocals
 var extenders = {
     experimental: experimental,
     inlineBlock: inlineBlock
 };
-
 module.exports = extenders;
 
 },{"./experimental":12,"./inlineBlock":13}],12:[function(require,module,exports){
 // ReSharper disable once UnusedLocals
 function experimental(property, value, options) {
     options = options || {};
-
     return (function (config) {
         var decs = [];
         ['webkit', 'khtml', 'moz', 'ms', 'o'].forEach(function (vendor) {
@@ -1213,38 +1070,29 @@ function experimental(property, value, options) {
         return decs;
     });
 }
-
 module.exports = experimental;
 
 },{}],13:[function(require,module,exports){
 // ReSharper disable once UnusedLocals
 function inlineBlock(options) {
     options = options || {};
-
     return (function (config) {
         var decs = [];
-
         if (config.firefox < 3) {
             decs.push(['display', '-moz-inline-stack']);
         }
-
         decs.push(['display', 'inline-block']);
-
         if (options.verticalAlign !== null) {
             decs.push(['vertical-align', options.verticalAlign || 'middle']);
         }
-
         if (config.ie < 8) {
             decs.push(['*vertical-align', 'auto']);
             decs.push(['zoom', '1']);
             decs.push(['*display', 'inline']);
         }
-
         return decs;
     });
 }
-
-
 module.exports = inlineBlock;
 
 },{}],14:[function(require,module,exports){
@@ -1252,7 +1100,7 @@ function flatten(arr) {
     var flat = [];
     arr.forEach(function (item) {
         if (item.forEach) {
-            [].push.apply(flat, exports.flatten(item));
+            [].push.apply(flat, flatten(item));
             return;
         }
         flat.push(item);
@@ -1276,15 +1124,13 @@ var STRING_CAMELIZE = (/(\-|_|\.|\s)+(.)?/g);
 var STRING_DASHERIZE = /[ _]/g;
 var STRING_DASHERIZE_CACHE = {};
 var STRING_DECAMELIZE = /([a-z\d])([A-Z])/g;
-
 // ReSharper restore InconsistentNaming
 function repeat(s, n) {
     return new Array(n + 1).join(s);
 }
 exports.repeat = repeat;
-
 /**
-Returns the LowerCamelCase form of a string.
+    Returns the LowerCamelCase form of a string.
 */
 function camelize(s) {
     return s.replace(STRING_CAMELIZE, function (match, separator, chr) {
@@ -1294,24 +1140,20 @@ function camelize(s) {
     });
 }
 exports.camelize = camelize;
-
 /**
-Replaces underscores, spaces, or camelCase with dashes.
+    Replaces underscores, spaces, or camelCase with dashes.
 */
 function dasherize(s) {
     var cache = STRING_DASHERIZE_CACHE;
     var hit = cache.hasOwnProperty(s);
-
     if (!hit) {
-        cache[s] = exports.decamelize(s).replace(STRING_DASHERIZE, '-');
+        cache[s] = decamelize(s).replace(STRING_DASHERIZE, '-');
     }
-
     return cache[s];
 }
 exports.dasherize = dasherize;
-
 /**
-Converts a camelized string into all lower case separated by underscores.
+    Converts a camelized string into all lower case separated by underscores.
 */
 function decamelize(s) {
     return s.replace(STRING_DECAMELIZE, '$1_$2').toLowerCase();
@@ -1328,7 +1170,6 @@ var display = require('./display');
 var opacity = require('./opacity');
 var text = require('./text');
 var textSizeAdjust = require('./textSizeAdjust');
-
 // ReSharper disable once UnusedLocals
 var overrides = {
     appearance: appearance,
@@ -1341,50 +1182,43 @@ var overrides = {
     text: text,
     textSizeAdjust: textSizeAdjust
 };
-
 module.exports = overrides;
 
 },{"./appearance":18,"./background":19,"./box":20,"./boxSizing":21,"./clearfix":22,"./display":23,"./opacity":24,"./text":25,"./textSizeAdjust":26}],18:[function(require,module,exports){
 var experimental = require('../extenders/experimental');
-
+// ReSharper disable once UnusedLocals
 function appearance(value) {
-    return (function (config) {
+    return function (config) {
         return experimental('appearance', value, {
             webkit: true,
             moz: true
         })(config);
-    });
+    };
 }
-
 module.exports = appearance;
 
 },{"../extenders/experimental":12}],19:[function(require,module,exports){
 // ReSharper disable once UnusedLocals
 function background(options) {
     options = options || {};
-
-    return (function () {
+    // ReSharper disable once UnusedParameter
+    return function (config) {
         var values = [];
-
         ['color', 'image', 'repeat', 'attachment', 'position'].forEach(function (prop) {
             if (options.hasOwnProperty(prop)) {
                 values.push(options[prop]);
             }
         });
-
         if (values.length) {
-            return [['background', values]];
+            return [['background', values.join(' ')]];
         }
-
         return [];
-    });
+    };
 }
-
 module.exports = background;
 
 },{}],20:[function(require,module,exports){
 var boxSizing = require('./boxSizing');
-
 // ReSharper disable once UnusedLocals
 function box(value) {
     if (value.hasOwnProperty('sizing')) {
@@ -1392,55 +1226,46 @@ function box(value) {
     }
     // ReSharper disable once NotAllPathsReturnValue
 }
-
 module.exports = box;
 
 },{"./boxSizing":21}],21:[function(require,module,exports){
 var experimental = require('../extenders/experimental');
-
 // ReSharper disable once UnusedLocals
 function boxSizing(value) {
-    return (function (config) {
+    return function (config) {
         return experimental('box-sizing', value, {
             official: true,
             webkit: !(config.chrome >= 10 && config.safari >= 5.1 && config.android >= 4),
             moz: !(config.firefox >= 29 && config.firefoxMobile >= 29)
         })(config);
-    });
+    };
 }
-
 module.exports = boxSizing;
 
 },{"../extenders/experimental":12}],22:[function(require,module,exports){
 var s = require('../helpers/string');
-
 // ReSharper disable once UnusedLocals
 function clearfix(value) {
-    var override = (function (config) {
+    return function (config) {
         if (!value) {
-            // ReSharper disable once InconsistentFunctionReturns
-            return;
+            return [];
         }
-        return [
-            ['content', s.repeat(config.quote, 2)],
-            ['display', 'table'],
-            ['clear', 'both']
-        ];
-    });
-
-    override.selectors = [':after'];
-
-    return override;
+        return {
+            ':after': [
+                ['content', s.repeat(config.quote, 2)],
+                ['display', 'table'],
+                ['clear', 'both']
+            ]
+        };
+    };
 }
-
 module.exports = clearfix;
 
 },{"../helpers/string":16}],23:[function(require,module,exports){
 var inlineBlock = require('../extenders/inlineBlock');
-
 // ReSharper disable once UnusedLocals
 function display(value, options) {
-    return (function (config) {
+    return function (config) {
         switch (value) {
             case 'inline-block':
                 return inlineBlock(options)(config);
@@ -1448,56 +1273,45 @@ function display(value, options) {
                 if (options) {
                     throw new Error('Unused options for display override');
                 }
-                return [['display', value]];
+                return value;
         }
-    });
+    };
 }
-
 module.exports = display;
 
 },{"../extenders/inlineBlock":13}],24:[function(require,module,exports){
 var experimental = require('../extenders/experimental');
-
-
 function opacity(value) {
-    return (function (config) {
+    return function (config) {
         var decs = [];
-
         if (config.ie < 9 || config.ieMobile < 9) {
             var alphaArgs = 'Opacity=' + Math.round(value * 100);
             if (value === 1) {
                 alphaArgs = 'enabled=false';
             }
-
             // IE 8
             [].push.apply(decs, experimental('filter', 'progid:DXImageTransform.' + 'Microsoft.Alpha(' + alphaArgs + ')', { ms: true })(config));
-
             // IE 5-7
             if (config.ie < 8 || config.ieMobile < 8) {
                 decs.push(['filter', 'alpha(' + alphaArgs.toLowerCase() + ')']);
             }
         }
-
         [].push.apply(decs, experimental('opacity', value, {
             khtml: config.safari < 1.2,
             moz: config.firefox < 0.9,
             official: true
         })(config));
-
         // Trigger "hasLayout" in IE 7 and lower
         if (config.ie < 8 || config.ieMobile < 8) {
             decs.push(['zoom', 1]);
         }
-
         return decs;
-    });
+    };
 }
-
 module.exports = opacity;
 
 },{"../extenders/experimental":12}],25:[function(require,module,exports){
 var textSizeAdjust = require('./textSizeAdjust');
-
 // ReSharper disable once UnusedLocals
 function text(value) {
     if (value.hasOwnProperty('size')) {
@@ -1508,12 +1322,10 @@ function text(value) {
     }
     // ReSharper disable once NotAllPathsReturnValue
 }
-
 module.exports = text;
 
 },{"./textSizeAdjust":26}],26:[function(require,module,exports){
 var experimental = require('../extenders/experimental');
-
 // ReSharper disable once UnusedLocals
 function textSizeAdjust(value) {
     return (function (config) {
@@ -1524,7 +1336,6 @@ function textSizeAdjust(value) {
         })(config);
     });
 }
-
 module.exports = textSizeAdjust;
 
 },{"../extenders/experimental":12}],27:[function(require,module,exports){

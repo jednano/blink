@@ -1,5 +1,4 @@
 var Rule = require('./Rule');
-
 var Block = (function () {
     function Block(name, body) {
         this.name = name;
@@ -15,8 +14,6 @@ var Block = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Object.defineProperty(Block.prototype, "modifiers", {
         get: function () {
             return this.body.modifiers || [];
@@ -27,8 +24,6 @@ var Block = (function () {
         enumerable: true,
         configurable: true
     });
-
-
     Block.prototype.resolve = function (config) {
         var elements = this.elements;
         delete this.body.elements;
@@ -38,17 +33,14 @@ var Block = (function () {
         var resolved = new Rule(selector, this.body).resolve(config);
         this.elements = elements;
         this.modifiers = modifiers;
-
         elements.forEach(function (element) {
             [].push.apply(resolved, element.resolve(selector, config));
         });
         modifiers.forEach(function (modifier) {
             [].push.apply(resolved, modifier.resolve(selector, config));
         });
-
         return resolved;
     };
     return Block;
 })();
-
 module.exports = Block;

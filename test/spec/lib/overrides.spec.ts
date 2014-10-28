@@ -1,5 +1,4 @@
-﻿import Compiler = require('../../../lib/Compiler');
-import Configuration = require('../../../lib/Configuration');
+﻿import Configuration = require('../../../lib/Configuration');
 import extenders = require('../../../lib/extenders/all');
 import overrides = require('../../../lib/overrides/all');
 import Rule = require('../../../lib/Rule');
@@ -12,7 +11,6 @@ var expect = sinonChai.expect;
 describe('overrides', () => {
 
 	var config = new Configuration();
-	var compiler = new Compiler(config);
 
 	describe('appearance', () => {
 
@@ -36,13 +34,13 @@ describe('overrides', () => {
 				attachment: 'quux'
 			})(config);
 			expect(result).to.deep.equal([
-				['background', ['bar', 'baz', 'qux', 'quux', 'corge']]
+				['background', 'bar baz qux quux corge']
 			]);
 		});
 
 		it('generates no declarations when no options are provided', () => {
 			var result = overrides.background()(config);
-			expect(result).to.deep.equal([]);
+			expect(result).to.be.empty;
 		});
 
 	});
@@ -73,7 +71,7 @@ describe('overrides', () => {
 		});
 
 		it('removes -webkit prefix when appropriate', () => {
-			var resolved = overrides.boxSizing('foo')(config.clone().set({
+			var resolved = overrides.boxSizing('foo')(<Configuration>config.clone().set({
 				chrome: 10,
 				safari: 5.1,
 				android: 4
@@ -85,7 +83,7 @@ describe('overrides', () => {
 		});
 
 		it('removes -firefox prefix when appropriate', () => {
-			var resolved = overrides.boxSizing('foo')(config.clone().set({
+			var resolved = overrides.boxSizing('foo')(<Configuration>config.clone().set({
 				firefox: 29,
 				firefoxMobile: 29
 			}));
@@ -99,27 +97,21 @@ describe('overrides', () => {
 
 	describe('clearfix', () => {
 
-		var expected = [
-			['content', s.repeat(config.quote, 2)],
-			['display', 'table'],
-			['clear', 'both']
-		];
-
-		it('generates clearfix declarations when value is true', () => {
-			expect(overrides.clearfix(true)(config)).to.deep.equal(expected);
-		});
-
-		it.skip('inserts clearfix declarations inside :after pseudo-selector', () => {
+		it('inserts clearfix declarations inside :after pseudo-selector', () => {
 			var rule = new Rule('foo', {
 				clearfix: true
 			});
-			expect(compiler.resolve(rule)).to.deep.equal([
-				[['foo:after'], expected]
+			expect(rule.resolve(config)).to.deep.equal([
+				[['foo:after'], [
+					['content', s.repeat(config.quote, 2)],
+					['display', 'table'],
+					['clear', 'both']
+				]]
 			]);
 		});
 
 		it('returns undefined when value is false', () => {
-			expect(overrides.clearfix(false)(config)).to.be.undefined;
+			expect(overrides.clearfix(false)(config)).to.be.empty;
 		});
 
 	});
@@ -147,10 +139,8 @@ describe('overrides', () => {
 			expect(fn).to.throw('Unused options for display override');
 		});
 
-		it('returns display: none when none is the value', () => {
-			expect(overrides.display('none')(config)).to.deep.equal([
-				['display', 'none']
-			]);
+		it('returns "none" when none is the value', () => {
+			expect(overrides.display('none')(config)).to.eq('none');
 		});
 
 	});

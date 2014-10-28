@@ -3,11 +3,11 @@ import Configuration = require('./Configuration');
 import Element = require('./Element');
 import Modifier = require('./Modifier');
 declare class Block {
-    public name: string;
-    public body: BlockBody;
-    public elements : Element[];
-    public modifiers : Modifier[];
+    name: string;
+    body: BlockBody;
+    elements: Element[];
+    modifiers: Modifier[];
     constructor(name: string, body?: BlockBody);
-    public resolve(config: Configuration): any[];
+    resolve(config: Configuration): any[][];
 }
 export = Block;

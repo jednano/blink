@@ -4,7 +4,7 @@ import experimental = require('../extenders/experimental');
 // ReSharper disable once UnusedLocals
 function boxSizing(value: string) {
 
-	return ((config: Configuration) => {
+	return (config: Configuration) => {
 		return experimental('box-sizing', value, {
 			official: true,
 			webkit: !(
@@ -17,7 +17,7 @@ function boxSizing(value: string) {
 				config.firefoxMobile >= 29
 			)
 		})(config);
-	});
+	};
 
 }
 

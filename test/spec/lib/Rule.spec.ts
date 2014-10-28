@@ -27,7 +27,7 @@ describe('Rule', () => {
 
 	it('resolves an undefined declaration value as nothing', () => {
 		var rule = new Rule('foo', {
-			bar: void(0)
+			bar: void (0)
 		});
 		expect(rule.resolve(config)).to.deep.equal([]);
 	});
@@ -86,23 +86,6 @@ describe('Rule', () => {
 				['bar-baz-quux', 'QUUX'],
 				['bar-corge', 'CORGE'],
 				['bar-grault-garply', 'waldo fred']
-			]]
-		]);
-	});
-
-	it('places current rule before pseudo selector rules', () => {
-		var rule = new Rule('foo', {
-			':baz': {
-				qux: 'QUX'
-			},
-			bar: 'BAR'
-		});
-		expect(rule.resolve(config)).to.deep.equal([
-			[['foo'], [
-				['bar', 'BAR']
-			]],
-			[['foo:baz'], [
-				['qux', 'QUX']
 			]]
 		]);
 	});
@@ -221,7 +204,11 @@ describe('Rule', () => {
 					if (options.addBaz) {
 						value += 'BAZ';
 					}
-					return value.toUpperCase();
+					if (value === 'baz') {
+						// ReSharper disable once InconsistentFunctionReturns
+						return;
+					}
+					return [['upper', value.toUpperCase()]];
 				};
 			}
 		});

@@ -6,7 +6,6 @@ var __extends = this.__extends || function (d, b) {
     d.prototype = new __();
 };
 var Rule = require('./Rule');
-
 var MediaAtRule = (function (_super) {
     __extends(MediaAtRule, _super);
     function MediaAtRule(condition, body) {
@@ -17,5 +16,4 @@ var MediaAtRule = (function (_super) {
     }
     return MediaAtRule;
 })(Rule);
-
 module.exports = MediaAtRule;

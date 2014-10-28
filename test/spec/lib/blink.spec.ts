@@ -18,7 +18,7 @@ describe('blink', () => {
 	});
 
 	it('exports class Compiler', () => {
-		expect(new blink.Compiler()).to.be.instanceof(Compiler);
+		expect(new blink.Compiler(new Configuration())).to.be.instanceof(Compiler);
 	});
 
 	it('exports class Configuration', () => {

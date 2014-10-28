@@ -1,9 +1,9 @@
-﻿import experimental = require('../extenders/experimental');
-import inlineBlock = require('../extenders/inlineBlock');
+﻿import _experimental = require('../extenders/experimental');
+import _inlineBlock = require('../extenders/inlineBlock');
 
 interface Extenders {
-	experimental: typeof experimental;
-	inlineBlock: typeof inlineBlock;
+	experimental: typeof _experimental;
+	inlineBlock: typeof _inlineBlock;
 }
 
 export = Extenders;

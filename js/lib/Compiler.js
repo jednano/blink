@@ -1,23 +1,19 @@
 /* jshint evil: true */
 /* tslint:disable:no-eval */
 var a = require('./helpers/array');
-
-var Configuration = require('./browser/Configuration');
 var Formatter = require('./Formatter');
-
 var o = require('./helpers/object');
 var Rule = require('./Rule');
-
 var Compiler = (function () {
     function Compiler(config) {
         this.config = config;
-        this.config = config || new Configuration();
     }
     Compiler.prototype.compile = function (rules, callback) {
         if (typeof rules === 'string') {
-            try  {
+            try {
                 rules = eval(rules);
-            } catch (err) {
+            }
+            catch (err) {
                 callback(err);
                 return;
             }
@@ -29,55 +25,41 @@ var Compiler = (function () {
             return rule;
         });
         this.compileRules(a.flatten(rules), callback);
-
         function createRulesFromObject(obj) {
             return Object.keys(obj).map(function (selectors) {
                 return new Rule(selectors, obj[selectors]);
             });
         }
     };
-
     Compiler.prototype.compileRules = function (rules, callback) {
         var formatted;
-        try  {
+        try {
             var resolved = this.resolve(rules);
             formatted = this.format(resolved);
-        } catch (err) {
+        }
+        catch (err) {
             callback(err);
             return;
         }
         callback(null, formatted);
     };
-
     Compiler.prototype.resolve = function (rules) {
-        if (!Array.isArray(rules)) {
-            rules = [rules];
-        }
-        return this.resolveRules(rules);
-    };
-
-    Compiler.prototype.resolveRules = function (rules) {
         var _this = this;
         var resolved = [];
-
         rules.forEach(function (rule) {
             push(rule.resolve(_this.config));
         });
         push(this.resolveResponders(rules));
-
         function push(val) {
             if (val && val.length) {
                 resolved.push(val[0]);
             }
         }
-
         return resolved;
     };
-
     Compiler.prototype.format = function (rules) {
         return new Formatter().format(this.config, rules);
     };
-
     Compiler.prototype.resolveResponders = function (responders) {
         var _this = this;
         var registry = {};
@@ -86,7 +68,6 @@ var Compiler = (function () {
         });
         return this.resolveTree(registry);
     };
-
     Compiler.prototype.registerResponders = function (registry, selectors, responders) {
         var _this = this;
         (responders || []).forEach(function (responder) {
@@ -101,7 +82,6 @@ var Compiler = (function () {
             _this.registerResponders(scope, selectors, responder.responders);
         });
     };
-
     Compiler.prototype.resolveTree = function (tree) {
         var _this = this;
         var result = [];
@@ -117,5 +97,4 @@ var Compiler = (function () {
     };
     return Compiler;
 })();
-
 module.exports = Compiler;

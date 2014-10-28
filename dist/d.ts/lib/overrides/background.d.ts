@@ -1,3 +1,4 @@
 import BackgroundOptions = require('../interfaces/css/BackgroundOptions');
-declare function background(options?: BackgroundOptions): () => {}[][];
+import Configuration = require('../Configuration');
+declare function background(options?: BackgroundOptions): (config: Configuration) => string[][];
 export = background;

@@ -25,7 +25,7 @@ function blink(options?: blink.ConfigurationOptions): NodeJS.ReadWriteStream {
 module blink {
 
 	export class Block         extends _Block {}
-	export class Compiler      extends _Compiler {}
+	export class Compiler      extends _Compiler<Configuration> {}
 	export class Configuration extends _Configuration {}
 	export class Element       extends _Element {}
 	export class MediaAtRule   extends _MediaAtRule {}

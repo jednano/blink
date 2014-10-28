@@ -1,3 +1,4 @@
+/// <reference path="../bower_components/dt-vinyl/vinyl.d.ts" />
 import _BackgroundOptions = require('./interfaces/css/BackgroundOptions');
 import _Block = require('./Block');
 import _BlockBody = require('./interfaces/BlockBody');
@@ -15,7 +16,7 @@ declare function blink(options?: blink.ConfigurationOptions): NodeJS.ReadWriteSt
 declare module blink {
     class Block extends _Block {
     }
-    class Compiler extends _Compiler {
+    class Compiler extends _Compiler<Configuration> {
     }
     class Configuration extends _Configuration {
     }

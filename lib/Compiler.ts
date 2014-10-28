@@ -10,10 +10,9 @@ import o = require('./helpers/object');
 import Rule = require('./Rule');
 import s = require('./helpers/string');
 
-class Compiler {
+class Compiler<T extends Configuration> {
 
-	constructor(public config?: Configuration) {
-		this.config = config || new Configuration();
+	constructor(public config: T) {
 	}
 
 	public compile(contents: string, callback: { (err: Error, css?: string): void; }): void;
@@ -60,16 +59,7 @@ class Compiler {
 		callback(null, formatted);
 	}
 
-	public resolve(rule: Rule): any[];
-	public resolve(rules: Rule[]): any[];
-	public resolve(rules: any) {
-		if (!Array.isArray(rules)) {
-			rules = [rules];
-		}
-		return this.resolveRules(rules);
-	}
-
-	private resolveRules(rules: Rule[]) {
+	private resolve(rules: Rule[]) {
 		var resolved = [];
 
 		rules.forEach(rule => {

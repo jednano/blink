@@ -6,24 +6,17 @@ var __extends = this.__extends || function (d, b) {
     d.prototype = new __();
 };
 var _Block = require('./Block');
-
 var _Compiler = require('./Compiler');
 var _Configuration = require('./Configuration');
-
 var _Element = require('./Element');
-
 var _MediaAtRule = require('./MediaAtRule');
 var _Modifier = require('./Modifier');
-
 var _Rule = require('./Rule');
-
 var plugin = require('./plugin');
-
 // ReSharper disable once UnusedLocals
 function blink(options) {
     return plugin(options);
 }
-
 // ReSharper disable once InconsistentNaming
 var blink;
 (function (blink) {
@@ -83,8 +76,6 @@ var blink;
         return Rule;
     })(_Rule);
     blink.Rule = Rule;
-
     blink.config = new Configuration();
 })(blink || (blink = {}));
-
 module.exports = blink;

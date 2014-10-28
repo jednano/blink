@@ -1,5 +1,4 @@
 var textSizeAdjust = require('./textSizeAdjust');
-
 // ReSharper disable once UnusedLocals
 function text(value) {
     if (value.hasOwnProperty('size')) {
@@ -10,5 +9,4 @@ function text(value) {
     }
     // ReSharper disable once NotAllPathsReturnValue
 }
-
 module.exports = text;

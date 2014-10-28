@@ -6,23 +6,16 @@ var __extends = this.__extends || function (d, b) {
     d.prototype = new __();
 };
 var _Block = require('../Block');
-
+var _BrowserConfiguration = require('./Configuration');
 var _Compiler = require('../Compiler');
-var _Configuration = require('./Configuration');
-
 var _Element = require('../Element');
-
 var _MediaAtRule = require('../MediaAtRule');
 var _Modifier = require('../Modifier');
-
 var _Rule = require('../Rule');
-
-
 function blink(contents, callback, options) {
     var compiler = new blink.Compiler(new blink.Configuration(options || {}));
     compiler.compile(contents, callback);
 }
-
 // ReSharper disable once InconsistentNaming
 var blink;
 (function (blink) {
@@ -48,7 +41,7 @@ var blink;
             _super.apply(this, arguments);
         }
         return Configuration;
-    })(_Configuration);
+    })(_BrowserConfiguration);
     blink.Configuration = Configuration;
     var Element = (function (_super) {
         __extends(Element, _super);
@@ -82,8 +75,6 @@ var blink;
         return Rule;
     })(_Rule);
     blink.Rule = Rule;
-
     blink.config = new Configuration();
 })(blink || (blink = {}));
-
 module.exports = blink;

@@ -2,7 +2,7 @@ function flatten(arr) {
     var flat = [];
     arr.forEach(function (item) {
         if (item.forEach) {
-            [].push.apply(flat, exports.flatten(item));
+            [].push.apply(flat, flatten(item));
             return;
         }
         flat.push(item);
