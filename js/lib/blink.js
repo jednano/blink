@@ -17,11 +17,11 @@ var _Modifier = require('./Modifier');
 
 var _Rule = require('./Rule');
 
-var bundle = require('./bundle');
+var plugin = require('./plugin');
 
-
-function blink(output, options) {
-    return bundle(output, options);
+// ReSharper disable once UnusedLocals
+function blink(options) {
+    return plugin(options);
 }
 
 // ReSharper disable once InconsistentNaming

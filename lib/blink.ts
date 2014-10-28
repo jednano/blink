@@ -14,14 +14,11 @@ import _Modifier = require('./Modifier');
 import _ModifierBody = require('./interfaces/ModifierBody');
 import _Rule = require('./Rule');
 import _RuleBody = require('./interfaces/RuleBody');
-import bundle = require('./bundle');
+import plugin = require('./plugin');
 
 // ReSharper disable once UnusedLocals
-function blink(outputFilename: string, options?: blink.ConfigurationOptions): NodeJS.ReadWriteStream;
-function blink(outputFile: File, options?: blink.ConfigurationOptions): NodeJS.ReadWriteStream;
-function blink(output: { path: string }, options?: blink.ConfigurationOptions): NodeJS.ReadWriteStream;
-function blink(output: any, options?: blink.ConfigurationOptions): NodeJS.ReadWriteStream {
-	return bundle(output, options);
+function blink(options?: blink.ConfigurationOptions): NodeJS.ReadWriteStream {
+	return plugin(options);
 }
 
 // ReSharper disable once InconsistentNaming

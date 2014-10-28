@@ -1,4 +1,3 @@
-import File = require('vinyl');
 import _BackgroundOptions = require('./interfaces/css/BackgroundOptions');
 import _Block = require('./Block');
 import _BlockBody = require('./interfaces/BlockBody');
@@ -12,11 +11,7 @@ import _Modifier = require('./Modifier');
 import _ModifierBody = require('./interfaces/ModifierBody');
 import _Rule = require('./Rule');
 import _RuleBody = require('./interfaces/RuleBody');
-declare function blink(outputFilename: string, options?: blink.ConfigurationOptions): NodeJS.ReadWriteStream;
-declare function blink(outputFile: File, options?: blink.ConfigurationOptions): NodeJS.ReadWriteStream;
-declare function blink(output: {
-    path: string;
-}, options?: blink.ConfigurationOptions): NodeJS.ReadWriteStream;
+declare function blink(options?: blink.ConfigurationOptions): NodeJS.ReadWriteStream;
 declare module blink {
     class Block extends _Block {
     }
