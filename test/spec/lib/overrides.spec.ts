@@ -97,7 +97,7 @@ describe('overrides', () => {
 
 	describe('clearfix', () => {
 
-		it('inserts clearfix declarations inside :after pseudo-selector', () => {
+		it('generates clearfix declarations inside :after pseudo-selector', () => {
 			var rule = new Rule('foo', {
 				clearfix: true
 			});
@@ -110,7 +110,7 @@ describe('overrides', () => {
 			]);
 		});
 
-		it('returns undefined when value is false', () => {
+		it('generates no declarations when value is false', () => {
 			expect(overrides.clearfix(false)(config)).to.be.empty;
 		});
 
@@ -118,18 +118,57 @@ describe('overrides', () => {
 
 	describe('display', () => {
 
-		it('aliases display: inline-block to inlineBlock extender', () => {
-			checkAlias(
-				overrides.display('inline-block'),
-				extenders.inlineBlock()
-			);
-		});
+		describe('inline-block', () => {
 
-		it('passes options to the inlineBlock extender', () => {
-			var options = { verticalAlign: 'top' };
-			var result = overrides.display('inline-block', options)(config);
-			var expected = extenders.inlineBlock(options)(config);
-			expect(result).to.deep.equal(expected);
+			after(() => {
+				config = new Configuration();
+			});
+
+			it('generates inline-block, vertical-align and hack declarations', () => {
+				expect(overrides.display('inline-block')(config)).to.deep.equal([
+					['display', '-moz-inline-stack'],
+					['display', 'inline-block'],
+					['vertical-align', 'middle'],
+					['*vertical-align', 'auto'],
+					['zoom', '1'],
+					['*display', 'inline']
+				]);
+			});
+
+			it('removes CSS hacks when IE 8', () => {
+				config.ie = 8;
+				expect(overrides.display('inline-block')(config)).to.deep.equal([
+					['display', '-moz-inline-stack'],
+					['display', 'inline-block'],
+					['vertical-align', 'middle']
+				]);
+			});
+
+			it('removes display: -moz-inline-stack when firefox 3', () => {
+				config.firefox = 3;
+				expect(overrides.display('inline-block')(config)).to.deep.equal([
+					['display', 'inline-block'],
+					['vertical-align', 'middle']
+				]);
+			});
+
+			it('changes vertical-align to top when specified', () => {
+				expect(overrides.display('inline-block', {
+					verticalAlign: 'top'
+				})(config)).to.deep.equal([
+					['display', 'inline-block'],
+					['vertical-align', 'top']
+				]);
+			});
+
+			it('removes vertical-align when value is null', () => {
+				expect(overrides.display('inline-block', {
+					verticalAlign: null
+				})(config)).to.deep.equal([
+					['display', 'inline-block']
+				]);
+			});
+
 		});
 
 		it('errors when options are passed to the default display property', () => {
@@ -141,6 +180,24 @@ describe('overrides', () => {
 
 		it('returns "none" when none is the value', () => {
 			expect(overrides.display('none')(config)).to.eq('none');
+		});
+
+	});
+
+	describe('fill', () => {
+
+		it('generates fill declarations when value is true', () => {
+			expect(overrides.fill(true)(config)).to.deep.equal([
+				['position', 'absolute'],
+				['top', '0'],
+				['right', '0'],
+				['bottom', '0'],
+				['left', '0']
+			]);
+		});
+
+		it('generates no declarations when value is false', () => {
+			expect(overrides.fill(false)(config)).to.be.empty;
 		});
 
 	});

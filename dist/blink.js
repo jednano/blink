@@ -265,7 +265,7 @@ var Compiler = (function () {
 })();
 module.exports = Compiler;
 
-},{"./Formatter":6,"./Rule":9,"./helpers/array":14,"./helpers/object":15}],5:[function(require,module,exports){
+},{"./Formatter":6,"./Rule":9,"./helpers/array":13,"./helpers/object":14}],5:[function(require,module,exports){
 var Rule = require('./Rule');
 var Element = (function () {
     function Element(name, body) {
@@ -369,7 +369,7 @@ var Formatter = (function () {
 })();
 module.exports = Formatter;
 
-},{"./helpers/string":16}],7:[function(require,module,exports){
+},{"./helpers/string":15}],7:[function(require,module,exports){
 /* istanbul ignore next: TypeScript extend */
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -604,7 +604,7 @@ var Rule = (function () {
 })();
 module.exports = Rule;
 
-},{"./Formatter":6,"./helpers/string":16,"node.extend":27}],10:[function(require,module,exports){
+},{"./Formatter":6,"./helpers/string":15,"node.extend":27}],10:[function(require,module,exports){
 var extend = require('node.extend');
 var _extenders = require('../extenders/all');
 var _overrides = require('../overrides/all');
@@ -1043,17 +1043,15 @@ var Configuration = (function () {
 })();
 module.exports = Configuration;
 
-},{"../../defaults.browser.json":2,"../extenders/all":11,"../helpers/string":16,"../overrides/all":17,"node.extend":27}],11:[function(require,module,exports){
+},{"../../defaults.browser.json":2,"../extenders/all":11,"../helpers/string":15,"../overrides/all":16,"node.extend":27}],11:[function(require,module,exports){
 var experimental = require('./experimental');
-var inlineBlock = require('./inlineBlock');
 // ReSharper disable once UnusedLocals
 var extenders = {
-    experimental: experimental,
-    inlineBlock: inlineBlock
+    experimental: experimental
 };
 module.exports = extenders;
 
-},{"./experimental":12,"./inlineBlock":13}],12:[function(require,module,exports){
+},{"./experimental":12}],12:[function(require,module,exports){
 // ReSharper disable once UnusedLocals
 function experimental(property, value, options) {
     options = options || {};
@@ -1073,29 +1071,6 @@ function experimental(property, value, options) {
 module.exports = experimental;
 
 },{}],13:[function(require,module,exports){
-// ReSharper disable once UnusedLocals
-function inlineBlock(options) {
-    options = options || {};
-    return (function (config) {
-        var decs = [];
-        if (config.firefox < 3) {
-            decs.push(['display', '-moz-inline-stack']);
-        }
-        decs.push(['display', 'inline-block']);
-        if (options.verticalAlign !== null) {
-            decs.push(['vertical-align', options.verticalAlign || 'middle']);
-        }
-        if (config.ie < 8) {
-            decs.push(['*vertical-align', 'auto']);
-            decs.push(['zoom', '1']);
-            decs.push(['*display', 'inline']);
-        }
-        return decs;
-    });
-}
-module.exports = inlineBlock;
-
-},{}],14:[function(require,module,exports){
 function flatten(arr) {
     var flat = [];
     arr.forEach(function (item) {
@@ -1109,7 +1084,7 @@ function flatten(arr) {
 }
 exports.flatten = flatten;
 
-},{}],15:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 function isPlainObject(o) {
     if (typeof o === 'object' && o) {
         return o.constructor === Object;
@@ -1118,7 +1093,7 @@ function isPlainObject(o) {
 }
 exports.isPlainObject = isPlainObject;
 
-},{}],16:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 // ReSharper disable InconsistentNaming
 var STRING_CAMELIZE = (/(\-|_|\.|\s)+(.)?/g);
 var STRING_DASHERIZE = /[ _]/g;
@@ -1160,13 +1135,14 @@ function decamelize(s) {
 }
 exports.decamelize = decamelize;
 
-},{}],17:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 var appearance = require('./appearance');
 var background = require('./background');
 var box = require('./box');
 var boxSizing = require('./boxSizing');
 var clearfix = require('./clearfix');
 var display = require('./display');
+var fill = require('./fill');
 var opacity = require('./opacity');
 var text = require('./text');
 var textSizeAdjust = require('./textSizeAdjust');
@@ -1178,13 +1154,14 @@ var overrides = {
     boxSizing: boxSizing,
     clearfix: clearfix,
     display: display,
+    fill: fill,
     opacity: opacity,
     text: text,
     textSizeAdjust: textSizeAdjust
 };
 module.exports = overrides;
 
-},{"./appearance":18,"./background":19,"./box":20,"./boxSizing":21,"./clearfix":22,"./display":23,"./opacity":24,"./text":25,"./textSizeAdjust":26}],18:[function(require,module,exports){
+},{"./appearance":17,"./background":18,"./box":19,"./boxSizing":20,"./clearfix":21,"./display":22,"./fill":23,"./opacity":24,"./text":25,"./textSizeAdjust":26}],17:[function(require,module,exports){
 var experimental = require('../extenders/experimental');
 // ReSharper disable once UnusedLocals
 function appearance(value) {
@@ -1197,7 +1174,7 @@ function appearance(value) {
 }
 module.exports = appearance;
 
-},{"../extenders/experimental":12}],19:[function(require,module,exports){
+},{"../extenders/experimental":12}],18:[function(require,module,exports){
 // ReSharper disable once UnusedLocals
 function background(options) {
     options = options || {};
@@ -1217,7 +1194,7 @@ function background(options) {
 }
 module.exports = background;
 
-},{}],20:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 var boxSizing = require('./boxSizing');
 // ReSharper disable once UnusedLocals
 function box(value) {
@@ -1228,7 +1205,7 @@ function box(value) {
 }
 module.exports = box;
 
-},{"./boxSizing":21}],21:[function(require,module,exports){
+},{"./boxSizing":20}],20:[function(require,module,exports){
 var experimental = require('../extenders/experimental');
 // ReSharper disable once UnusedLocals
 function boxSizing(value) {
@@ -1242,7 +1219,7 @@ function boxSizing(value) {
 }
 module.exports = boxSizing;
 
-},{"../extenders/experimental":12}],22:[function(require,module,exports){
+},{"../extenders/experimental":12}],21:[function(require,module,exports){
 var s = require('../helpers/string');
 // ReSharper disable once UnusedLocals
 function clearfix(value) {
@@ -1261,25 +1238,62 @@ function clearfix(value) {
 }
 module.exports = clearfix;
 
-},{"../helpers/string":16}],23:[function(require,module,exports){
-var inlineBlock = require('../extenders/inlineBlock');
+},{"../helpers/string":15}],22:[function(require,module,exports){
 // ReSharper disable once UnusedLocals
 function display(value, options) {
+    options = options || {};
     return function (config) {
         switch (value) {
             case 'inline-block':
-                return inlineBlock(options)(config);
+                return inlineBlock()(config);
             default:
-                if (options) {
+                if (Object.keys(options).length) {
                     throw new Error('Unused options for display override');
                 }
                 return value;
         }
     };
+    function inlineBlock() {
+        return function (config) {
+            var decs = [];
+            if (config.firefox < 3) {
+                decs.push(['display', '-moz-inline-stack']);
+            }
+            decs.push(['display', 'inline-block']);
+            if (options.verticalAlign !== null) {
+                decs.push(['vertical-align', options.verticalAlign || 'middle']);
+            }
+            if (config.ie < 8) {
+                decs.push(['*vertical-align', 'auto']);
+                decs.push(['zoom', '1']);
+                decs.push(['*display', 'inline']);
+            }
+            return decs;
+        };
+    }
 }
 module.exports = display;
 
-},{"../extenders/inlineBlock":13}],24:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
+// ReSharper disable once UnusedLocals
+function fill(value) {
+    // ReSharper disable once UnusedParameter
+    return function (config) {
+        if (!value) {
+            return [];
+        }
+        return [
+            ['position', 'absolute'],
+            ['top', '0'],
+            ['right', '0'],
+            ['bottom', '0'],
+            ['left', '0']
+        ];
+    };
+}
+module.exports = fill;
+
+},{}],24:[function(require,module,exports){
 var experimental = require('../extenders/experimental');
 function opacity(value) {
     return function (config) {
