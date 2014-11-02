@@ -4,14 +4,11 @@ import fs = require('fs');
 import os = require('os');
 import path = require('path');
 
-import _extenders = require('./extenders/all');
 import _overrides = require('./overrides/all');
 import ConfigurationForBrowser = require('./browser/Configuration');
 import ConfigurationOptions = require('./interfaces/ConfigurationOptions');
-import Extenders = require('./interfaces/Extenders');
 import Overrides = require('./interfaces/Overrides');
 import s = require('./helpers/string');
-
 
 var newlines = {
 	os: os.EOL,
@@ -34,7 +31,7 @@ class Configuration
 			return this;
 		}
 		var result = extend(true, this, options);
-		(options.plugins || []).forEach(function(pluginPath) {
+		options.plugins.forEach(function(pluginPath) {
 			extend(true, result, this.tryLoadingPlugin(pluginPath)(result));
 		}.bind(this));
 		return result;

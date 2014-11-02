@@ -1,6 +1,6 @@
 <img src="https://github.com/blinkjs/blink/blob/master/artwork/blink_256_nobg.png?raw=true" width="256" height="256" alt="blink" align="right">
 
-Blink converts [Node.js][] modules into CSS.
+Blink converts [Node.js](http://nodejs.org/) modules into CSS.
 
 [![Build Status](https://secure.travis-ci.org/blinkjs/blink.svg)](http://travis-ci.org/blinkjs/blink)
 [![Dependency Status](https://david-dm.org/blinkjs/blink.svg)](https://david-dm.org/blinkjs/blink)
@@ -15,11 +15,11 @@ Blink converts [Node.js][] modules into CSS.
 
 ## Introduction
 
-If you landed here, you're probably a front-end web developer of some kind. You know how to write JavaScript. You might even have a favorite CSS preprocessor. Sure, they allow you to write [variables and functions](http://sass-lang.com/guide) in some form or another, but they require you learn their domain-specific language, which often falls short of a full-blown language. You scour their documentation, struggling to find solutions to problems you already know how to solve in JavaScript. We keep looking for ways to introduce logic into our CSS, so why not just use JavaScript?
+If you landed here, you're probably a front-end web developer of some kind. You know how to write JavaScript. You might even have a favorite CSS preprocessor. Sure, they allow you to write [variables and functions](http://sass-lang.com/guide) in some form or another, but they also require that you learn their domain-specific language (DSL), which often falls short of a full-blown language. You scour their documentation, struggling to find solutions to problems you already know how to solve in JavaScript. We keep looking for ways to introduce logic into our CSS, so why not just use JavaScript?
 
-Blink, like [Autoprefixer](https://github.com/postcss/autoprefixer), allows you to write your CSS rules without vendor prefixes. In fact, you can forget about them entirely. Like [Compass' cross-browser-mixins](http://compass-style.org/reference/compass/css3/), blink has [a set of overrides](#overrides) to handle cross-browser CSS hack scenarios that vendor prefixes are simply not equipped to do; however, unlike Compass, you don't have to remember to include them. In fact, you can forget that they even exist.
+Blink doesn't need to do anything special to support functions, because blink runs actual JavaScript. This means the equivalent of [Sass](http://sass-lang.com/) [mixins](http://sass-lang.com/guide) can be achieved in blink by means of a function that returns any number of CSS declarations. In blink, these are implemented as [overrides](#overrides). For example, the [fill override](#fill) allows you to add `{ fill: true }` to your rule body, which, in turn, generates 5 CSS declarations to fill its relative or absolute container.
 
-With blink, browser support is a configuration setting, so when your browser support requirements change, none of your source code has to change. All you do is update your configuration to support different browser versions by setting the minimum versions you wish to support.
+Blink follows the Single Responsibility Principle (SRP), which means it doesn't try to do too much. As such, you are encouraged to combine blink with other tools to achieve the best result. For example, use [Autoprefixer](https://github.com/postcss/autoprefixer) to add vendor prefixes and [Spritesmith](https://github.com/Ensighten/spritesmith) to generate sprites, which can then be implemented directly in blink. There are a plethora of Node modules you can leverage.
 
 Blink is just getting started, so stay tuned for any updates.
 
@@ -42,8 +42,6 @@ Blink is just getting started, so stay tuned for any updates.
 - [TypeScript Source](#typescript-source)
 - [CLI](https://github.com/blinkjs/blink-cli)
 - [API](https://github.com/blinkjs/blink/blob/master/blink.d.ts)
-- [Express middleware](https://github.com/blinkjs/blink-middleware)
-- [Spriting](#spriting)
 
 
 ## Getting started
@@ -56,9 +54,7 @@ Blink is just getting started, so stay tuned for any updates.
 
 ### Example
 
-At its simplest, blink lets you write CSS with a simple [object initializer](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Working_with_Objects#Using_object_initializers).
-This object needs to be exported with either `module.exports` in Node or just `exports` in the browser.
-Here's a quick and dirty example:
+At its simplest, blink lets you write CSS with a simple [object initializer](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Working_with_Objects#Using_object_initializers). This object needs to be exported with either `module.exports` in Node or just `exports` in the browser. Here's a quick and dirty example:
 
 ```js
 exports = {
@@ -81,14 +77,12 @@ From here, you'll want look at [the full list of features](#features) for a comp
 
 ### Runs on Node
 
-Unlike most CSS preprocessors out there, blink does not transpile a [DSL](http://en.wikipedia.org/wiki/Domain-specific_language) into CSS. Blink code gets compiled directly as a [Node][] module, giving you access to all JavaScript syntax for free. This, of course, includes variables and functions, as well as [file I/O](http://nodejs.org/api/fs.html). The possibilities are endless.
+Unlike most CSS preprocessors out there, blink does not transpile a [DSL](http://en.wikipedia.org/wiki/Domain-specific_language) into CSS. Blink code gets compiled directly as a [Node](http://nodejs.org/) module, giving you access to all JavaScript syntax for free. This, of course, includes variables and functions, as well as [file I/O](http://nodejs.org/api/fs.html). The possibilities are endless.
 
 
 ### Gulp plugin
 
-Blink is, itself, a gulp plugin.
-As with any gulp plugin, files can be piped to other [gulp plugins](http://gulpjs.com/plugins/) before being written to their final destination.
-Blink supports [vinyl](https://github.com/wearefractal/vinyl) files in buffer mode only (streams not supported).
+Blink is, itself, a gulp plugin. As with any gulp plugin, files can be piped to other [gulp plugins](http://gulpjs.com/plugins/) before being written to their final destination. Blink supports [vinyl](https://github.com/wearefractal/vinyl) files in buffer mode only (streams not supported).
 
 ```js
 var blink = require('blink');
@@ -142,7 +136,7 @@ blink(foo, function(err, css) {
 
 ### OOCSS with BEM
 
-Blink is designed with [BEM syntax][] in mind. You can create blocks, elements and modifiers and their CSS selectors will be generated for you. You can configure your BEM format however you want, but the default naming convention follows that which is defined in [MindBEMding &ndash; getting your head 'round BEM syntax][].
+Blink is designed with [BEM syntax](http://csswizardry.com/2013/01/mindbemding-getting-your-head-round-bem-syntax/) in mind. You can create blocks, elements and modifiers and their CSS selectors will be generated for you. You can configure your BEM format however you want, but the default naming convention follows that which is defined in [MindBEMding &ndash; getting your head 'round BEM syntax](http://csswizardry.com/2013/01/mindbemding-getting-your-head-round-bem-syntax/).
 
 Here's an example of a block with both an element and a modifier:
 
@@ -344,7 +338,6 @@ Responders currently only support [MediaAtRules](https://github.com/blinkjs/blin
 ///<reference path="./node_modules/blink/blink.d.ts"/>
 import blink = require('blink');
 
-
 var foo = new blink.Block('foo', {
 	respond: [
 		new blink.MediaAtRule('screen and (max-width: 320)', {
@@ -365,8 +358,6 @@ This generates the following CSS:
 	}
 }
 ```
-
-[Unlike Sass](http://thesassway.com/intermediate/responsive-web-design-in-sass-using-media-queries-in-sass-32), at the time of this writing, blink supports extenders inside of media queries. Blink also merges similar media queries for you. So feel free to go crazy with some complicated responders!
 
 
 ### Plugins
@@ -398,7 +389,7 @@ With all the new build tools and taks runners springing up, blink was built with
 
 ### TypeScript Source
 
-Since blink source code is written in [TypeScript][], you don't need to constantly look-up documentation to gain insight as to how you can use the blink API. Unfortunately, although there is [TypeScript][] support for [other editors][], you won't get the powerful feature of Intellisense unless you are using [Visual Studio][].
+Since blink source code is written in [TypeScript][], you don't need to constantly look-up documentation to gain insight as to how you can use the blink API. Unfortunately, although there is [TypeScript][] support for [other editors](http://msopentech.com/blog/2012/10/01/sublime-text-vi-emacs-typescript-enabled/), you won't get the powerful feature of Intellisense unless you are using [Visual Studio](http://www.visualstudio.com/).
 
 BTW, you can write your blink files in [TypeScript][] or JavaScript. It really doesn't matter as long as it ends up in JavaScript.
 
@@ -426,29 +417,10 @@ import blink = require('blink');
 Refer to the [blink TypeScript definition](https://github.com/blinkjs/blink/blob/master/blink.d.ts) for a list of available public methods.
 
 
-### Spriting
-
-As blink is built on Node.js, any spriting tools available for Node.js can be implemented quite easily. Some of these tools, like [Spritesmith][] allow you to not only generate sprites, but compute off the dimensions of the source images that build the sprites. This makes your CSS highly maintainable. For example, when Design gives you replacement images all you should have to do is drop them in the sprites folder without changing a single line of your blink source.
-
-
 ## License
 
 Released under the MIT license.
 
 
 
-[Node.js]: http://nodejs.org/
-[Node]: http://nodejs.org/
-[BEM syntax]: http://csswizardry.com/2013/01/mindbemding-getting-your-head-round-bem-syntax/
-[MindBEMding &ndash; getting your head 'round BEM syntax]: http://csswizardry.com/2013/01/mindbemding-getting-your-head-round-bem-syntax/
 [TypeScript]: http://www.typescriptlang.org/
-[other editors]: http://msopentech.com/blog/2012/10/01/sublime-text-vi-emacs-typescript-enabled/
-[Visual Studio]: http://www.visualstudio.com/
-[options]: https://github.com/blinkjs/blink/blob/master/lib/interfaces/IConfigurationOptions.ts
-[stream]: http://nodejs.org/api/stream.html#stream_class_stream_readable
-[err]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error
-[config]: https://github.com/blinkjs/blink/blob/master/lib/interfaces/IConfigurationOptions.ts
-[file]: https://github.com/blinkjs/blink/blob/master/lib/interfaces/IFile.ts
-[Rule]: https://github.com/blinkjs/blink/blob/master/lib/Rule.ts
-[Sass]: http://sass-lang.com/
-[Spritesmith]: https://github.com/Ensighten/spritesmith

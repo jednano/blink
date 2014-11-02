@@ -1,7 +1,6 @@
 ﻿import os = require('os');
 
 import Configuration = require('../../../../lib/browser/Configuration');
-import extenders = require('../../../../lib/extenders/all');
 import overrides = require('../../../../lib/overrides/all');
 import sinonChai = require('../../../sinon-chai');
 
@@ -21,10 +20,11 @@ describe('Configuration for browser', () => {
 		expect(config.raw.block).to.eq(defaults.block);
 		expect(config.raw.element).to.eq(defaults.element);
 		expect(config.raw.modifier).to.eq(defaults.modifier);
-		expect(config.raw.chrome).to.eq(defaults.chrome);
-		expect(config.raw.firefox).to.eq(defaults.firefox);
-		expect(config.raw.ie).to.eq(defaults.ie);
-		expect(config.raw.opera).to.eq(defaults.opera);
+	});
+
+	it('supports cloning', () => {
+		var clone = config.clone();
+		expect(clone).to.exist.and.to.deep.equal(config);
 	});
 
 	it('supports setting multiple configuration options in a batch', () => {
@@ -223,39 +223,12 @@ describe('Configuration for browser', () => {
 		});
 	});
 
-	it('requires numeric browser version settings', () => {
-		var settings = {
-			chrome: 'Chrome',
-			firefox: 'Firefox',
-			ie: 'IE',
-			opera: 'Opera',
-			safari: 'Safari',
-			android: 'Android',
-			firefoxMobile: 'Firefox Mobile',
-			ieMobile: 'IE Mobile',
-			operaMobile: 'Opera Mobile',
-			safariMobile: 'Safari Mobile'
-		};
-		Object.keys(settings).forEach(key => {
-			config[key] = 42;
-			expect(config[key]).to.eq(42);
-			var fn = () => {
-				config[key] = 'foo';
-			};
-			expect(fn).to.throw('Invalid ' + settings[key] + ' version. Expected number.');
-		});
-	});
-
 	it('gets and sets vendor prefixes', () => {
 		['webkit', 'khtml', 'moz', 'ms', 'o'].forEach(vendor => {
 			var key = vendor + 'Prefix';
 			config[key] = true;
 			expect(config[key]).to.be.true;
 		});
-	});
-
-	it('gets all registered extenders', () => {
-		expect(config.extenders).to.deep.equal(extenders);
 	});
 
 	it('gets all registered overrides', () => {
