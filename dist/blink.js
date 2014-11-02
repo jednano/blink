@@ -939,7 +939,16 @@ function background(options) {
     // ReSharper disable once UnusedParameter
     return function (config) {
         var values = [];
-        ['color', 'image', 'repeat', 'attachment', 'position'].forEach(function (prop) {
+        [
+            'attachment',
+            'clip',
+            'color',
+            'image',
+            'origin',
+            'position',
+            'repeat',
+            'size'
+        ].forEach(function (prop) {
             if (options.hasOwnProperty(prop)) {
                 values.push(options[prop]);
             }

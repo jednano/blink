@@ -13,16 +13,28 @@ describe('overrides', () => {
 
 	describe('background', () => {
 
-		it('inserts shorthand declaration for all background properties', () => {
+		it('generates shorthand declaration for provided properties', () => {
 			var result = overrides.background({
-				position: 'corge',
-				repeat: 'qux',
-				image: 'baz',
-				color: 'bar',
-				attachment: 'quux'
+				attachment: 'a',
+				clip: 'c1',
+				color: 'c2',
+				image: 'i',
+				origin: 'o',
+				position: 'p',
+				repeat: 'r',
+				size: 's'
 			})(config);
 			expect(result).to.deep.equal([
-				['background', 'bar baz qux quux corge']
+				['background', 'a c1 c2 i o p r s']
+			]);
+			result = overrides.background({
+				clip: 'c1',
+				image: 'i',
+				repeat: 'r',
+				size: 's'
+			})(config);
+			expect(result).to.deep.equal([
+				['background', 'c1 i r s']
 			]);
 		});
 

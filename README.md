@@ -15,9 +15,9 @@ Blink converts [Node.js](http://nodejs.org/) modules into CSS.
 
 ## Introduction
 
-If you landed here, you're probably a front-end web developer of some kind. You know how to write JavaScript. You might even have a favorite CSS preprocessor. Sure, they allow you to write [variables and functions](http://sass-lang.com/guide) in some form or another, but they also require that you learn their domain-specific language (DSL), which often falls short of a full-blown language. You scour their documentation, struggling to find solutions to problems you already know how to solve in JavaScript. We keep looking for ways to introduce logic into our CSS, so why not just use JavaScript?
+If you landed here, you're probably a front-end web developer of some kind. You know how to write JavaScript. You might even have a favorite CSS preprocessor. Sure, they allow you to write [variables](http://sass-lang.com/guide#topic-2) and [functions](http://sass-lang.com/guide#topic-6) in some form or another, but they also require that you learn their [domain-specific language](http://sass-lang.com/documentation/file.SASS_REFERENCE.html#syntax) (DSL), which often falls short of a full-blown language. You scour their documentation, struggling to find solutions to problems you already know how to solve in JavaScript. We keep looking for ways to introduce logic into our CSS, so why not just use JavaScript?
 
-Blink doesn't need to do anything special to support functions, because blink runs actual JavaScript. This means the equivalent of [Sass](http://sass-lang.com/) [mixins](http://sass-lang.com/guide) can be achieved in blink by means of a function that returns any number of CSS declarations. In blink, these are implemented as [overrides](#overrides). For example, the [fill override](#fill) allows you to add `{ fill: true }` to your rule body, which, in turn, generates 5 CSS declarations to fill its relative or absolute container.
+Blink doesn't need to do anything special to support functions, because blink runs actual JavaScript. This means the equivalent of [Sass](http://sass-lang.com/) [mixins](http://sass-lang.com/guide#topic-6) can be achieved in blink by means of a function that returns any number of CSS declarations. In blink, these are implemented as [overrides](#overrides). For example, the [fill override](#fill) allows you to add `{ fill: true }` to your rule body, which, in turn, generates 5 CSS declarations to fill its relative or absolute container.
 
 Blink follows the Single Responsibility Principle (SRP), which means it doesn't try to do too much. As such, you are encouraged to combine blink with other tools to achieve the best result. For example, use [Autoprefixer](https://github.com/postcss/autoprefixer) to add vendor prefixes and [Spritesmith](https://github.com/Ensighten/spritesmith) to generate sprites, which can then be implemented directly in blink. There are a plethora of Node modules you can leverage.
 
@@ -41,7 +41,7 @@ Blink is just getting started, so stay tuned for any updates.
 - [Plugins](#plugins)
 - [TypeScript Source](#typescript-source)
 - [CLI](https://github.com/blinkjs/blink-cli)
-- [API](https://github.com/blinkjs/blink/blob/master/blink.d.ts)
+- [API](https://github.com/blinkjs/blink/blob/master/dist/d.ts/lib/blink.d.ts)
 
 
 ## Getting started
@@ -222,92 +222,39 @@ You are encouraged to use BEM blocks for all of your components. There's nothing
 
 ### Mixins
 
-If you're coming from [Sass](http://sass-lang.com/), you might be familiar with [mixins](http://sass-lang.com/guide). Really, Sass mixins are no different than functions in JavaScript; thus, blink supports them. All you have to do is create a function that returns an array of declarations. This is, in fact, how [overrides](#overrides) work.
+If you're coming from [Sass](http://sass-lang.com/), you might be familiar with [mixins](http://sass-lang.com/guide#topic-6). Really, Sass mixins are no different than functions in JavaScript; thus, blink supports them. All you have to do is create a function that returns an array of declarations. This is, in fact, how [overrides](#overrides) work.
 
 
 ### Overrides
 
-Overrides are named function [factories](http://en.wikipedia.org/wiki/Factory_(object-oriented_programming). The function that is returned can be used for the purpose of generating any number of CSS declarations. This enables you to override existing CSS properties or create your own. For example, say you wanted to override the CSS `color` property to always convert colors into `hsl`. You could do that! Maybe you want to create a new `clearfix` property that, when set to true, generates 3 CSS declarations. Good news &ndash; [that one already exists](https://github.com/blinkjs/blink/blob/master/lib/overrides/clearfix.ts)!
+Overrides are named function [factories](http://en.wikipedia.org/wiki/Factory_(object-oriented_programming)). The function that is returned can be used for the purpose of generating any number of CSS declarations. This enables you to override existing CSS properties or create your own. For example, say you wanted to override the CSS `color` property to always convert colors into `hsl`. You could do that! Maybe you want to create a new `clearfix` property that, when set to true, generates 3 CSS declarations. Good news &ndash; [that one already exists](https://github.com/blinkjs/blink/blob/master/lib/overrides/clearfix.ts) and you can override it with your own [plugin](#plugins) if you wish.
 
 
-#### box-sizing
+#### fill override
 
-Let's take an in-depth look at the [box-sizing override](https://github.com/blinkjs/blink/blob/master/lib/overrides/boxSizing.ts). Here's how you would go about writing it from scratch, in TypeScript.
+Let's take an in-depth look at the [fill override](https://github.com/blinkjs/blink/blob/master/lib/overrides/fill.ts). Here's how you would go about writing it from scratch, in TypeScript.
 
 ```ts
-function boxSizing() {}
-export = boxSizing;
+function fill() {}
+export = fill;
 ```
 
 Firstly, overrides are just functions, but they are function factories, which means they need to return a function. Let's do that.
 
 ```ts
-import blink = require('blink');
-
-function boxSizing(value: string) {
-
-	return (config: blink.Configuration) => {
-	};
-
+function fill(value: boolean) {
+	return () => {};
 }
 
-export = boxSizing;
+export = fill;
 ```
 
-We've imported the blink library to gain access to the [Configuration](https://github.com/blinkjs/blink/blob/master/lib/Configuration.ts) class.
-We're accepting a `value: string` argument, because we know that `box-sizing` accepts one of `content-box`, `padding-box`, `border-box` or `inherit`. It doesn't accept numeric values or anything like that. See [box-sizing on MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/box-sizing?redirectlocale=en-US&redirectslug=CSS%2Fbox-sizing).
-
-Next, we created a new function and immediately return it. This function will be provided the configuration object, which gives you all the information you need to make informed decisions about how your override should build-out CSS declarations.
-
-The `box-sizing` property is actually quite simple. All we need to do is add some vendor prefixes. Fortunately, blink has an [experimental extender](https://github.com/blinkjs/blink/blob/master/lib/extenders/experimental.ts) for just that purpose.
+We're accepting a `value: boolean` argument, because we know that fill is a black and white thing. You either want it or you don't. Next, we created a new function and immediately return it. The `fill` override is actually quite simple. All we need to do is generate some CSS declarations.
 
 ```ts
-import blink = require('blink');
-
-function boxSizing(value: string) {
-
-	return (config: blink.Configuration) => {
-		return blink.config.extenders.experimental('box-sizing', value, {
-			official: true,
-			webkit: !(
-				config.chrome >= 10 &&
-				config.safari >= 5.1 &&
-				config.android >= 4
-			),
-			moz: !(
-				config.firefox >= 29 &&
-				config.firefoxMobile >= 29
-			)
-		})(config);
-	};
-
-}
-
-export = boxSizing;
-```
-
-The experimental extender is quite handy, but we still need to know which vendor prefixes to generate. Refer to [the Can I Use support table](http://caniuse.com/#search=box-sizing) and/or [MDN's box-sizing browser compatability table](https://developer.mozilla.org/en-US/docs/Web/CSS/box-sizing#Browser_compatibility) for in-depth browser support information.
-
-Once you implement the correct browser versions, anyone using your override will only generate the vendor prefixes they intend to support. If they change their configuration file to drop support for older browsers, it could generate no vendor prefixes at all. It really depends on the configuration. This is a blink paradigm that you would do well to follow.
-
-
-#### Override registration
-
-Overrides are registered on the configuration object. If you wish to extend the configuration, you can do so by providing [a plugin module](#plugins).
-
-_Note: override names are dasherized for you (e.g., boxSizing overrides the `box-sizing` property)._
-
-
-#### fill
-
-Not all overrides deal with vendor prefixes. Some will only generate CSS declarations. Let's take a look at the [fill override](https://github.com/blinkjs/blink/blob/master/lib/overrides/fill.ts), which does exactly that.
-
-```ts
-import blink = require('blink');
-
 function fill(value: boolean) {
 
-	return (config: blink.Configuration) => {
+	return () => {
 		if (!value) {
 			return [];
 		}
@@ -325,9 +272,16 @@ function fill(value: boolean) {
 export = fill;
 ```
 
-This override will only generate CSS declarations if you call it with `{ fill: true }` in the rule body. If you call it with `false`, it returns an empty array, which gets ignored by the compiler. As you can see, there are no vendor prefixes here and, really, no logic worth mentioning. It just generates 5 declarations and leaves it at that &ndash; pretty simple.
+This override will only generate CSS declarations if you call it with `{ fill: true }` in the rule body. If you call it with `false`, it returns an empty array, which gets ignored by the compiler. It just generates 5 declarations and leaves it at that &ndash; pretty simple.
 
-See the [display override](https://github.com/blinkjs/blink/blob/master/lib/overrides/display.ts) for a more complex example that illustrates both vendor prefixes as well as CSS hacks for certain browser versions.
+See the [background override](https://github.com/blinkjs/blink/blob/master/lib/overrides/background.ts) for a more complex example that converts an object literal into a shorthand list of background properties. True, this gives you some optimized CSS, but that could be achieved through a build tool. The real value here is that it gives you TypeScript Intellisense for the types of options you can provide to the `background` property, reducing the need to lookup documentation.
+
+
+#### Override registration
+
+Overrides are registered on the configuration object. If you wish to extend the configuration, you can do so by providing [a plugin module](#plugins).
+
+_Note: override names are dasherized for you (e.g., fooBar overrides the `foo-bar` property)._
 
 
 ### Responders
