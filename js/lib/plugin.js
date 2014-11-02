@@ -17,8 +17,9 @@ function plugin(options) {
             cb(new PluginError(PLUGIN_NAME, 'Streaming not supported'));
             return;
         }
+        var rule;
         try {
-            var rule = compileModule(file);
+            rule = compileModule(file);
         }
         catch (err) {
             cb(new PluginError(PLUGIN_NAME, err.message, {
