@@ -31,7 +31,7 @@ class Configuration
 			return this;
 		}
 		var result = extend(true, this, options);
-		options.plugins.forEach(function(pluginPath) {
+		(options.plugins || []).forEach(function(pluginPath) {
 			extend(true, result, this.tryLoadingPlugin(pluginPath)(result));
 		}.bind(this));
 		return result;

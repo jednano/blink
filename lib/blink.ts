@@ -17,7 +17,7 @@ import _RuleBody = require('./interfaces/RuleBody');
 import plugin = require('./plugin');
 
 // ReSharper disable once UnusedLocals
-function blink(options?: blink.ConfigurationOptions): NodeJS.ReadWriteStream {
+function blink(options?: blink.ConfigurationOptions) {
 	return plugin(options);
 }
 

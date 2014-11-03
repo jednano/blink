@@ -13,6 +13,10 @@ var expect = sinonChai.expect;
 // ReSharper disable WrongExpressionStatement
 describe('blink', () => {
 
+	it('returns a stream when called', () => {
+		expect(blink().pipe).to.exist;
+	});
+
 	it('exports class Block', () => {
 		expect(new blink.Block('foo')).to.be.instanceof(Block);
 	});
