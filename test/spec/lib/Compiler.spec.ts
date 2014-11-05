@@ -1,7 +1,6 @@
 ﻿import blink = require('../../../lib/browser/blink');
 import Compiler = require('../../../lib/Compiler');
 import Configuration = require('../../../lib/browser/Configuration');
-import MediaAtRule = require('../../../lib/MediaAtRule');
 import Rule = require('../../../lib/Rule');
 import sinonChai = require('../../sinon-chai');
 
@@ -122,80 +121,6 @@ describe('Compiler', () => {
 			expect(err).to.exist.and.to.have.property('message', 'Unexpected token }');
 			done();
 		});
-	});
-
-	describe('responders', () => {
-
-		it('compiles a basic responder', () => {
-			var rule = new Rule('foo', {
-				bar: 'BAR',
-				respond: [
-					new MediaAtRule('baz', {
-						qux: 'QUX'
-					})
-				]
-			});
-			compiler.compile(rule, (err, css) => {
-				expect(err).to.be.null;
-				expect(css).to.eq([
-					'foo {',
-					'  bar: BAR;',
-					'}',
-					'@media baz {',
-					'  foo {',
-					'    qux: QUX;',
-					'  }',
-					'}'
-				].join(newline) + newline);
-			});
-		});
-
-		it('compiles a nested responder', () => {
-			var rule = new Rule('foo', {
-				bar: 'BAR',
-				respond: [
-					new MediaAtRule('baz', {
-						qux: 'QUX',
-						respond: [
-							new MediaAtRule('quux', {
-								corge: 'CORGE'
-							})
-						]
-					})
-				]
-			});
-			compiler.compile(rule, (err, css) => {
-				expect(err).to.be.null;
-				expect(css).to.eq([
-					'foo {',
-					'  bar: BAR;',
-					'}',
-					'@media baz {',
-					'  foo {',
-					'    qux: QUX;',
-					'  }',
-					'  @media quux {',
-					'    foo {',
-					'      corge: CORGE;',
-					'    }',
-					'  }',
-					'}'
-				].join(newline) + newline);
-			});
-		});
-
-		it('compiles an empty responder', () => {
-			var rule = new Rule('foo', {
-				respond: [
-					new MediaAtRule('baz', {})
-				]
-			});
-			compiler.compile(rule, (err, css) => {
-				expect(err).to.be.null;
-				expect(css).to.be.empty;
-			});
-		});
-
 	});
 
 });

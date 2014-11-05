@@ -86,17 +86,23 @@ Blink is, itself, a gulp plugin. As with any gulp plugin, files can be piped to 
 
 ```js
 var blink = require('blink');
+var concat = require('gulp-concat');
+var eventStream = require('event-stream');
 var gulp = require('gulp');
 
 gulp.task('styles', function() {
-	return gulp.src('styles/**/*.js')
-		.pipe(blink('styles.css', /* options */))
-		.on('error', function(err) {
-			// handle error
-		})
-		.pipe(gulp.dest('dist/styles'));
+	var bundles = ['app', 'account'].map(function(bundleName) {
+		return gulp.src('styles/' + bundleName + '/**/*.js')
+			.pipe(blink())
+			// more plugins
+			.pipe(concat(bundleName + '.css'))
+			.pipe(gulp.dest('./build/css'));
+	});
+	return eventStream.merge.apply(this, bundles);
 });
 ```
+
+This `styles` task will build two CSS bundles (app and account), passing them through the same plugins and writing them to the same destination folder.
 
 _Note: [gulp-blink](https://github.com/blinkjs/gulp-blink) has been deprecated in favor of using the blink module directly._
 
@@ -150,19 +156,19 @@ var btn = new blink.Block('btn', {
 		width: 80
 	},
 
-	elements: [
-		new blink.Element('foreground', {
+	elements: {
+		foreground: {
 			color: 'black'
-		})
-	],
+		}
+	},
 
-	modifiers: [
-		new blink.Modifier('wide', {
+	modifiers: {
+		wide: {
 			min: {
 				width: 120
 			}
-		})
-	]
+		}
+	}
 });
 
 export = btn;

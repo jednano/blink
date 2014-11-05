@@ -6,13 +6,10 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-var _Block = require('../Block');
 var _BrowserConfiguration = require('./Configuration');
 var _Compiler = require('../Compiler');
-var _Element = require('../Element');
-var _MediaAtRule = require('../MediaAtRule');
-var _Modifier = require('../Modifier');
 var _Rule = require('../Rule');
+var BEM = require('../BEM');
 function blink(contents, callback, options) {
     var compiler = new blink.Compiler(new blink.Configuration(options || {}));
     compiler.compile(contents, callback);
@@ -26,7 +23,7 @@ var blink;
             _super.apply(this, arguments);
         }
         return Block;
-    })(_Block);
+    })(BEM.Block);
     blink.Block = Block;
     var Compiler = (function (_super) {
         __extends(Compiler, _super);
@@ -50,23 +47,15 @@ var blink;
             _super.apply(this, arguments);
         }
         return Element;
-    })(_Element);
+    })(BEM.Element);
     blink.Element = Element;
-    var MediaAtRule = (function (_super) {
-        __extends(MediaAtRule, _super);
-        function MediaAtRule() {
-            _super.apply(this, arguments);
-        }
-        return MediaAtRule;
-    })(_MediaAtRule);
-    blink.MediaAtRule = MediaAtRule;
     var Modifier = (function (_super) {
         __extends(Modifier, _super);
         function Modifier() {
             _super.apply(this, arguments);
         }
         return Modifier;
-    })(_Modifier);
+    })(BEM.Modifier);
     blink.Modifier = Modifier;
     var Rule = (function (_super) {
         __extends(Rule, _super);
@@ -80,7 +69,7 @@ var blink;
 })(blink || (blink = {}));
 module.exports = blink;
 
-},{"../Block":3,"../Compiler":4,"../Element":5,"../MediaAtRule":7,"../Modifier":8,"../Rule":9,"./Configuration":10}],2:[function(require,module,exports){
+},{"../BEM":3,"../Compiler":4,"../Rule":6,"./Configuration":7}],2:[function(require,module,exports){
 module.exports={
   "quiet": false,
   "trace": false,
@@ -124,7 +113,7 @@ var Block = (function () {
     }
     Object.defineProperty(Block.prototype, "elements", {
         get: function () {
-            return this.body.elements || [];
+            return this.body.elements;
         },
         set: function (value) {
             this.body.elements = value;
@@ -134,7 +123,7 @@ var Block = (function () {
     });
     Object.defineProperty(Block.prototype, "modifiers", {
         get: function () {
-            return this.body.modifiers || [];
+            return this.body.modifiers;
         },
         set: function (value) {
             this.body.modifiers = value;
@@ -151,19 +140,81 @@ var Block = (function () {
         var resolved = new Rule(selector, this.body).resolve(config);
         this.elements = elements;
         this.modifiers = modifiers;
-        elements.forEach(function (element) {
+        Object.keys(elements || {}).forEach(function (key) {
+            var element = new Element(key, elements[key]);
             [].push.apply(resolved, element.resolve(selector, config));
         });
-        modifiers.forEach(function (modifier) {
+        Object.keys(modifiers || {}).forEach(function (key) {
+            var modifier = new Modifier(key, modifiers[key]);
             [].push.apply(resolved, modifier.resolve(selector, config));
         });
         return resolved;
     };
     return Block;
 })();
-module.exports = Block;
+exports.Block = Block;
+var Element = (function () {
+    function Element(name, body) {
+        this.name = name;
+        this.body = body;
+    }
+    Object.defineProperty(Element.prototype, "modifiers", {
+        get: function () {
+            return this.body.modifiers;
+        },
+        set: function (value) {
+            this.body.modifiers = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Element.prototype.resolve = function (base, config) {
+        var modifiers = this.modifiers;
+        delete this.body.modifiers;
+        var selector = base + config.element.replace('%s', this.name);
+        var resolved = new Rule(selector, this.body).resolve(config);
+        this.modifiers = modifiers;
+        Object.keys(modifiers || {}).forEach(function (key) {
+            var modifier = new Modifier(key, modifiers[key]);
+            [].push.apply(resolved, modifier.resolve(selector, config));
+        });
+        return resolved;
+    };
+    return Element;
+})();
+exports.Element = Element;
+var Modifier = (function () {
+    function Modifier(name, body) {
+        this.name = name;
+        this.body = body;
+    }
+    Object.defineProperty(Modifier.prototype, "elements", {
+        get: function () {
+            return this.body.elements;
+        },
+        set: function (value) {
+            this.body.elements = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Modifier.prototype.resolve = function (base, config) {
+        var elements = this.elements;
+        delete this.body.elements;
+        var selector = base + config.modifier.replace('%s', this.name);
+        var resolved = new Rule(selector, this.body).resolve(config);
+        this.elements = elements;
+        Object.keys(elements || {}).forEach(function (key) {
+            var element = new Element(key, elements[key]);
+            [].push.apply(resolved, element.resolve(selector, config));
+        });
+        return resolved;
+    };
+    return Modifier;
+})();
+exports.Modifier = Modifier;
 
-},{"./Rule":9}],4:[function(require,module,exports){
+},{"./Rule":6}],4:[function(require,module,exports){
 /* jshint evil: true */
 /* tslint:disable:no-eval */
 var a = require('./helpers/array');
@@ -211,93 +262,18 @@ var Compiler = (function () {
     };
     Compiler.prototype.resolve = function (rules) {
         var _this = this;
-        var resolved = [];
-        rules.forEach(function (rule) {
-            push(rule.resolve(_this.config));
+        return rules.map(function (rule) {
+            return rule.resolve(_this.config)[0];
         });
-        push(this.resolveResponders(rules));
-        function push(val) {
-            if (val && val.length) {
-                resolved.push(val[0]);
-            }
-        }
-        return resolved;
     };
     Compiler.prototype.format = function (rules) {
         return new Formatter().format(this.config, rules);
-    };
-    Compiler.prototype.resolveResponders = function (responders) {
-        var _this = this;
-        var registry = {};
-        responders.forEach(function (responder) {
-            _this.registerResponders(registry, responder.selectors, responder.responders);
-        });
-        return this.resolveTree(registry);
-    };
-    Compiler.prototype.registerResponders = function (registry, selectors, responders) {
-        var _this = this;
-        (responders || []).forEach(function (responder) {
-            var condition = responder.condition;
-            var scope = registry[condition] = registry[condition] || {};
-            responder.selectors = selectors;
-            var resolved = responder.resolve(_this.config);
-            if (resolved.length) {
-                resolved = resolved[0];
-                scope[resolved[0].join(',' + _this.config.oneSpace)] = resolved[1];
-            }
-            _this.registerResponders(scope, selectors, responder.responders);
-        });
-    };
-    Compiler.prototype.resolveTree = function (tree) {
-        var _this = this;
-        var result = [];
-        Object.keys(tree).forEach(function (key) {
-            var value = tree[key];
-            if (Array.isArray(value)) {
-                result.push([[key], value]);
-                return;
-            }
-            result.push([[key], _this.resolveTree(value)]);
-        });
-        return result;
     };
     return Compiler;
 })();
 module.exports = Compiler;
 
-},{"./Formatter":6,"./Rule":9,"./helpers/array":11,"./helpers/object":12}],5:[function(require,module,exports){
-var Rule = require('./Rule');
-var Element = (function () {
-    function Element(name, body) {
-        this.name = name;
-        this.body = body;
-    }
-    Object.defineProperty(Element.prototype, "modifiers", {
-        get: function () {
-            return this.body.modifiers || [];
-        },
-        set: function (value) {
-            this.body.modifiers = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Element.prototype.resolve = function (base, config) {
-        var modifiers = this.modifiers;
-        delete this.body.modifiers;
-        var selector = base + config.element.replace('%s', this.name);
-        var resolved = new Rule(selector, this.body).resolve(config);
-        this.modifiers = modifiers;
-        modifiers.forEach(function (modifier) {
-            [].push.apply(resolved, modifier.resolve(selector, config));
-        });
-        return resolved;
-    };
-    return Element;
-})();
-module.exports = Element;
-
-},{"./Rule":9}],6:[function(require,module,exports){
+},{"./Formatter":5,"./Rule":6,"./helpers/array":8,"./helpers/object":9}],5:[function(require,module,exports){
 var s = require('./helpers/string');
 var Formatter = (function () {
     function Formatter() {
@@ -369,67 +345,20 @@ var Formatter = (function () {
 })();
 module.exports = Formatter;
 
-},{"./helpers/string":13}],7:[function(require,module,exports){
-/* istanbul ignore next: TypeScript extend */
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var Rule = require('./Rule');
-var MediaAtRule = (function (_super) {
-    __extends(MediaAtRule, _super);
-    function MediaAtRule(condition, body) {
-        _super.call(this, null, body);
-        this.condition = condition;
-        this.body = body;
-        this.condition = '@media ' + condition;
-    }
-    return MediaAtRule;
-})(Rule);
-module.exports = MediaAtRule;
-
-},{"./Rule":9}],8:[function(require,module,exports){
-var Rule = require('./Rule');
-var Modifier = (function () {
-    function Modifier(name, body) {
-        this.name = name;
-        this.body = body;
-    }
-    Object.defineProperty(Modifier.prototype, "elements", {
-        get: function () {
-            return this.body.elements || [];
-        },
-        set: function (value) {
-            this.body.elements = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Modifier.prototype.resolve = function (base, config) {
-        var elements = this.elements;
-        delete this.body.elements;
-        var selector = base + config.modifier.replace('%s', this.name);
-        var resolved = new Rule(selector, this.body).resolve(config);
-        this.elements = elements;
-        this.elements.forEach(function (element) {
-            [].push.apply(resolved, element.resolve(selector, config));
-        });
-        return resolved;
-    };
-    return Modifier;
-})();
-module.exports = Modifier;
-
-},{"./Rule":9}],9:[function(require,module,exports){
+},{"./helpers/string":10}],6:[function(require,module,exports){
 var extend = require('node.extend');
 var Formatter = require('./Formatter');
 var s = require('./helpers/string');
 var Rule = (function () {
     function Rule(selectors, body) {
         this.body = body;
-        this.selectors = selectors;
+        this._selectors = [];
+        if (Array.isArray(selectors)) {
+            this.selectors = selectors;
+        }
+        else {
+            this.selectors = this.splitSelectors(selectors);
+        }
     }
     Object.defineProperty(Rule.prototype, "responders", {
         get: function () {
@@ -443,13 +372,6 @@ var Rule = (function () {
             return this._selectors;
         },
         set: function (value) {
-            if (!value) {
-                this._selectors = [];
-                return;
-            }
-            if (typeof value === 'string') {
-                value = this.splitSelectors(value);
-            }
             this._selectors = value.map(function (selector) {
                 return selector.trim();
             });
@@ -464,36 +386,34 @@ var Rule = (function () {
         var _this = this;
         this.config = config;
         var body = this.clone().body;
-        delete body.respond;
-        var rules = this.resolveTree(this.selectors.join(), {}, '', body);
+        var rules = this.resolveTree(this.selectors.join(), body);
         return Object.keys(rules).map(function (key) {
             return [_this.splitSelectors(key), rules[key]];
         });
     };
-    Rule.prototype.resolveTree = function (selectors, seed, key, body) {
+    Rule.prototype.clone = function () {
+        return new Rule(extend([], this.selectors), extend({}, this.body));
+    };
+    Rule.prototype.resolveTree = function (selectors, body, seed, key) {
         var _this = this;
+        seed = seed || {};
+        key = key || '';
         Object.keys(body).forEach(function (k2) {
+            if (k2 === 'respond') {
+                _this.resolveResponders(selectors, body.respond, seed);
+                return;
+            }
             if (k2[0] === ':') {
-                _this.resolveTree(_this.joinSelectors(selectors, k2), seed, '', body[k2]);
+                _this.resolveTree(_this.joinSelectors(selectors, k2), body[k2], seed);
                 return;
             }
-            var k1 = key || '';
-            var joinedKey = _this.combineKeys(k1, k2);
-            var result = _this.resolveOverride(s.camelize(joinedKey), body[k2]);
-            var value = result.value;
-            if (result.isOverrideResult) {
-                if (Array.isArray(value)) {
-                    seed[selectors] = seed[selectors] || [];
-                    [].push.apply(seed[selectors], value);
-                    return;
-                }
-                Object.keys(value).forEach(function (s2) {
-                    var s3 = _this.joinSelectors(selectors, s2);
-                    seed[s3] = seed[s3] || [];
-                    [].push.apply(seed[s3], value[s2]);
-                });
+            var joinedKey = _this.combineKeys(key, k2);
+            var overrideKey = s.camelize(joinedKey);
+            if (_this.config.overrides.hasOwnProperty(overrideKey)) {
+                _this.resolveOverride(overrideKey, selectors, seed, body[k2]);
                 return;
             }
+            var value = body[k2];
             if (_this.isDeclarationValue(value)) {
                 seed[selectors] = seed[selectors] || [];
                 seed[selectors].push([
@@ -502,10 +422,23 @@ var Rule = (function () {
                 ]);
                 return;
             }
-            _this.resolveTree(selectors, seed, joinedKey, value);
-            key = k1;
+            _this.resolveTree(selectors, value, seed, joinedKey);
         });
         return seed;
+    };
+    Rule.prototype.resolveResponders = function (selectors, body, seed) {
+        var _this = this;
+        Object.keys(body).forEach(function (condition) {
+            var mediaQuery = '@media ' + condition;
+            var resolved = _this.resolveTree(selectors, body[condition], seed[mediaQuery]);
+            var keys = Object.keys(resolved);
+            if (keys.length === 0) {
+                return;
+            }
+            seed[mediaQuery] = keys.map(function (key) {
+                return [_this.splitSelectors(key), resolved[key]];
+            });
+        });
     };
     Rule.prototype.joinSelectors = function (left, right) {
         var _this = this;
@@ -517,41 +450,36 @@ var Rule = (function () {
         });
         return result.join();
     };
-    Rule.prototype.clone = function () {
-        return new Rule(extend([], this.selectors), extend({}, this.body));
-    };
-    Rule.prototype.resolveOverride = function (key, value) {
-        var override = this.config.overrides[s.camelize(key)];
-        switch (typeof override) {
-            case 'function':
-                var fn;
-                if (Array.isArray(value)) {
-                    fn = override(value[0], value[1]);
-                }
-                else {
-                    fn = override(value);
-                }
-                if (typeof fn !== 'function') {
-                    throw new Error('Override "' + key + '" must return a function');
-                }
-                return {
-                    isOverrideResult: true,
-                    value: fn(this.config)
-                };
-            case 'undefined':
-                return {
-                    isOverrideResult: false,
-                    value: value
-                };
-            default:
-                throw new Error('Override "' + key + '" must be of type: Function');
-        }
-    };
     Rule.prototype.combineKeys = function (k1, k2) {
         if (k1 !== '' && k2[0] !== ':') {
             return k1 + '-' + k2;
         }
         return k1 + k2;
+    };
+    Rule.prototype.resolveOverride = function (overrideKey, selectors, seed, value) {
+        var _this = this;
+        var override = this.config.overrides[overrideKey];
+        if (typeof override !== 'function') {
+            throw new Error('Override "' + overrideKey + '" must be of type: Function');
+        }
+        var fn;
+        if (Array.isArray(value)) {
+            fn = override(value[0], value[1]);
+        }
+        else {
+            fn = override(value);
+        }
+        if (typeof fn !== 'function') {
+            throw new Error('Override "' + overrideKey + '" must return a function');
+        }
+        var result = fn(this.config);
+        if (Array.isArray(result)) {
+            seed[selectors] = result;
+            return;
+        }
+        Object.keys(result).forEach(function (key) {
+            seed[_this.joinSelectors(selectors, key)] = result[key];
+        });
     };
     Rule.prototype.isDeclarationValue = function (value) {
         if (Array.isArray(value)) {
@@ -604,7 +532,7 @@ var Rule = (function () {
 })();
 module.exports = Rule;
 
-},{"./Formatter":6,"./helpers/string":13,"node.extend":18}],10:[function(require,module,exports){
+},{"./Formatter":5,"./helpers/string":10,"node.extend":15}],7:[function(require,module,exports){
 var extend = require('node.extend');
 var _overrides = require('../overrides/all');
 var s = require('../helpers/string');
@@ -855,7 +783,7 @@ var Configuration = (function () {
 })();
 module.exports = Configuration;
 
-},{"../../defaults.browser.json":2,"../helpers/string":13,"../overrides/all":14,"node.extend":18}],11:[function(require,module,exports){
+},{"../../defaults.browser.json":2,"../helpers/string":10,"../overrides/all":11,"node.extend":15}],8:[function(require,module,exports){
 function flatten(arr) {
     var flat = [];
     arr.forEach(function (item) {
@@ -869,7 +797,7 @@ function flatten(arr) {
 }
 exports.flatten = flatten;
 
-},{}],12:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 function isPlainObject(o) {
     if (typeof o === 'object' && o) {
         return o.constructor === Object;
@@ -878,7 +806,7 @@ function isPlainObject(o) {
 }
 exports.isPlainObject = isPlainObject;
 
-},{}],13:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 // ReSharper disable InconsistentNaming
 var STRING_CAMELIZE = (/(\-|_|\.|\s)+(.)?/g);
 var STRING_DASHERIZE = /[ _]/g;
@@ -920,7 +848,7 @@ function decamelize(s) {
 }
 exports.decamelize = decamelize;
 
-},{}],14:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 var background = require('./background');
 var clearfix = require('./clearfix');
 var fill = require('./fill');
@@ -932,7 +860,7 @@ var overrides = {
 };
 module.exports = overrides;
 
-},{"./background":15,"./clearfix":16,"./fill":17}],15:[function(require,module,exports){
+},{"./background":12,"./clearfix":13,"./fill":14}],12:[function(require,module,exports){
 // ReSharper disable once UnusedLocals
 function background(options) {
     options = options || {};
@@ -961,7 +889,7 @@ function background(options) {
 }
 module.exports = background;
 
-},{}],16:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 var s = require('../helpers/string');
 // ReSharper disable once UnusedLocals
 function clearfix(value) {
@@ -980,7 +908,7 @@ function clearfix(value) {
 }
 module.exports = clearfix;
 
-},{"../helpers/string":13}],17:[function(require,module,exports){
+},{"../helpers/string":10}],14:[function(require,module,exports){
 // ReSharper disable once UnusedLocals
 function fill(value) {
     // ReSharper disable once UnusedParameter
@@ -999,11 +927,11 @@ function fill(value) {
 }
 module.exports = fill;
 
-},{}],18:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 module.exports = require('./lib/extend');
 
 
-},{"./lib/extend":19}],19:[function(require,module,exports){
+},{"./lib/extend":16}],16:[function(require,module,exports){
 /*!
  * node.extend
  * Copyright 2011, John Resig
@@ -1087,7 +1015,7 @@ extend.version = '1.0.8';
 module.exports = extend;
 
 
-},{"is":20}],20:[function(require,module,exports){
+},{"is":17}],17:[function(require,module,exports){
 
 /**!
  * is

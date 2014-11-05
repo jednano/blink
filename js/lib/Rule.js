@@ -4,7 +4,13 @@ var s = require('./helpers/string');
 var Rule = (function () {
     function Rule(selectors, body) {
         this.body = body;
-        this.selectors = selectors;
+        this._selectors = [];
+        if (Array.isArray(selectors)) {
+            this.selectors = selectors;
+        }
+        else {
+            this.selectors = this.splitSelectors(selectors);
+        }
     }
     Object.defineProperty(Rule.prototype, "responders", {
         get: function () {
@@ -18,13 +24,6 @@ var Rule = (function () {
             return this._selectors;
         },
         set: function (value) {
-            if (!value) {
-                this._selectors = [];
-                return;
-            }
-            if (typeof value === 'string') {
-                value = this.splitSelectors(value);
-            }
             this._selectors = value.map(function (selector) {
                 return selector.trim();
             });
@@ -39,36 +38,34 @@ var Rule = (function () {
         var _this = this;
         this.config = config;
         var body = this.clone().body;
-        delete body.respond;
-        var rules = this.resolveTree(this.selectors.join(), {}, '', body);
+        var rules = this.resolveTree(this.selectors.join(), body);
         return Object.keys(rules).map(function (key) {
             return [_this.splitSelectors(key), rules[key]];
         });
     };
-    Rule.prototype.resolveTree = function (selectors, seed, key, body) {
+    Rule.prototype.clone = function () {
+        return new Rule(extend([], this.selectors), extend({}, this.body));
+    };
+    Rule.prototype.resolveTree = function (selectors, body, seed, key) {
         var _this = this;
+        seed = seed || {};
+        key = key || '';
         Object.keys(body).forEach(function (k2) {
+            if (k2 === 'respond') {
+                _this.resolveResponders(selectors, body.respond, seed);
+                return;
+            }
             if (k2[0] === ':') {
-                _this.resolveTree(_this.joinSelectors(selectors, k2), seed, '', body[k2]);
+                _this.resolveTree(_this.joinSelectors(selectors, k2), body[k2], seed);
                 return;
             }
-            var k1 = key || '';
-            var joinedKey = _this.combineKeys(k1, k2);
-            var result = _this.resolveOverride(s.camelize(joinedKey), body[k2]);
-            var value = result.value;
-            if (result.isOverrideResult) {
-                if (Array.isArray(value)) {
-                    seed[selectors] = seed[selectors] || [];
-                    [].push.apply(seed[selectors], value);
-                    return;
-                }
-                Object.keys(value).forEach(function (s2) {
-                    var s3 = _this.joinSelectors(selectors, s2);
-                    seed[s3] = seed[s3] || [];
-                    [].push.apply(seed[s3], value[s2]);
-                });
+            var joinedKey = _this.combineKeys(key, k2);
+            var overrideKey = s.camelize(joinedKey);
+            if (_this.config.overrides.hasOwnProperty(overrideKey)) {
+                _this.resolveOverride(overrideKey, selectors, seed, body[k2]);
                 return;
             }
+            var value = body[k2];
             if (_this.isDeclarationValue(value)) {
                 seed[selectors] = seed[selectors] || [];
                 seed[selectors].push([
@@ -77,10 +74,23 @@ var Rule = (function () {
                 ]);
                 return;
             }
-            _this.resolveTree(selectors, seed, joinedKey, value);
-            key = k1;
+            _this.resolveTree(selectors, value, seed, joinedKey);
         });
         return seed;
+    };
+    Rule.prototype.resolveResponders = function (selectors, body, seed) {
+        var _this = this;
+        Object.keys(body).forEach(function (condition) {
+            var mediaQuery = '@media ' + condition;
+            var resolved = _this.resolveTree(selectors, body[condition], seed[mediaQuery]);
+            var keys = Object.keys(resolved);
+            if (keys.length === 0) {
+                return;
+            }
+            seed[mediaQuery] = keys.map(function (key) {
+                return [_this.splitSelectors(key), resolved[key]];
+            });
+        });
     };
     Rule.prototype.joinSelectors = function (left, right) {
         var _this = this;
@@ -92,41 +102,36 @@ var Rule = (function () {
         });
         return result.join();
     };
-    Rule.prototype.clone = function () {
-        return new Rule(extend([], this.selectors), extend({}, this.body));
-    };
-    Rule.prototype.resolveOverride = function (key, value) {
-        var override = this.config.overrides[s.camelize(key)];
-        switch (typeof override) {
-            case 'function':
-                var fn;
-                if (Array.isArray(value)) {
-                    fn = override(value[0], value[1]);
-                }
-                else {
-                    fn = override(value);
-                }
-                if (typeof fn !== 'function') {
-                    throw new Error('Override "' + key + '" must return a function');
-                }
-                return {
-                    isOverrideResult: true,
-                    value: fn(this.config)
-                };
-            case 'undefined':
-                return {
-                    isOverrideResult: false,
-                    value: value
-                };
-            default:
-                throw new Error('Override "' + key + '" must be of type: Function');
-        }
-    };
     Rule.prototype.combineKeys = function (k1, k2) {
         if (k1 !== '' && k2[0] !== ':') {
             return k1 + '-' + k2;
         }
         return k1 + k2;
+    };
+    Rule.prototype.resolveOverride = function (overrideKey, selectors, seed, value) {
+        var _this = this;
+        var override = this.config.overrides[overrideKey];
+        if (typeof override !== 'function') {
+            throw new Error('Override "' + overrideKey + '" must be of type: Function');
+        }
+        var fn;
+        if (Array.isArray(value)) {
+            fn = override(value[0], value[1]);
+        }
+        else {
+            fn = override(value);
+        }
+        if (typeof fn !== 'function') {
+            throw new Error('Override "' + overrideKey + '" must return a function');
+        }
+        var result = fn(this.config);
+        if (Array.isArray(result)) {
+            seed[selectors] = result;
+            return;
+        }
+        Object.keys(result).forEach(function (key) {
+            seed[_this.joinSelectors(selectors, key)] = result[key];
+        });
     };
     Rule.prototype.isDeclarationValue = function (value) {
         if (Array.isArray(value)) {

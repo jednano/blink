@@ -45,55 +45,12 @@ var Compiler = (function () {
     };
     Compiler.prototype.resolve = function (rules) {
         var _this = this;
-        var resolved = [];
-        rules.forEach(function (rule) {
-            push(rule.resolve(_this.config));
+        return rules.map(function (rule) {
+            return rule.resolve(_this.config)[0];
         });
-        push(this.resolveResponders(rules));
-        function push(val) {
-            if (val && val.length) {
-                resolved.push(val[0]);
-            }
-        }
-        return resolved;
     };
     Compiler.prototype.format = function (rules) {
         return new Formatter().format(this.config, rules);
-    };
-    Compiler.prototype.resolveResponders = function (responders) {
-        var _this = this;
-        var registry = {};
-        responders.forEach(function (responder) {
-            _this.registerResponders(registry, responder.selectors, responder.responders);
-        });
-        return this.resolveTree(registry);
-    };
-    Compiler.prototype.registerResponders = function (registry, selectors, responders) {
-        var _this = this;
-        (responders || []).forEach(function (responder) {
-            var condition = responder.condition;
-            var scope = registry[condition] = registry[condition] || {};
-            responder.selectors = selectors;
-            var resolved = responder.resolve(_this.config);
-            if (resolved.length) {
-                resolved = resolved[0];
-                scope[resolved[0].join(',' + _this.config.oneSpace)] = resolved[1];
-            }
-            _this.registerResponders(scope, selectors, responder.responders);
-        });
-    };
-    Compiler.prototype.resolveTree = function (tree) {
-        var _this = this;
-        var result = [];
-        Object.keys(tree).forEach(function (key) {
-            var value = tree[key];
-            if (Array.isArray(value)) {
-                result.push([[key], value]);
-                return;
-            }
-            result.push([[key], _this.resolveTree(value)]);
-        });
-        return result;
     };
     return Compiler;
 })();

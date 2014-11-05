@@ -1,8 +1,7 @@
-import HashTable = require('./HashTable');
-import MediaAtRule = require('../MediaAtRule');
 import BackgroundOptions = require('../interfaces/css/BackgroundOptions');
+import HashTable = require('./HashTable');
 interface RuleBody extends HashTable<any> {
-    respond?: MediaAtRule[];
+    respond?: HashTable<RuleBody>;
     /**
      * A shorthand for setting the individual background values in a single
      * place in the style sheet.

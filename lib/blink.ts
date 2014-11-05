@@ -2,18 +2,12 @@
 import File = require('vinyl');
 
 import _BackgroundOptions = require('./interfaces/css/BackgroundOptions');
-import _Block = require('./Block');
-import _BlockBody = require('./interfaces/BlockBody');
 import _Compiler = require('./Compiler');
 import _Configuration = require('./Configuration');
 import _ConfigurationOptions = require('./interfaces/ConfigurationOptions');
-import _Element = require('./Element');
-import _ElementBody = require('./interfaces/ElementBody');
-import _MediaAtRule = require('./MediaAtRule');
-import _Modifier = require('./Modifier');
-import _ModifierBody = require('./interfaces/ModifierBody');
 import _Rule = require('./Rule');
 import _RuleBody = require('./interfaces/RuleBody');
+import BEM = require('./BEM');
 import plugin = require('./plugin');
 
 // ReSharper disable once UnusedLocals
@@ -24,19 +18,15 @@ function blink(options?: blink.ConfigurationOptions) {
 // ReSharper disable once InconsistentNaming
 module blink {
 
-	export class Block         extends _Block {}
+	export class Block         extends BEM.Block {}
 	export class Compiler      extends _Compiler<Configuration> {}
 	export class Configuration extends _Configuration {}
-	export class Element       extends _Element {}
-	export class MediaAtRule   extends _MediaAtRule {}
-	export class Modifier      extends _Modifier {}
+	export class Element       extends BEM.Element {}
+	export class Modifier      extends BEM.Modifier {}
 	export class Rule          extends _Rule {}
 
 	export interface BackgroundOptions    extends _BackgroundOptions {}
-	export interface BlockBody            extends _BlockBody {}
 	export interface ConfigurationOptions extends _ConfigurationOptions {}
-	export interface ElementBody          extends _ElementBody {}
-	export interface ModifierBody         extends _ModifierBody {}
 	export interface RuleBody             extends _RuleBody {}
 
 	export var config = new Configuration();

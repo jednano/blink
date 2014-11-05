@@ -267,6 +267,108 @@ describe('Rule', () => {
 
 	});
 
+	describe('responders', () => {
+
+		it('gets body responders when responders property is requested', () => {
+			var responders = <any>{
+				bar: {
+					baz: 'BAZ'
+				}
+			};
+			var rule = new Rule('foo', {
+				respond: responders
+			});
+			expect(rule.responders).to.deep.equal(responders);
+		});
+
+		it('resolves a basic responder', () => {
+			var rule = new Rule('foo', {
+				bar: 'BAR',
+				respond: {
+					baz: {
+						qux: 'QUX'
+					}
+				}
+			});
+			expect(rule.resolve(config)).to.deep.equal([
+				[['foo'], [
+					['bar', 'BAR']
+				]],
+				[['@media baz'], [
+					[['foo'], [
+						['qux', 'QUX']
+					]]
+				]]
+			]);
+		});
+
+		it('resolves a responder with two separate conditions', () => {
+			var rule = new Rule('foo', {
+				respond: {
+					bar: {
+						baz: 'BAZ'
+					},
+					qux: {
+						quux: 'QUUX'
+					}
+				}
+			});
+			expect(rule.resolve(config)).to.deep.equal([
+				[['@media bar'], [
+					[['foo'], [
+						['baz', 'BAZ']
+					]]
+				]],
+				[['@media qux'], [
+					[['foo'], [
+						['quux', 'QUUX']
+					]]
+				]]
+			]);
+		});
+
+		it('resolves a nested responder', () => {
+			var rule = new Rule('foo', {
+				bar: 'BAR',
+				respond: {
+					baz: {
+						qux: 'QUX',
+						respond: {
+							quux: {
+								corge: 'CORGE'
+							}
+						}
+					}
+				}
+			});
+			expect(rule.resolve(config)).to.deep.equal([
+				[['foo'], [
+					['bar', 'BAR']
+				]],
+				[['@media baz'], [
+					[['foo'], [
+						['qux', 'QUX']
+					]],
+					[['@media quux'], [
+						[['foo'], [
+							['corge', 'CORGE']
+						]]
+					]]
+				]]
+			]);
+		});
+
+		it('resolves an empty responder', () => {
+			var rule = new Rule('foo', {
+				respond: {
+					baz: {}
+				}
+			});
+			expect(rule.resolve(config)).to.be.empty;
+		});
+
+	});
+
 	it('compiles into CSS via the compile method', () => {
 		var rule = new Rule('foo', { bar: 'baz' });
 		expect(rule.compile(config)).to.eq([

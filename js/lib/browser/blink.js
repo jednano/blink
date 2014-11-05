@@ -5,13 +5,10 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-var _Block = require('../Block');
 var _BrowserConfiguration = require('./Configuration');
 var _Compiler = require('../Compiler');
-var _Element = require('../Element');
-var _MediaAtRule = require('../MediaAtRule');
-var _Modifier = require('../Modifier');
 var _Rule = require('../Rule');
+var BEM = require('../BEM');
 function blink(contents, callback, options) {
     var compiler = new blink.Compiler(new blink.Configuration(options || {}));
     compiler.compile(contents, callback);
@@ -25,7 +22,7 @@ var blink;
             _super.apply(this, arguments);
         }
         return Block;
-    })(_Block);
+    })(BEM.Block);
     blink.Block = Block;
     var Compiler = (function (_super) {
         __extends(Compiler, _super);
@@ -49,23 +46,15 @@ var blink;
             _super.apply(this, arguments);
         }
         return Element;
-    })(_Element);
+    })(BEM.Element);
     blink.Element = Element;
-    var MediaAtRule = (function (_super) {
-        __extends(MediaAtRule, _super);
-        function MediaAtRule() {
-            _super.apply(this, arguments);
-        }
-        return MediaAtRule;
-    })(_MediaAtRule);
-    blink.MediaAtRule = MediaAtRule;
     var Modifier = (function (_super) {
         __extends(Modifier, _super);
         function Modifier() {
             _super.apply(this, arguments);
         }
         return Modifier;
-    })(_Modifier);
+    })(BEM.Modifier);
     blink.Modifier = Modifier;
     var Rule = (function (_super) {
         __extends(Rule, _super);

@@ -1,4 +1,4 @@
-import Block = require('./Block');
+import BEM = require('./BEM');
 import Configuration = require('./browser/Configuration');
 import Rule = require('./Rule');
 declare class Compiler<T extends Configuration> {
@@ -9,12 +9,9 @@ declare class Compiler<T extends Configuration> {
     compile(rules: {}[], callback: (err: Error, css?: string) => void): void;
     compile(rule: Rule, callback: (err: Error, css?: string) => void): void;
     compile(rules: Rule[], callback: (err: Error, css?: string) => void): void;
-    compile(block: Block, callback: (err: Error, css?: string) => void): void;
+    compile(block: BEM.Block, callback: (err: Error, css?: string) => void): void;
     private compileRules(rules, callback);
     private resolve(rules);
     private format(rules);
-    private resolveResponders(responders);
-    private registerResponders(registry, selectors, responders);
-    private resolveTree(tree);
 }
 export = Compiler;
