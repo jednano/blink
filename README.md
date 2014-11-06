@@ -124,6 +124,7 @@ Include the script in your web page:
 Compile your block:
 
 ```js
+var blink = require('blink');
 var foo = new blink.Block('foo', { bar: 'baz' });
 blink(foo, function(err, css) {
   console.log(css);
@@ -133,7 +134,8 @@ blink(foo, function(err, css) {
 You can also compile a string of source code as long as you export the rule with `exports`.
 
 ```js
-var foo = "exports = new blink.Block('foo', { bar: 'baz' });";
+var blink = require('blink');
+var foo = 'exports = { foo: { bar: "baz" }}';
 blink(foo, function(err, css) {
   console.log(css);
 });

@@ -23,6 +23,9 @@ class Compiler<T extends Configuration> {
 	public compile(rules: Rule[], callback: { (err: Error, css?: string): void; }): void;
 	public compile(block: BEM.Block, callback: { (err: Error, css?: string): void; }): void;
 	public compile(rules: any, callback: { (err: Error, css?: string): void; }) {
+		if (typeof callback !== 'function') {
+			return;
+		}
 		if (typeof rules === 'string') {
 			try {
 				rules = eval(rules);

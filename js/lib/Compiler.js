@@ -9,6 +9,9 @@ var Compiler = (function () {
         this.config = config;
     }
     Compiler.prototype.compile = function (rules, callback) {
+        if (typeof callback !== 'function') {
+            return;
+        }
         if (typeof rules === 'string') {
             try {
                 rules = eval(rules);

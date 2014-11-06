@@ -13,6 +13,13 @@ describe('Compiler', () => {
 	var compiler = new Compiler(config);
 	var newline = config.newline;
 
+	it('fails silently if compile is called w/o a callback', () => {
+		var fn = () => {
+			blink('foo', null);
+		};
+		expect(fn).not.to.throw(Error);
+	});
+
 	it('compiles no rules into an empty string', done => {
 		blink([], (err, css) => {
 			expect(err).to.be.null;
