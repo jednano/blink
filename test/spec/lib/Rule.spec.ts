@@ -142,6 +142,17 @@ describe('Rule', () => {
 		]);
 	});
 
+	it('resolves 0 as unitless', () => {
+		var rule = new Rule('foo', { bar: 0 });
+		expect(rule.resolve(config)).to.deep.equal([
+			[
+				['foo'], [
+					['bar', '0']
+				]
+			]
+		]);
+	});
+
 	it('joins an array of declaration values with spaces', () => {
 		var rule = new Rule('foo', {
 			bar: ['baz', 42, 'qux quux']
