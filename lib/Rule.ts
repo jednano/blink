@@ -91,11 +91,7 @@ class Rule {
 	private resolveResponders(selectors: string, body: any, seed: any) {
 		Object.keys(body).forEach(condition => {
 			var mediaQuery = '@media ' + condition;
-			var resolved = this.resolveTree(
-				selectors,
-				body[condition],
-				seed[mediaQuery]
-			);
+			var resolved = this.resolveTree(selectors, body[condition]);
 			var keys = Object.keys(resolved);
 			if (keys.length === 0) {
 				return;

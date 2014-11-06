@@ -280,7 +280,7 @@ describe('Rule', () => {
 
 	describe('responders', () => {
 
-		it('gets body responders when responders property is requested', () => {
+		it('gets responders property from body.responders', () => {
 			var responders = <any>{
 				bar: {
 					baz: 'BAZ'
@@ -304,6 +304,29 @@ describe('Rule', () => {
 			expect(rule.resolve(config)).to.deep.equal([
 				[['foo'], [
 					['bar', 'BAR']
+				]],
+				[['@media baz'], [
+					[['foo'], [
+						['qux', 'QUX']
+					]]
+				]]
+			]);
+		});
+
+		it('joins common media queries together', () => {
+			var rule = new Rule('foo', {
+				bar: 'BAR',
+				respond: {
+					baz: {
+						qux: 'QUX'
+					}
+				},
+				corge: 'CORGE'
+			});
+			expect(rule.resolve(config)).to.deep.equal([
+				[['foo'], [
+					['bar', 'BAR'],
+					['corge', 'CORGE']
 				]],
 				[['@media baz'], [
 					[['foo'], [

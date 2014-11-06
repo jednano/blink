@@ -82,7 +82,7 @@ var Rule = (function () {
         var _this = this;
         Object.keys(body).forEach(function (condition) {
             var mediaQuery = '@media ' + condition;
-            var resolved = _this.resolveTree(selectors, body[condition], seed[mediaQuery]);
+            var resolved = _this.resolveTree(selectors, body[condition]);
             var keys = Object.keys(resolved);
             if (keys.length === 0) {
                 return;

@@ -197,6 +197,59 @@ describe('BEM Module', () => {
 			]);
 		});
 
+		it('compiles a block with elements with media queries inside', () => {
+			var block = new BEM.Block('a', {
+				b: 'c',
+				respond: {
+					d: {
+						e: 'f'
+					}
+				},
+				elements: {
+					g: {
+						h: 'i',
+						respond: {
+							j: {
+								k: 'l'
+							}
+						}
+					}
+				},
+				modifiers: {
+					m: {
+						respond: {
+							d: {
+								n: 'o'
+							}
+						}
+					}
+				}
+			});
+			expect(block.resolve(config)).to.deep.equal([
+				[['.a'], [
+					['b', 'c']
+				]],
+				[['@media d'], [
+					[['.a'], [
+						['e', 'f']
+					]]
+				]],
+				[['.a__g'], [
+					['h', 'i']
+				]],
+				[['@media j'], [
+					[['.a__g'], [
+						['k', 'l']
+					]]
+				]],
+				[['@media d'], [
+					[['.a--m'], [
+						['n', 'o']
+					]]
+				]]
+			]);
+		});
+
 	});
 
 	describe('Element', () => {
