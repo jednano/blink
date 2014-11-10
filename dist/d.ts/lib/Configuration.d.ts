@@ -1,4 +1,4 @@
-/// <reference path="../bower_components/dt-node/node.d.ts" />
+/// <reference path="../../../bower_components/dt-node/node.d.ts" />
 import ConfigurationForBrowser = require('./browser/Configuration');
 import ConfigurationOptions = require('./interfaces/ConfigurationOptions');
 declare class Configuration extends ConfigurationForBrowser implements ConfigurationOptions {

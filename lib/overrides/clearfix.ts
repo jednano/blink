@@ -4,9 +4,9 @@ import s = require('../helpers/string');
 // ReSharper disable once UnusedLocals
 function clearfix(value: boolean) {
 
-	return (config: Configuration): any => {
+	return (config: Configuration) => {
 		if (!value) {
-			return [];
+			return {};
 		}
 		return {
 			':after': [

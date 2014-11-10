@@ -21,7 +21,7 @@ var newlines = {
 
 var quotes = {
 	'double': '"',
-	'single': "'"
+	'single': '\''
 };
 
 class Configuration implements ConfigurationOptions {

@@ -82,7 +82,7 @@ Unlike most CSS preprocessors out there, blink does not transpile a [DSL](http:/
 
 ### Gulp plugin
 
-Blink is, itself, a gulp plugin. As with any gulp plugin, files can be piped to other [gulp plugins](http://gulpjs.com/plugins/) before being written to their final destination. Blink supports [vinyl](https://github.com/wearefractal/vinyl) files in buffer mode only (streams not supported).
+Blink exposes a plugin method, which is, itself, a gulp plugin. As with any gulp plugin, files can be piped to other [gulp plugins](http://gulpjs.com/plugins/) before being written to their final destination. Blink supports [vinyl](https://github.com/wearefractal/vinyl) files in buffer mode only (streams not supported).
 
 ```js
 var blink = require('blink');
@@ -93,7 +93,7 @@ var gulp = require('gulp');
 gulp.task('styles', function() {
 	var bundles = ['app', 'account'].map(function(bundleName) {
 		return gulp.src('styles/' + bundleName + '/**/*.js')
-			.pipe(blink())
+			.pipe(blink.plugin(/* options */))
 			// more plugins
 			.pipe(concat(bundleName + '.css'))
 			.pipe(gulp.dest('./build/css'));
@@ -104,7 +104,7 @@ gulp.task('styles', function() {
 
 This `styles` task will build two CSS bundles (app and account), passing them through the same plugins and writing them to the same destination folder.
 
-_Note: [gulp-blink](https://github.com/blinkjs/gulp-blink) has been deprecated in favor of using the blink module directly._
+_Note: [gulp-blink](https://github.com/blinkjs/gulp-blink) has been deprecated in favor of using the blink module's plugin method._
 
 
 ### Browserified

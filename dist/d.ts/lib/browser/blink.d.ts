@@ -5,11 +5,12 @@ import _ConfigurationOptions = require('../interfaces/ConfigurationOptions');
 import _Rule = require('../Rule');
 import _RuleBody = require('../interfaces/RuleBody');
 import BEM = require('../BEM');
-declare function blink(contents: string, callback: blink.Callback, options?: blink.ConfigurationOptions): void;
-declare function blink(rules: {}, callback: blink.Callback, options?: blink.ConfigurationOptions): void;
-declare function blink(rule: blink.Rule, callback: blink.Callback, options?: blink.ConfigurationOptions): void;
-declare function blink(rules: blink.Rule[], callback: blink.Callback, options?: blink.ConfigurationOptions): void;
-declare function blink(block: blink.Block, callback: blink.Callback, options?: blink.ConfigurationOptions): void;
+declare function blink(contents: string, config?: blink.Configuration): string;
+declare function blink(rule: blink.Rule, config?: blink.Configuration): string;
+declare function blink(rules: blink.Rule[], config?: blink.Configuration): string;
+declare function blink(rules: {}[], config?: blink.Configuration): string;
+declare function blink(block: BEM.Block, config?: blink.Configuration): string;
+declare function blink(rules: {}, config?: blink.Configuration): string;
 declare module blink {
     class Block extends BEM.Block {
     }
@@ -30,8 +31,5 @@ declare module blink {
     interface RuleBody extends _RuleBody {
     }
     var config: Configuration;
-    interface Callback {
-        (err: Error, css?: string): void;
-    }
 }
 export = blink;

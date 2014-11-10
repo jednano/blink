@@ -22,13 +22,14 @@ var Configuration = (function (_super) {
         this.loadPlugins(options);
     }
     Configuration.prototype.loadPlugins = function (options) {
+        var _this = this;
         if (!options) {
             return this;
         }
         var result = extend(true, this, options);
         (options.plugins || []).forEach(function (pluginPath) {
-            extend(true, result, this.tryLoadingPlugin(pluginPath)(result));
-        }.bind(this));
+            extend(true, result, _this.tryLoadingPlugin(pluginPath)(result));
+        });
         return result;
     };
     Configuration.prototype.tryLoadingPlugin = function (pluginPath) {

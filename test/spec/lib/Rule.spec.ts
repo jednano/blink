@@ -1,6 +1,5 @@
 ﻿import Configuration = require('../../../lib/Configuration');
 import Rule = require('../../../lib/Rule');
-import o = require('../../../lib/helpers/object');
 import s = require('../../../lib/helpers/string');
 import sinonChai = require('../../sinon-chai');
 
@@ -72,7 +71,7 @@ describe('Rule', () => {
 			bar: {
 				baz: {
 					qux: 'QUX',
-					quux: 'QUUX',
+					quux: 'QUUX'
 				},
 				corge: 'CORGE',
 				grault: {
@@ -207,7 +206,6 @@ describe('Rule', () => {
 		var overrides = <any>config.overrides;
 
 		before(() => {
-			overrides.upper = upper;
 			function upper(value: string, options?: { addBaz?: boolean }) {
 				options = options || {};
 				return (c: Configuration) => {
@@ -222,6 +220,7 @@ describe('Rule', () => {
 					return [['upper', value.toUpperCase()]];
 				};
 			}
+			overrides.upper = upper;
 		});
 
 		after(() => {

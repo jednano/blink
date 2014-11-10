@@ -14,7 +14,7 @@ var newlines = {
 };
 var quotes = {
     'double': '"',
-    'single': "'"
+    'single': '\''
 };
 var Configuration = (function () {
     function Configuration(options) {

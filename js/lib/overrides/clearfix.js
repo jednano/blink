@@ -3,7 +3,7 @@ var s = require('../helpers/string');
 function clearfix(value) {
     return function (config) {
         if (!value) {
-            return [];
+            return {};
         }
         return {
             ':after': [

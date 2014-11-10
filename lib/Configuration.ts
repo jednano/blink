@@ -1,14 +1,9 @@
 ﻿///<reference path="../bower_components/dt-node/node.d.ts"/>
 var extend = require('node.extend');
-import fs = require('fs');
 import os = require('os');
-import path = require('path');
 
-import _overrides = require('./overrides/all');
 import ConfigurationForBrowser = require('./browser/Configuration');
 import ConfigurationOptions = require('./interfaces/ConfigurationOptions');
-import Overrides = require('./interfaces/Overrides');
-import s = require('./helpers/string');
 
 var newlines = {
 	os: os.EOL,
@@ -26,14 +21,14 @@ class Configuration
 		this.loadPlugins(options);
 	}
 
-	public loadPlugins(options?: ConfigurationOptions) {
+	loadPlugins(options?: ConfigurationOptions) {
 		if (!options) {
 			return this;
 		}
 		var result = extend(true, this, options);
-		(options.plugins || []).forEach(function(pluginPath) {
+		(options.plugins || []).forEach(pluginPath => {
 			extend(true, result, this.tryLoadingPlugin(pluginPath)(result));
-		}.bind(this));
+		});
 		return result;
 	}
 
@@ -45,7 +40,7 @@ class Configuration
 		}
 	}
 
-	public get newline() {
+	get newline() {
 		switch (this.style) {
 			case 'compact':
 			case 'compressed':
@@ -55,7 +50,7 @@ class Configuration
 		}
 	}
 
-	public set newline(value: string) {
+	set newline(value: string) {
 		value = value.toLowerCase();
 		if (!newlines.hasOwnProperty(value)) {
 			throw new Error('Unsupported newline: ' + value);

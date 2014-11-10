@@ -5,26 +5,26 @@ import RuleBody = require('./interfaces/RuleBody');
 
 export class Block {
 
-	public get elements() {
+	get elements() {
 		return this.body.elements;
 	}
 
-	public set elements(value: ElementsWithModifiers) {
+	set elements(value: ElementsWithModifiers) {
 		this.body.elements = value;
 	}
 
-	public get modifiers() {
+	get modifiers() {
 		return this.body.modifiers;
 	}
 
-	public set modifiers(value: ModifiersWithElements) {
+	set modifiers(value: ModifiersWithElements) {
 		this.body.modifiers = value;
 	}
 
 	constructor(public name: string, public body?: BlockBody) {
 	}
 
-	public resolve(config: Configuration) {
+	resolve(config: Configuration) {
 		var elements = this.elements;
 		delete this.body.elements;
 		var modifiers = this.modifiers;
@@ -49,18 +49,18 @@ export class Block {
 
 export class Element {
 
-	public get modifiers() {
+	get modifiers() {
 		return this.body.modifiers;
 	}
 
-	public set modifiers(value: RuleBodyWithElements) {
+	set modifiers(value: RuleBodyWithElements) {
 		this.body.modifiers = value;
 	}
 
 	constructor(public name: string, public body?: RuleBodyWithModifiers) {
 	}
 
-	public resolve(base: string, config: Configuration) {
+	resolve(base: string, config: Configuration) {
 		var modifiers = this.modifiers;
 		delete this.body.modifiers;
 		var selector = base + config.element.replace('%s', this.name);
@@ -78,18 +78,18 @@ export class Element {
 
 export class Modifier {
 
-	public get elements() {
+	get elements() {
 		return this.body.elements;
 	}
 
-	public set elements(value: RuleBodyWithModifiers) {
+	set elements(value: RuleBodyWithModifiers) {
 		this.body.elements = value;
 	}
 
 	constructor(public name: string, public body?: RuleBodyWithElementsWithModifiers) {
 	}
 
-	public resolve(base: string, config: Configuration) {
+	resolve(base: string, config: Configuration) {
 		var elements = this.elements;
 		delete this.body.elements;
 		var selector = base + config.modifier.replace('%s', this.name);

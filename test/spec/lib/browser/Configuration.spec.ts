@@ -1,6 +1,4 @@
-﻿import os = require('os');
-
-import Configuration = require('../../../../lib/browser/Configuration');
+﻿import Configuration = require('../../../../lib/browser/Configuration');
 import overrides = require('../../../../lib/overrides/all');
 import sinonChai = require('../../../sinon-chai');
 
@@ -147,7 +145,7 @@ describe('Configuration for browser', () => {
 			config.quote = 'double';
 			expect(config.quote).to.eq('"');
 			config.quote = 'single';
-			expect(config.quote).to.eq("'");
+			expect(config.quote).to.eq('\'');
 		});
 
 		it('errors when value is not supported', () => {

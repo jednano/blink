@@ -1,75 +1,4 @@
-require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"blink":[function(require,module,exports){
-/* istanbul ignore next: TypeScript extend */
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var _BrowserConfiguration = require('./Configuration');
-var _Compiler = require('../Compiler');
-var _Rule = require('../Rule');
-var BEM = require('../BEM');
-function blink(contents, callback, options) {
-    var compiler = new blink.Compiler(new blink.Configuration(options || {}));
-    compiler.compile(contents, callback);
-}
-// ReSharper disable once InconsistentNaming
-var blink;
-(function (blink) {
-    var Block = (function (_super) {
-        __extends(Block, _super);
-        function Block() {
-            _super.apply(this, arguments);
-        }
-        return Block;
-    })(BEM.Block);
-    blink.Block = Block;
-    var Compiler = (function (_super) {
-        __extends(Compiler, _super);
-        function Compiler() {
-            _super.apply(this, arguments);
-        }
-        return Compiler;
-    })(_Compiler);
-    blink.Compiler = Compiler;
-    var Configuration = (function (_super) {
-        __extends(Configuration, _super);
-        function Configuration() {
-            _super.apply(this, arguments);
-        }
-        return Configuration;
-    })(_BrowserConfiguration);
-    blink.Configuration = Configuration;
-    var Element = (function (_super) {
-        __extends(Element, _super);
-        function Element() {
-            _super.apply(this, arguments);
-        }
-        return Element;
-    })(BEM.Element);
-    blink.Element = Element;
-    var Modifier = (function (_super) {
-        __extends(Modifier, _super);
-        function Modifier() {
-            _super.apply(this, arguments);
-        }
-        return Modifier;
-    })(BEM.Modifier);
-    blink.Modifier = Modifier;
-    var Rule = (function (_super) {
-        __extends(Rule, _super);
-        function Rule() {
-            _super.apply(this, arguments);
-        }
-        return Rule;
-    })(_Rule);
-    blink.Rule = Rule;
-    blink.config = new Configuration();
-})(blink || (blink = {}));
-module.exports = blink;
-
-},{"../BEM":2,"../Compiler":3,"../Rule":5,"./Configuration":6}],1:[function(require,module,exports){
+require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 module.exports={
   "quiet": false,
   "trace": false,
@@ -216,7 +145,6 @@ exports.Modifier = Modifier;
 
 },{"./Rule":5}],3:[function(require,module,exports){
 /* jshint evil: true */
-/* tslint:disable:no-eval */
 var a = require('./helpers/array');
 var Formatter = require('./Formatter');
 var o = require('./helpers/object');
@@ -225,18 +153,15 @@ var Compiler = (function () {
     function Compiler(config) {
         this.config = config;
     }
-    Compiler.prototype.compile = function (rules, callback) {
-        if (typeof callback !== 'function') {
-            return;
+    Compiler.prototype.compile = function (rules) {
+        function createRulesFromObject(rule) {
+            return Object.keys(rule).map(function (selectors) {
+                return new Rule(selectors, rule[selectors]);
+            });
         }
         if (typeof rules === 'string') {
-            try {
-                rules = eval(rules);
-            }
-            catch (err) {
-                callback(err);
-                return;
-            }
+            /* tslint:disable:no-eval */
+            rules = eval(rules);
         }
         rules = a.flatten([rules]).map(function (rule) {
             if (o.isPlainObject(rule)) {
@@ -244,24 +169,10 @@ var Compiler = (function () {
             }
             return rule;
         });
-        this.compileRules(a.flatten(rules), callback);
-        function createRulesFromObject(obj) {
-            return Object.keys(obj).map(function (selectors) {
-                return new Rule(selectors, obj[selectors]);
-            });
-        }
+        return this.compileRules(a.flatten(rules));
     };
-    Compiler.prototype.compileRules = function (rules, callback) {
-        var formatted;
-        try {
-            var resolved = this.resolve(rules);
-            formatted = this.format(resolved);
-        }
-        catch (err) {
-            callback(err);
-            return;
-        }
-        callback(null, formatted);
+    Compiler.prototype.compileRules = function (rules) {
+        return this.format(this.resolve(rules));
     };
     Compiler.prototype.resolve = function (rules) {
         var _this = this;
@@ -552,7 +463,7 @@ var newlines = {
 };
 var quotes = {
     'double': '"',
-    'single': "'"
+    'single': '\''
 };
 var Configuration = (function () {
     function Configuration(options) {
@@ -898,7 +809,7 @@ var s = require('../helpers/string');
 function clearfix(value) {
     return function (config) {
         if (!value) {
-            return [];
+            return {};
         }
         return {
             ':after': [
@@ -1765,4 +1676,74 @@ is.hex = function (value) {
   return is.string(value) && (!value.length || hexRegex.test(value));
 };
 
-},{}]},{},[]);
+},{}],"blink":[function(require,module,exports){
+/* istanbul ignore next: TypeScript extend */
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var _BrowserConfiguration = require('./Configuration');
+var _Compiler = require('../Compiler');
+var _Rule = require('../Rule');
+var BEM = require('../BEM');
+function blink(rules, config) {
+    return new blink.Compiler(config).compile(rules);
+}
+// ReSharper disable once InconsistentNaming
+var blink;
+(function (blink) {
+    var Block = (function (_super) {
+        __extends(Block, _super);
+        function Block() {
+            _super.apply(this, arguments);
+        }
+        return Block;
+    })(BEM.Block);
+    blink.Block = Block;
+    var Compiler = (function (_super) {
+        __extends(Compiler, _super);
+        function Compiler() {
+            _super.apply(this, arguments);
+        }
+        return Compiler;
+    })(_Compiler);
+    blink.Compiler = Compiler;
+    var Configuration = (function (_super) {
+        __extends(Configuration, _super);
+        function Configuration() {
+            _super.apply(this, arguments);
+        }
+        return Configuration;
+    })(_BrowserConfiguration);
+    blink.Configuration = Configuration;
+    var Element = (function (_super) {
+        __extends(Element, _super);
+        function Element() {
+            _super.apply(this, arguments);
+        }
+        return Element;
+    })(BEM.Element);
+    blink.Element = Element;
+    var Modifier = (function (_super) {
+        __extends(Modifier, _super);
+        function Modifier() {
+            _super.apply(this, arguments);
+        }
+        return Modifier;
+    })(BEM.Modifier);
+    blink.Modifier = Modifier;
+    var Rule = (function (_super) {
+        __extends(Rule, _super);
+        function Rule() {
+            _super.apply(this, arguments);
+        }
+        return Rule;
+    })(_Rule);
+    blink.Rule = Rule;
+    blink.config = new Configuration();
+})(blink || (blink = {}));
+module.exports = blink;
+
+},{"../BEM":2,"../Compiler":3,"../Rule":5,"./Configuration":6}]},{},[]);

@@ -54,7 +54,7 @@ describe('plugin', () => {
 			.write(fakeFile);
 	});
 
-	it('emits errors as plugin errors', done => {
+	it('emits blink errors as plugin errors', done => {
 		var fakeFile = new File({
 			contents: new Buffer('module.exports={foo:{"":"baz"}};')
 		});

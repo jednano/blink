@@ -1,5 +1,4 @@
 /* jshint evil: true */
-/* tslint:disable:no-eval */
 var a = require('./helpers/array');
 var Formatter = require('./Formatter');
 var o = require('./helpers/object');
@@ -8,18 +7,15 @@ var Compiler = (function () {
     function Compiler(config) {
         this.config = config;
     }
-    Compiler.prototype.compile = function (rules, callback) {
-        if (typeof callback !== 'function') {
-            return;
+    Compiler.prototype.compile = function (rules) {
+        function createRulesFromObject(rule) {
+            return Object.keys(rule).map(function (selectors) {
+                return new Rule(selectors, rule[selectors]);
+            });
         }
         if (typeof rules === 'string') {
-            try {
-                rules = eval(rules);
-            }
-            catch (err) {
-                callback(err);
-                return;
-            }
+            /* tslint:disable:no-eval */
+            rules = eval(rules);
         }
         rules = a.flatten([rules]).map(function (rule) {
             if (o.isPlainObject(rule)) {
@@ -27,24 +23,10 @@ var Compiler = (function () {
             }
             return rule;
         });
-        this.compileRules(a.flatten(rules), callback);
-        function createRulesFromObject(obj) {
-            return Object.keys(obj).map(function (selectors) {
-                return new Rule(selectors, obj[selectors]);
-            });
-        }
+        return this.compileRules(a.flatten(rules));
     };
-    Compiler.prototype.compileRules = function (rules, callback) {
-        var formatted;
-        try {
-            var resolved = this.resolve(rules);
-            formatted = this.format(resolved);
-        }
-        catch (err) {
-            callback(err);
-            return;
-        }
-        callback(null, formatted);
+    Compiler.prototype.compileRules = function (rules) {
+        return this.format(this.resolve(rules));
     };
     Compiler.prototype.resolve = function (rules) {
         var _this = this;

@@ -1,4 +1,4 @@
-/// <reference path="../bower_components/dt-node/node.d.ts" />
+/// <reference path="../../../bower_components/dt-node/node.d.ts" />
 import events = require('events');
 declare class Logger extends events.EventEmitter {
     debug(message: string): void;

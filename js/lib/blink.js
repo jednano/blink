@@ -5,14 +5,19 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
+///<reference path="../bower_components/dt-vinyl/vinyl.d.ts" />
+var File = require('vinyl');
 var _Compiler = require('./Compiler');
 var _Configuration = require('./Configuration');
+var _plugin = require('./plugin');
 var _Rule = require('./Rule');
+var _VinylCompiler = require('./VinylCompiler');
 var BEM = require('./BEM');
-var plugin = require('./plugin');
-// ReSharper disable once UnusedLocals
-function blink(options) {
-    return plugin(options);
+function blink(rules, config) {
+    if (rules instanceof File) {
+        return new blink.VinylCompiler(config).compile(rules);
+    }
+    return new blink.Compiler(config).compile(rules);
 }
 // ReSharper disable once InconsistentNaming
 var blink;
@@ -65,6 +70,15 @@ var blink;
         return Rule;
     })(_Rule);
     blink.Rule = Rule;
+    var VinylCompiler = (function (_super) {
+        __extends(VinylCompiler, _super);
+        function VinylCompiler() {
+            _super.apply(this, arguments);
+        }
+        return VinylCompiler;
+    })(_VinylCompiler);
+    blink.VinylCompiler = VinylCompiler;
     blink.config = new Configuration();
+    blink.plugin = _plugin;
 })(blink || (blink = {}));
 module.exports = blink;

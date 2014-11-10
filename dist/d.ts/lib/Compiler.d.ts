@@ -4,13 +4,13 @@ import Rule = require('./Rule');
 declare class Compiler<T extends Configuration> {
     config: T;
     constructor(config: T);
-    compile(contents: string, callback: (err: Error, css?: string) => void): void;
-    compile(rules: {}, callback: (err: Error, css?: string) => void): void;
-    compile(rules: {}[], callback: (err: Error, css?: string) => void): void;
-    compile(rule: Rule, callback: (err: Error, css?: string) => void): void;
-    compile(rules: Rule[], callback: (err: Error, css?: string) => void): void;
-    compile(block: BEM.Block, callback: (err: Error, css?: string) => void): void;
-    private compileRules(rules, callback);
+    compile(contents: string): string;
+    compile(rules: Rule[]): string;
+    compile(rules: {}[]): string;
+    compile(rule: Rule): string;
+    compile(block: BEM.Block): string;
+    compile(rules: {}): string;
+    private compileRules(rules);
     private resolve(rules);
     private format(rules);
 }

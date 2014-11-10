@@ -1,6 +1,7 @@
 var eventStream = require('event-stream');
 var gulp = require('gulp');
 var os = require('os');
+var replace = require('gulp-replace');
 var through = require('through2');
 var ts = require('gulp-typescript');
 
@@ -16,7 +17,9 @@ function scripts() {
 		.pipe(ts(project));
 
 	return eventStream.merge(
-		result.dts.pipe(gulp.dest('dist/d.ts')),
+		result.dts
+			.pipe(replace(/bower_components/g, '../../bower_components'))
+			.pipe(gulp.dest('dist/d.ts')),
 		result.js
 			.pipe(istanbulIgnoreTypeScriptExtend())
 			.pipe(gulp.dest('js'))

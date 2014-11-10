@@ -7,14 +7,14 @@ import _RuleBody = require('../interfaces/RuleBody');
 import BEM = require('../BEM');
 
 // ReSharper disable once UnusedLocals
-function blink(contents: string, callback: blink.Callback, options?: blink.ConfigurationOptions): void;
-function blink(rules: {}, callback: blink.Callback, options?: blink.ConfigurationOptions): void;
-function blink(rule: blink.Rule, callback: blink.Callback, options?: blink.ConfigurationOptions): void;
-function blink(rules: blink.Rule[], callback: blink.Callback, options?: blink.ConfigurationOptions): void;
-function blink(block: blink.Block, callback: blink.Callback, options?: blink.ConfigurationOptions): void;
-function blink(contents: any, callback: blink.Callback, options?: blink.ConfigurationOptions) {
-	var compiler = new blink.Compiler(new blink.Configuration(options || {}));
-	compiler.compile(contents, callback);
+function blink(contents: string, config?: blink.Configuration): string;
+function blink(rule: blink.Rule, config?: blink.Configuration): string;
+function blink(rules: blink.Rule[], config?: blink.Configuration): string;
+function blink(rules: {}[], config?: blink.Configuration): string;
+function blink(block: BEM.Block, config?: blink.Configuration): string;
+function blink(rules: {}, config?: blink.Configuration): string;
+function blink(rules: any, config?: blink.Configuration): any {
+	return new blink.Compiler(config).compile(rules);
 }
 
 // ReSharper disable once InconsistentNaming
@@ -32,9 +32,6 @@ module blink {
 	export interface RuleBody             extends _RuleBody {}
 
 	export var config = new Configuration();
-	export interface Callback {
-		(err: Error, css?: string): void;
-	}
 
 }
 

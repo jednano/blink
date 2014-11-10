@@ -9,9 +9,8 @@ var _BrowserConfiguration = require('./Configuration');
 var _Compiler = require('../Compiler');
 var _Rule = require('../Rule');
 var BEM = require('../BEM');
-function blink(contents, callback, options) {
-    var compiler = new blink.Compiler(new blink.Configuration(options || {}));
-    compiler.compile(contents, callback);
+function blink(rules, config) {
+    return new blink.Compiler(config).compile(rules);
 }
 // ReSharper disable once InconsistentNaming
 var blink;
