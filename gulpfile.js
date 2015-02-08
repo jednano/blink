@@ -12,7 +12,3 @@ gulp.task('default', ['watch']);
 
 gulp.task('test:onScriptsChanged', ['scripts:changed'], require('./tasks/test--watch'));
   gulp.task('scripts:changed', require('./tasks/scripts'));
-
-gulp.task('dist', ['stripboms', 'browserify']);
-  gulp.task('stripboms', require('./tasks/stripboms'));
-  gulp.task('browserify', ['build'], require('./tasks/browserify'));

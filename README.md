@@ -32,7 +32,6 @@ Blink is just getting started, so stay tuned for any updates.
 - [Gulp plugin](#gulp-plugin)
 - [Grunt plugin](https://github.com/blinkjs/grunt-blink)
 - [Middleware](https://github.com/blinkjs/blink-middleware)
-- [Browserified](#browserified)
 - [OOCSS with BEM Syntax](#oocss-with-bem)
 - [Rules](#rules)
 - [Mixins](#mixins)
@@ -49,7 +48,7 @@ Blink is just getting started, so stay tuned for any updates.
 
 ### Installation
 - [Node](#library-usage)
-- [In the browser](#browserified)
+- [In the browser](#in-the-browser)
 
 
 ### Example
@@ -107,18 +106,30 @@ This `styles` task will build two CSS bundles (app and account), passing them th
 _Note: [gulp-blink](https://github.com/blinkjs/gulp-blink) has been deprecated in favor of using the blink module's plugin method._
 
 
-### Browserified
+### In the browser
 
-For those wishing to transpile blink files into CSS in the browser, a [Browserified](http://browserify.org/) version of blink is available in the [dist folder](https://github.com/blinkjs/blink/tree/master/dist), also available as a [bower component](http://bower.io/search/?q=blink).
+For those wishing to transpile blink files into CSS in the browser, you can use [Browserify](http://browserify.org/) or your module loader of choice. If you would like to create a gulp task that bundles blink with Browserify, it would look something like this:
 
-```bash
-$ bower install --save blink
+```js
+var gulp = require('gulp');
+var browserify = require('browserify');
+var source = require('vinyl-source-stream');
+
+gulp.task('bundle-blink', function() {
+	browserify()
+		.require('./node_modules/blink/js/lib/browser/blink.js', { expose: 'blink' })
+		.bundle()
+		.pipe(source('blink.js'))
+		.pipe(gulp.dest('dist'));
+});
 ```
+
+This gulp task simply bundles up blink's browser package, names it blink.js and dumps it in a dist folder.
 
 Include the script in your web page:
 
 ```html
-<script src="/bower_components/blink/dist/blink.js"/>
+<script src="/dist/blink.min.js"/>
 ```
 
 Compile your block:
